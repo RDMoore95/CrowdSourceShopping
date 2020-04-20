@@ -1,0 +1,17 @@
+{
+  "name": "romanesco-app",
+  "displayName": "romanesco-app",
+  "expo": {
+    "name": "romanesco-app",
+    "slug": "romanesco-app",
+    "version": "1.0.0",
+    "platforms": [
+      "ios",
+      "android",
+      "web"
+    ],
+    "assetBundlePatterns": [
+      "**/*"
+    ]
+  }
+}
