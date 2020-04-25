@@ -3,22 +3,25 @@ import { StyleSheet, Text, View, Image, Button, ScrollView } from 'react-native'
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 
-export function UserProfile( { navigation } ) {
+export function UserProfile( { route, navigation }, {} ) {
+
+    const { name } = route.params;
+    const { karma } = route.params;
     return (
         <View style={styles.container}>
             <ScrollView>
-                <Image source={require('./Propic.png')} > </Image>
-                <Text>Name:</Text>
-                <Text>Karma: </Text>
+                <Image source={require('./Propic.png')} ></Image>
+                <Text>Name: {JSON.stringify(name)}</Text>
+                <Text>Karma: {JSON.stringify(karma)}</Text>
                 <Button
                 onPress={() => navigation.navigate('Feed')}
-                title="Profile"
-                color="#fff"
+                title="Feed"
+                color="#000"
               />
       <Button
-                onPress={() navigation.navigate('Home')}
-                title="Feed"
-                color="#fff"
+                onPress={() => navigation.navigate('Home')}
+                title="Home"
+                color="#000"
               />
 
             </ScrollView>

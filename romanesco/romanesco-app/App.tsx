@@ -4,10 +4,9 @@
 // Description: A mobile app with a social rewards component to help locate the ideal shopping experience.
 // This is the front end, written in React Native
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
+import 'react-native-gesture-handler';
 import React from 'react';
 import { StyleSheet, Text, ScrollView, Image, Button, View } from 'react-native';
-import 'react-native-gesture-handler';
 import { Feed } from './app/screens/feed/feed';
 import { UserProfile } from './app/screens/profile/profile';
 //import * as React from 'react';
@@ -17,8 +16,11 @@ import { createStackNavigator } from '@react-navigation/stack';
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //
 // Main/Entry for app - Navigation Container provides navigation functionality
-//
+// Also includes navigation stack instantiation
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+const Stack = createStackNavigator();
+
 
 export default function App() {
   return (
@@ -52,19 +54,24 @@ export default function App() {
   );*/
 }
 
-function HomeScreen({ navigation }) {
+function HomeScreen({ navigation}) {
   return (
     <View style={styles.container}>
       <Text>Home Screen</Text>
       <Button
-                onPress={() => navigation.navigate('UserProfile')}
-                title="Profile"
-                color="#fff"
-              />
+          title="Profile"
+          color="#000"
+          onPress={() => {
+            navigation.navigate("Profile", {
+            name: "testName",
+            karma: 710,
+          });
+        }}
+      />
       <Button
-                onPress={() navigation.navigate('Feed')}
+                onPress={() => navigation.navigate("Feed")}
                 title="Feed"
-                color="#fff"
+                color="#000"
               />
     </View>
   );
@@ -77,8 +84,8 @@ function HomeScreen({ navigation }) {
 //
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-const Stack = createStackNavigator();
 
+/*
 function MyStack() {
   return (
     <NavigationContainer>
@@ -98,7 +105,7 @@ function MyStack() {
   );
 }
 
-
+*/
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //

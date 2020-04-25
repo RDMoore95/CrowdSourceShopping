@@ -1,29 +1,35 @@
 import React from 'react';
-import { StyleSheet, Text, Screen, View, Button,  ScrollView } from 'react-native';
+import { StyleSheet, Text, View, Button,  ScrollView } from 'react-native';
+import { FeedEntry } from './components/feedEntry';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 
 export function Feed( { navigation } ) {
     return (
-        <Screen style={styles.container}>
+        <View style={styles.container}>
             <ScrollView>
-                <Text>FEED 1</Text>
-                <Text>FEED 2</Text>
-                <Text>FEED 3</Text>
-                <Text>FEED 4</Text>
-                <Text>FEED 5</Text>
+                <FeedEntry></FeedEntry>
+                <FeedEntry></FeedEntry>
+                <FeedEntry></FeedEntry>
+                <FeedEntry></FeedEntry>
+                <FeedEntry></FeedEntry>
                 <Button
-                onPress={() => navigation.navigate('UserProfile')}
-                title="Profile"
-                color="#fff"
-              />
-      <Button
-                onPress={() navigation.navigate('Home')}
-                title="Feed"
-                color="#fff"
-              />
+                    title="Profile"
+                    color="#000"
+                    onPress={() => {
+                      navigation.navigate("Profile", {
+                      name: "testName",
+                      karma: 710,
+                    });
+                  }}
+                />
+                <Button
+                onPress={() => navigation.navigate('Home')}
+                title="Home"
+                color="#000"
+                />
             </ScrollView>
-        </Screen>
+        </View>
     )
 }
 
