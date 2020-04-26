@@ -265,7 +265,7 @@ def generate_store_feedback(sim_date, user_row, stores, db_connection):
     # Give general feedback
     if np.random.uniform(0, 1, 1) < float(user_store['user_activity']):
 
-        print("Rating trip")
+        print("Give general feedback")
         upload_store_feedback(user_store, 14, db_connection)
 
     # Rate trip
@@ -577,7 +577,7 @@ def run_simulation(start_date, day_count, poisson_mean, price_perc_items, min_sh
     users = assign_user_preferences(users)
 
     # SEED NEXT TRIP DATE
-    users['next_trip_date'] = df.apply(lambda row : shopper_start_date(start_date, poisson_mean), axis = 1)
+    users['next_trip_date'] = users.apply(lambda row : shopper_start_date(start_date, poisson_mean), axis = 1)
 
     # SIMULATE EACH DAY
     for sim_date in (start_date + timedelta(n) for n in range(day_count)):
