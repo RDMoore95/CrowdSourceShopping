@@ -23,8 +23,8 @@ from datetime import timedelta, date
 # SIM PARAMETERS
 #####################
 
-start_date = datetime.datetime(2020, 1, 1)
-day_count = 60 # Length of simulation period
+day_count = 90 # Length of simulation period
+start_date = datetime.datetime(2020, 4, 25) - timedelta(day_count)
 poisson_mean = 6 # Approximately how often users will grocery shop
 price_perc_items = 0.1 # Percentage of items to give price feedback on
 min_shopping_list_items = 1
@@ -446,11 +446,11 @@ def assign_reputation_category(user_reputation):
     user_reputation['user_reputation'] = user_reputation['user_received_upvotes'] + user_reputation['user_given_upvotes']
 
     user_reputation['user_reputation_category_id'] = 1
-    user_reputation.loc[user_reputation['user_reputation'] > 5, 'user_reputation_category_id'] = 2
-    user_reputation.loc[user_reputation['user_reputation'] > 10, 'user_reputation_category_id'] = 3
-    user_reputation.loc[user_reputation['user_reputation'] > 20, 'user_reputation_category_id'] = 4
-    user_reputation.loc[user_reputation['user_reputation'] > 50, 'user_reputation_category_id'] = 5
-    user_reputation.loc[user_reputation['user_reputation'] > 100, 'user_reputation_category_id'] = 6
+    user_reputation.loc[user_reputation['user_reputation'] > 25, 'user_reputation_category_id'] = 2
+    user_reputation.loc[user_reputation['user_reputation'] > 100, 'user_reputation_category_id'] = 3
+    user_reputation.loc[user_reputation['user_reputation'] > 250, 'user_reputation_category_id'] = 4
+    user_reputation.loc[user_reputation['user_reputation'] > 500, 'user_reputation_category_id'] = 5
+    user_reputation.loc[user_reputation['user_reputation'] > 1000, 'user_reputation_category_id'] = 6
     
     return(user_reputation)
 
@@ -603,11 +603,15 @@ def run_simulation(start_date, day_count, poisson_mean, price_perc_items, min_sh
             # If next trip is today, have the user take a grocery trip
             if next_trip_date == sim_date:
                 
-                print("Taking a grocery trip!")
-                print(u)
+                print("User {u} taking a grocery trip!".format(u = u))
                 
                 # Get user's shopping list
                 user_shopping_list = all_shopping_list[all_shopping_list['user_id'] == u]
+
+                # Change user's preferred store every 20 trips
+                if np.random.uniform(0, 1, 1) < 0.05:
+                    print("Change preferred store")
+                    users.loc[users['user_id'] == u, 'store_id'] = np.random.choice(stores['store_id'], 1)
                 
                 # Generate store feedback
                 generate_store_feedback(sim_date
