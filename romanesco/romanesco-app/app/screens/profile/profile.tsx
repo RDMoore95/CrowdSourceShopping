@@ -18,12 +18,16 @@ export function UserProfile( { route, navigation }, {} ) {
                 title="Feed"
                 color="#000"
               />
-      <Button
+        <Button
                 onPress={() => navigation.navigate('Home')}
                 title="Home"
                 color="#000"
               />
-
+        <Button
+                onPress={() => navigation.navigate("Map")}
+                title="Map"
+                color="#000"
+              />
             </ScrollView>
         </View>
     )

@@ -9,6 +9,7 @@ import React from 'react';
 import { StyleSheet, Text, ScrollView, Image, Button, View } from 'react-native';
 import { Feed } from './app/screens/feed/feed';
 import { UserProfile } from './app/screens/profile/profile';
+import { Map } from './app/screens/map/map';
 //import * as React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
@@ -35,6 +36,12 @@ export default function App() {
         <Stack.Screen
           name="Feed"
           component={Feed}
+          
+        />
+
+        <Stack.Screen
+          name="Map"
+          component={Map}
           
         />
 
@@ -71,6 +78,11 @@ function HomeScreen({ navigation}) {
       <Button
                 onPress={() => navigation.navigate("Feed")}
                 title="Feed"
+                color="#000"
+              />
+      <Button
+                onPress={() => navigation.navigate("Map")}
+                title="Map"
                 color="#000"
               />
     </View>
