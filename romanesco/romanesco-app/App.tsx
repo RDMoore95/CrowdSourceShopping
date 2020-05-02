@@ -10,6 +10,10 @@ import { StyleSheet, Text, ScrollView, Image, Button, View } from 'react-native'
 import { Feed } from './app/screens/feed/feed';
 import { UserProfile } from './app/screens/profile/profile';
 import { Map } from './app/screens/map/map';
+import { SignIn } from './app/screens/signin/signin';
+import { SignUp } from './app/screens/signin/signup';
+import { HomeScreen } from './app/screens/home/home';
+
 //import * as React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
@@ -50,6 +54,19 @@ export default function App() {
           component={UserProfile} 
           //options={{title: 'Name'}}
         />
+
+        <Stack.Screen
+          name="SignIn"
+          component={SignIn}
+          
+        />
+
+        <Stack.Screen
+          name="SignUp"
+          component={SignUp}
+          
+        />
+
       </Stack.Navigator>
     </NavigationContainer>
   );/*return (
@@ -60,64 +77,6 @@ export default function App() {
     }</NavigationContainer>
   );*/
 }
-
-function HomeScreen({ navigation}) {
-  return (
-    <View style={styles.container}>
-      <Text>Home Screen</Text>
-      <Button
-          title="Profile"
-          color="#000"
-          onPress={() => {
-            navigation.navigate("Profile", {
-            name: "testName",
-            karma: 710,
-          });
-        }}
-      />
-      <Button
-                onPress={() => navigation.navigate("Feed")}
-                title="Feed"
-                color="#000"
-              />
-      <Button
-                onPress={() => navigation.navigate("Map")}
-                title="Map"
-                color="#000"
-              />
-    </View>
-  );
-}
-
-
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////
-//
-// Navigation Function
-//
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-
-/*
-function MyStack() {
-  return (
-    <NavigationContainer>
-      <Stack.Navigator>
-        <Stack.Screen
-          name="Feed"
-          component={Feed}
-          
-        />
-        <Stack.Screen 
-          name="Profile" 
-          component={UserProfile} 
-          //options={{title: 'Name'}}
-        />
-      </Stack.Navigator>
-    </NavigationContainer>
-  );
-}
-
-*/
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //

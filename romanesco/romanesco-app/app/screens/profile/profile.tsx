@@ -3,6 +3,8 @@ import { StyleSheet, Text, View, Image, Button, ScrollView } from 'react-native'
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 
+// how are we doing accounts?
+
 export function UserProfile( { route, navigation }, {} ) {
 
     const { name } = route.params;

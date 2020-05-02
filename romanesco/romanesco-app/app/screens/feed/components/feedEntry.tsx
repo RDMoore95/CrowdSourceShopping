@@ -1,23 +1,60 @@
 import React from 'react';
-import { Text, View, Button,  ScrollView } from 'react-native';
+import { Text, View, Button,  ScrollView, StyleSheet } from 'react-native';
 
 
-export function FeedEntry( { } ) {
+export function FeedEntry( props ) {
+    
+    // to be filled in via server calls...
+    props = {
+        name: "username",
+        karma: "test_val",
+        store: "Grocery_Store_name",
+        rating: "test_rating",
+        review_text: "Lorem Ipsum blagh blah blah"
+    }
+    
     return (
-        <View style={{flex: 1, flexDirection: 'column'}}>
-            <View style={{flex: 1, flexDirection: 'row'}}>
-                <Text>Name: $N</Text>
-                <Text>Karma: $K</Text>
+        <View style={styles.container}>
+            <View style={styles.row}>
+                <Text>Name: {props.name}</Text>
+                <Text>Karma: {props.karma}</Text>
             </View> 
-            <View style={{flex: 1, flexDirection: 'row'}}>
-                <Text>Store Name: </Text>
-                <Text>Rating: </Text>
+            <View style={styles.row}>
+                <Text>Store Name: {props.store}</Text>
+                <Text>Rating: {props.rating}</Text>
             </View> 
-            <View style={{flex: 1, flexDirection: 'column'}}>
+            <View style={styles.col}>
                 <Text>Grocery Trip Review: </Text>
-                <Text>Lorem Ipsum Sic Dolor Amut I think?</Text>
+                <Text>{props.review_text}</Text>
             </View> 
         </View>
        
     );
 }
+
+const styles = StyleSheet.create({
+    container: {
+      flex: 1,
+      backgroundColor: '#fff',
+      alignItems: 'center',
+      justifyContent: 'center',
+      borderStyle: 'solid',
+      flexDirection: 'column'
+    },
+    col:{
+        flex: 1,
+      backgroundColor: '#fff',
+      alignItems: 'center',
+      justifyContent: 'center',
+      borderStyle: 'solid',
+      flexDirection: 'row'
+    },
+    row:{
+        flex: 1,
+      backgroundColor: '#fff',
+      alignItems: 'center',
+      justifyContent: 'center',
+      borderStyle: 'solid',
+      flexDirection: 'column'
+    }
+  });
