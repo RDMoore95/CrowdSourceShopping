@@ -7,11 +7,11 @@
 import 'react-native-gesture-handler';
 import React from 'react';
 import { StyleSheet, Text, ScrollView, Image, Button, View } from 'react-native';
-import { Feed } from './app/screens/feed/feed';
+import Feed from './app/screens/feed/feed';
 import { UserProfile } from './app/screens/profile/profile';
-import { Map } from './app/screens/map/map';
-import { SignIn } from './app/screens/signin/signin';
-import { SignUp } from './app/screens/signin/signup';
+import  Map  from './app/screens/map/map';
+import  SignIn from './app/screens/signin/signin';
+import  SignUp from './app/screens/signin/signup';
 import { HomeScreen } from './app/screens/home/home';
 
 //import * as React from 'react';

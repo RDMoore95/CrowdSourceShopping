@@ -5,8 +5,9 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import { useNavigation } from '@react-navigation/native';
 
+
 export default class Feed extends React.Component {
-  const navigation = useNavigation();
+  //navigation = useNavigation();
 
   state = {
       
@@ -57,19 +58,19 @@ export default class Feed extends React.Component {
                     title="Profile"
                     color="#000"
                     onPress={() => {
-                      this.navigation.navigate("Profile", {
+                      this.props.navigation.navigate("Profile", {
                       name: "testName",
                       karma: 710,
                     });
                   }}
                 />
                 <Button
-                onPress={() => this.navigation.navigate('Home')}
+                onPress={() => this.props.navigation.navigate.navigate('Home')}
                 title="Home"
                 color="#000"
                 />
                 <Button
-                onPress={() => this.navigation.navigate("Map")}
+                onPress={() => this.props.navigation.navigate.navigate("Map")}
                 title="Map"
                 color="#000"
               />

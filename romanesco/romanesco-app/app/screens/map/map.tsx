@@ -6,7 +6,7 @@ import MapView, { PROVIDER_GOOGLE } from 'react-native-maps';
 import { useNavigation } from '@react-navigation/native';
 
 export default class Map extends React.Component {
-  const navigation = useNavigation();
+  //navigation = useNavigation();
 
   state = {
       
@@ -84,5 +84,5 @@ export default class Map extends React.Component {
 // taaken from react-native-maps example snack
 
    
-
+        }
 }
