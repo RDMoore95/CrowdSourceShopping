@@ -6,17 +6,6 @@ import { createStackNavigator } from '@react-navigation/stack';
 
 // how are we doing accounts?
 
-function getProfileData() {
-  return fetch('http://flip1.engr.oregonstate.edu:4545/profile')
-    .then((response) => response.json())
-    .then((json) => {
-      return json;
-    })
-    .catch((error) => {
-      console.error(error);
-    });
-}
-
 
 export function UserProfile( { route, navigation }, {} ) {
 
@@ -24,7 +13,7 @@ export function UserProfile( { route, navigation }, {} ) {
     const [data, setData] = useState([]);
 
     useEffect(() => {
-      fetch('https://192.168.0.11:4545/profile')
+      fetch('http://flip1.engr.oregonstate.edu:4545/profile')
         .then((response) => response.json())
         .then((json) => setData(json[0]))
         .catch((error) => console.error(error))
@@ -37,10 +26,9 @@ export function UserProfile( { route, navigation }, {} ) {
         <View style={styles.container}>
           {isLoading ? <ActivityIndicator/> : (
             <ScrollView>
-              data = {data}
             <Image source={require('./Propic.png')} ></Image>
-            <Text>Name: {data.first_name + data.last_name}</Text>
-            <Text>Karma: {JSON.stringify(data.karma)}</Text>
+            <Text>Name: {data.first_name + " " + data.last_name}</Text>
+            <Text>Karma: {data.user_received_net.toString()}</Text>
             <Button
             onPress={() => navigation.navigate('Feed')}
             title="Feed"

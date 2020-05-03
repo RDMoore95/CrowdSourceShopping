@@ -29,11 +29,15 @@ var server = app.listen(4545, function() {
     var port = server.address().port;
 });
 
+// app.get('/feedEntries', function(req, res) {
+//     var q = ``
+// })
+
 app.get('/profile', function(req, res) {
 
     var q = `SELECT * FROM (SELECT user_received_net, first_name, last_name from User 
              INNER JOIN User_Reputation ON User.user_id = User_Reputation.user_id) as NAME_REP 
-             WHERE NAME_REP.first_name = "Adam";`
+             WHERE NAME_REP.first_name = "Ivory";`
 
              
     con.query(q, function(error, results) {
