@@ -30,6 +30,11 @@ export function UserProfile( { route, navigation }, {} ) {
                 title="Map"
                 color="#000"
               />
+        <Button
+                onPress={() => navigation.navigate("Stores")}
+                title="Stores"
+                color="#000"
+              />              
             </ScrollView>
         </View>
     )
