@@ -12,13 +12,13 @@ export function UserProfile( { route, navigation }, {} ) {
     const [isLoading, setLoading] = useState(true);
     const [data, setData] = useState([]);
 
-    // useEffect(() => {
-    //   fetch('http://flip1.engr.oregonstate.edu:4545/profile')
-    //     .then((response) => response.json())
-    //     .then((json) => setData(json))
-    //     .catch((error) => console.error(error))
-    //     .finally(() => setLoading(false))
-    // }, []);
+    useEffect(() => {
+      fetch('http://flip1.engr.oregonstate.edu:4545/profile')
+        .then((response) => response.json())
+        .then((json) => setData(json))
+        .catch((error) => console.error(error))
+        .finally(() => setLoading(false))
+    }, []);
 
     const { name } = route.params;
     const { karma } = route.params;
@@ -27,6 +27,8 @@ export function UserProfile( { route, navigation }, {} ) {
           {isLoading ? <ActivityIndicator/> : (
             <ScrollView>
             <Image source={require('./Propic.png')} ></Image>
+            <Text>Name: {data.first_name + " " + data.last_name}</Text>
+            <Text>Karma: {data.user_received_net.toString()}</Text>
           <Button
             onPress={() => navigation.navigate('Feed')}
             title="Feed"
