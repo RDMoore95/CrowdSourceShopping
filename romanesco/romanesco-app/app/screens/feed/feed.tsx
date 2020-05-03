@@ -65,12 +65,12 @@ export default class Feed extends React.Component {
                   }}
                 />
                 <Button
-                onPress={() => this.props.navigation.navigate.navigate('Home')}
+                onPress={() => this.props.navigation.navigate('Home')}
                 title="Home"
                 color="#000"
                 />
                 <Button
-                onPress={() => this.props.navigation.navigate.navigate("Map")}
+                onPress={() => this.props.navigation.navigate("Map")}
                 title="Map"
                 color="#000"
               />

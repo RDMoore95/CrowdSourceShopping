@@ -83,6 +83,5 @@ export default class Map extends React.Component {
 
 // taaken from react-native-maps example snack
 
-   
-        }
-}
+                }
+              }
