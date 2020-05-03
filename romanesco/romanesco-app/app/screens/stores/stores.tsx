@@ -25,17 +25,6 @@ export default class Feed extends React.Component {
     onChangeText = (key, val) => {
       this.setState({ [key]: val })
     }
-   
- // render() {
-
- //  return (
- //        <View style={this.styles.container}>
- //            <ScrollView>    
- //                <Text>Name: {JSON.stringify("YOUR STORES PAGE")}</Text>
- //            </ScrollView>
- //        </View>
- //    )
- //  }
 
   componentDidMount() {
     fetch(url, {
@@ -56,33 +45,6 @@ export default class Feed extends React.Component {
         this.setState({ isLoading: false });
       });       
   }
-
-  // componentDidMount() {
-  //   fetch(url)
-  //     .then((response) => response.json())
-  //     .then((response) => {
-  //         console.log(response);
-  //     })
-  //     .then(console.log("Did something"))
-  //     .catch((error) => console.log("My error is :", error))
-  //     .finally(() => {
-  //       this.setState({ isLoading: false });
-  //     });
-  // }
-
-  // componentDidMount() {
-  //   fetch('https://reactnative.dev/movies.json')
-  //     .then((response) => response.json())
-  //     .then((json) => {
-  //       this.setState({ data: json.movies });
-  //     })
-  //     .catch((error) => console.error(error))
-  //     .finally(() => {
-  //       this.setState({ isLoading: false });
-  //     });
-  // }
-
-//<Text>Name: {JSON.stringify('YOUR STORES PAGE')}</Text>
 
   render() {
 
