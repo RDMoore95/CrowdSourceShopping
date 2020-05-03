@@ -29,9 +29,26 @@ var server = app.listen(4545, function() {
     var port = server.address().port;
 });
 
-// app.get('/feedEntries', function(req, res) {
-//     var q = ``
-// })
+app.get('/feedEntries', function(req, res) {
+    var q = `SELECT first_name, last_name, store_name, store_feedback_category, time_added, store_feedback_text FROM 
+    Store_Feedback 
+    INNER JOIN Store ON Store_Feedback.store_id = Store.store_id 
+    INNER JOIN Store_Feedback_Category 
+        ON Store_Feedback.store_feedback_category_id = Store_Feedback_Category.store_feedback_category_id 
+    INNER JOIN User 
+        ON User.user_id = Store_Feedback.user_id
+        ORDER BY time_added DESC;`
+
+    con.query(q, function(error, results) {
+        if (error) {
+            throw (error);
+        }
+
+        else {
+            res.send(results);
+        }
+    });
+});
 
 app.get('/profile', function(req, res) {
 
