@@ -4,15 +4,9 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import { useNavigation } from '@react-navigation/native';
 
-var url = "http://127.0.0.1:5000/flask_api/time";
-var url = "http://127.0.0.1:5000/flask_api/";
-var url = "http://136.24.86.92/app/";
-var url = "http://127.0.0.1:5000/";
-var url = "http://136.24.86.92/";
-var url = "http://192.168.1.2.:5000/getStores/";
+// var url = "http://192.168.1.2.:5000/getStores/";
+var url = "http://flip1.engr.oregonstate.edu:5005/getStores/";
 // console.log(url);
-
-//.json()
 
 export default class Feed extends React.Component {
   //navigation = useNavigation();

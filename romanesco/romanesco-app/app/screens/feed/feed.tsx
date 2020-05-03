@@ -73,7 +73,15 @@ export default class Feed extends React.Component {
                 onPress={() => this.props.navigation.navigate.navigate("Map")}
                 title="Map"
                 color="#000"
-              />
+                />
+                <Button
+                    title="Stores"
+                    color="#000"
+                    onPress={() => {
+                      this.props.navigation.navigate("Stores", {
+                    });
+                  }}
+                />
             </ScrollView>
         </View>
     )
