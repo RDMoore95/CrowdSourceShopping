@@ -20,8 +20,8 @@ export function UserProfile( { route, navigation }, {} ) {
         .finally(() => setLoading(false))
     }, []);
 
-    const { name } = route.params;
-    const { karma } = route.params;
+    //const { name } = route.params;
+    //const { karma } = route.params;
     return (
         <View style={styles.container}>
           {isLoading ? <ActivityIndicator/> : (
