@@ -15,7 +15,7 @@ export function UserProfile( { route, navigation }, {} ) {
     useEffect(() => {
       fetch('http://flip1.engr.oregonstate.edu:4545/profile')
         .then((response) => response.json())
-        .then((json) => setData(json))
+        .then((json) => setData(json[0]))
         .catch((error) => console.error(error))
         .finally(() => setLoading(false))
     }, []);

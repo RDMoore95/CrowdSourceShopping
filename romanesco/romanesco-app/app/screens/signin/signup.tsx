@@ -23,7 +23,7 @@ export default class SignUp extends React.Component {
 
 
           // here place your signup logic
-            // fetch 
+            fetch()
           const success = this.state.email;
           console.log('user successfully signed up!: ' + this.state.username, success);
           this.props.navigation.navigate('Home');
