@@ -10,6 +10,7 @@ import { StyleSheet, Text, ScrollView, Image, Button, View } from 'react-native'
 import Feed from './app/screens/feed/feed';
 import { UserProfile } from './app/screens/profile/profile';
 import  Map  from './app/screens/map/map';
+import  Stores  from './app/screens/stores/stores';
 import  SignIn from './app/screens/signin/signin';
 import  SignUp from './app/screens/signin/signup';
 import { HomeScreen } from './app/screens/home/home';
@@ -46,6 +47,12 @@ export default function App() {
         <Stack.Screen
           name="Map"
           component={Map}
+          
+        />
+
+        <Stack.Screen
+          name="Stores"
+          component={Stores}
           
         />
 
