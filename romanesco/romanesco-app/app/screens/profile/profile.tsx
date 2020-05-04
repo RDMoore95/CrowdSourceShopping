@@ -35,11 +35,6 @@ export function UserProfile( { route, navigation }, {} ) {
             color="#000"
           />
           <Button
-            onPress={() => navigation.navigate('Home')}
-            title="Home"
-            color="#000"
-          />
-          <Button
             onPress={() => navigation.navigate("Map")}
             title="Map"
             color="#000"
