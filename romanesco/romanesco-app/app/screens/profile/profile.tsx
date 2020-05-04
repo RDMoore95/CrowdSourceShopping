@@ -86,7 +86,7 @@ export function UserProfile( { route, navigation }, {} ) {
                         color="#525F7F"
                         style={{ marginBottom: 4 }}
                       >
-                        {data.user_received_net.toString()}
+                        {data.user_received_net}
                       </Text>
                       <Text size={12} color={argonTheme.COLORS.TEXT}>Reputation</Text>
                     </Block>
