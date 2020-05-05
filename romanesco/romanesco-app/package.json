@@ -10,7 +10,7 @@
   "dependencies": {
     "@react-native-community/masked-view": "^0.1.10",
     "@react-navigation/compat": "^5.1.14",
-    "@react-navigation/native": "^5.2.3",
+    "@react-navigation/native": "^5.1.7",
     "@react-navigation/stack": "^5.2.18",
     "bcryptjs": "^2.4.3",
     "expo": "^37.0.8",
@@ -32,7 +32,8 @@
     "react-native-screens": "^2.7.0",
     "react-native-unimodules": "~0.9.0",
     "react-native-vector-icons": "^6.6.0",
-    "react-native-web": "~0.11.7"
+    "react-native-web": "~0.11.7",
+    "react-navigation": "^4.3.9"
   },
   "devDependencies": {
     "@babel/core": "~7.9.0",
