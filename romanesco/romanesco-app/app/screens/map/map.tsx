@@ -56,35 +56,23 @@ export default class Map extends Component {
 
   return (
       <View style={this.styles.container}>
-        {isLoading ? <ActivityIndicator/> : (
-          
-          <FlatList
-          data={data}
-          renderItem={({ item }) => (
-            <View>
-                <Text>{item.store_street}</Text>
-                <Text>{item.store_city}</Text>
-                </View>
-          )}
-        />
-          // <MapView 
-          // initialRegion={{ // placeholder - replace with location (get location)
-          //     latitude: 37.78825,
-          //     longitude: -122.4324,
-          //     latitudeDelta: 0.0922,
-          //     longitudeDelta: 0.0421,
-          //   }}
-          // provider={PROVIDER_GOOGLE}
-          // style={this.styles.mapStyle} 
-          // /*> // markers code from react-native-maps docs - loads our markers!
-          // {this.state.markers.map(marker => (
-          //     <Marker
-          //       coordinate={marker.latlng}
-          //       title={marker.title}
-          //       description={marker.description}
-          //     />*/
-          // />
-        )}   
+          <MapView 
+          initialRegion={{ // placeholder - replace with location (get location)
+              latitude: 37.78825,
+              longitude: -122.4324,
+              latitudeDelta: 0.0922,
+              longitudeDelta: 0.0421,
+            }}
+          provider={PROVIDER_GOOGLE}
+          style={this.styles.mapStyle} 
+          /*> // markers code from react-native-maps docs - loads our markers!
+          {this.state.markers.map(marker => (
+              <Marker
+                coordinate={marker.latlng}
+                title={marker.title}
+                description={marker.description}
+              />*/
+          />  
       </View>
     );
 
