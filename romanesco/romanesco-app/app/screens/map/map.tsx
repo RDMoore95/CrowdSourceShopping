@@ -51,7 +51,7 @@ export default class Map extends Component {
 
  render() {
 
-  const {data, isLoading } = this.state;
+  // const {data, isLoading } = this.state;
   
 
   return (
