@@ -2,9 +2,8 @@ var express = require('express');
 var app = express();
 var mysql = require('mysql');
 var bodyParser = require('body-parser');
-var passport = require("passport");
-var localStrat = require("passport-local").Strategy;
 const bcrypt = require('bcryptjs');
+const fetch = require("node-fetch");
 
 app.use(bodyParser.json({type:'application/json'}));
 app.use(bodyParser.urlencoded({extended:true}));
@@ -32,11 +31,47 @@ var server = app.listen(4545, function() {
     var port = server.address().port;
 });
 
-passport.use(new localStrat(
-    function(username, password, done) {
-        User.f
-    }
-))
+app.get('/map', function(req, res) {
+
+    var q = `SELECT store_name, store_street, store_city, state_name, store_zip 
+             FROM Store
+                INNER JOIN State
+                ON Store.store_state = State.state_id
+                WHERE store_street = "417 Westlake Center";`
+
+    var request1 = "https://maps.googleapis.com/maps/api/geocode/json?address="
+    var request2 = "&key=AIzaSyDQCwj-QWjaCb0oicA6xml3rnkw8o_O_X4"
+
+    con.query(q, function(error, results) {
+
+        fetch("https://maps.googleapis.com/maps/api/geocode/json?address=417+Westlake+Center,Daly+City,CA&key=AIzaSyDQCwj-QWjaCb0oicA6xml3rnkw8o_O_X4")
+                .then((response) => response.json())
+                .then((json) => {
+                    console.log(json);
+                })
+                .finally(() => {
+                    res.send(results);
+                })
+
+        // results.forEach(element => {
+        //     fetch(request1+element.store_street.replace(" ", "+")+","+element.store_city.replace(" ", "+")+","+element.state_name+request2)
+        //         .then((response) => response.json())
+        //         .then((json) => {
+        //             element["lat_long"] = json.results[0].geometry.location;
+        //         })
+        //         .catch((error) => console.error(error))
+        //         .finally(() => {
+        //             res.send(results);
+        //         })
+        //     })
+
+            if (error) {
+                throw (error);
+            }
+          })
+        
+
+});
 
 app.post('/signup', function(req, res) {
 
@@ -76,6 +111,9 @@ app.get('/login', function(req, res) {
              FROM User
              WHERE email = ?`
 
+    var q2 = `UPDATE
+    `
+
     con.query(q,
         [req.body.email
         ], function(error, results) {
@@ -91,6 +129,9 @@ app.get('/login', function(req, res) {
 
                     else {
                         res.send(result);
+                        if (result) {
+                            con.query()
+                        }
                     }
                 })
             }
@@ -105,7 +146,8 @@ app.get('/feedEntries', function(req, res) {
         ON Store_Feedback.store_feedback_category_id = Store_Feedback_Category.store_feedback_category_id 
     INNER JOIN User 
         ON User.user_id = Store_Feedback.user_id
-        ORDER BY time_added DESC;`
+        ORDER BY time_added DESC
+        LIMIT 30;`
 
     con.query(q, function(error, results) {
         if (error) {

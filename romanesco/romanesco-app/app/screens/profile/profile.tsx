@@ -28,7 +28,7 @@ export function UserProfile( { route, navigation }, {} ) {
             <ScrollView>
             <Image source={require('./Propic.png')} ></Image>
             <Text>Name: {data.first_name + " " + data.last_name}</Text>
-            <Text>Karma: {data.user_received_net.toString()}</Text>
+            <Text>Karma: {data.user_received_net}</Text>
           <Button
             onPress={() => navigation.navigate('Feed')}
             title="Feed"

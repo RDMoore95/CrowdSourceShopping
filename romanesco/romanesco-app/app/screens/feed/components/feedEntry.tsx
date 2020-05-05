@@ -1,22 +1,58 @@
 import React from 'react';
-import { Text, View, Button,  ScrollView, StyleSheet } from 'react-native';
+import { Text, View, Button,  ScrollView, StyleSheet, ActivityIndicator, FlatList } from 'react-native';
+import { useEffect, useState } from 'react';
+
 
 
 export function FeedEntry( props ) {
+    FlatListItemSeparator = () => {
+        return (
+          <View
+            style={{
+              height: 1,
+              width: "100%",
+              backgroundColor: "#000",
+            }}
+          />
+        );
+      }
     
-    // to be filled in via server calls...
-    props = {
-        name: "username",
-        karma: "test_val",
-        store: "Grocery_Store_name",
-        rating: "test_rating",
-        review_text: "Lorem Ipsum blagh blah blah"
-    }
+    const [isLoading, setLoading] = useState(true);
+    const [data, setData] = useState([]);
+
+    useEffect(() => {
+      fetch('http://flip1.engr.oregonstate.edu:4545/feedEntries')
+        .then((response) => response.json())
+        .then((json) => setData(json))
+        .catch((error) => console.error(error))
+        .finally(() => setLoading(false))
+    }, []);
     
     return (
-        <View style={styles.container}>
+
+        <View style={{ flex: 1, padding: 24 }}>
+      {isLoading ? <ActivityIndicator/> : (
+        <FlatList
+          data={data}
+          ItemSeparatorComponent = {FlatListItemSeparator}
+          renderItem={({ item }) => (
+            <View>
+                <Text>{item.time_added.slice(0,10)}</Text>
+                <Text>{item.first_name}, {item.last_name}</Text>
+                <Text>Store: {item.store_name}, Category: {item.store_feedback_category}</Text>
+                <Text>Review: {item.store_feedback_text}</Text>
+                </View>
+          )}
+        />
+      )}
+    </View>
+       
+    );
+}
+
+{/* <View style={styles.container}>
             <View style={styles.row}>
-                <Text>Name: {props.name}</Text>
+                <Text>Name: {props.first_name}</Text>
                 <Text>Karma: {props.karma}</Text>
             </View> 
             <View style={styles.row}>
@@ -27,10 +63,7 @@ export function FeedEntry( props ) {
                 <Text>Grocery Trip Review: </Text>
                 <Text>{props.review_text}</Text>
             </View> 
-        </View>
-       
-    );
-}
+        </View> */}
 
 const styles = StyleSheet.create({
     container: {
