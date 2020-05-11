@@ -167,6 +167,17 @@ export function UserProfile( { route, navigation }, {} ) {
                     title="Stores"
                     color="#000"
                     > Stores </Button>
+                    <Button
+                    color="transparent"
+                      textStyle={{
+                        color: "#233DD2",
+                        fontWeight: "500",
+                        fontSize: 16
+                      }}
+                    onPress={() => navigation.navigate('ReviewList')}
+                    title="Review List"
+                    color="#000"
+                    > Stores </Button>
                   </Block>
                   <Block
                     row
