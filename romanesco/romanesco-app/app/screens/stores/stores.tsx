@@ -19,8 +19,8 @@ const { width, height } = Dimensions.get("screen");
 
 const thumbMeasure = (width - 48 - 32) / 3;
 
-// var url = "http://192.168.1.2.:5000/getStores/";
-var url = "http://flip1.engr.oregonstate.edu:5005/getStores/";
+var url = "http://192.168.1.2.:5000/getStores/";
+// var url = "http://flip1.engr.oregonstate.edu:5005/getStores/";
 
 export default class Feed extends React.Component {
 
@@ -47,12 +47,11 @@ export default class Feed extends React.Component {
              'Content-Type': 'application/json',
          },
          body: JSON.stringify({
-             firstParam: 'user_id',
-             secondParam: '121',
+             user_id: '121',
          }),
      }).then((response) => response.json())
       .then((json) => {
-        this.setState({ data: json.stores });
+        this.setState({ data: json });
       })
       .finally(() => {
         this.setState({ isLoading: false });
@@ -62,13 +61,7 @@ export default class Feed extends React.Component {
   render() {
 
     const { data, isLoading } = this.state;
-    // const { data, isLoading } = this.state;
-
-    // console.log(JSON.stringify("Print something"));
-    //console.log(JSON.stringify("On stores page"));    
-    // console.log(JSON.stringify(response));
-    //console.log(response);
-    // console.log(error);
+    console.log(data);
 
     return (
 
@@ -92,9 +85,14 @@ export default class Feed extends React.Component {
             {isLoading ? <ActivityIndicator/> : (
               <FlatList
                 data={data}
-                keyExtractor={({ id }, index) => id}
+                //keyExtractor={({ id }, index) => id}
+                keyExtractor={item => item.id}
                 renderItem={({ item }) => (
-                  <Text size={16} color="#32325D" style={{ marginTop: 10 }}>{item.name}, {item.location}</Text>
+                  <>
+                  <Text size={16} color="#32325D" style={{ marginTop: 10 }}>{item.store_name}</Text>
+                  <Text size={16} color="#32325D" style={{ marginTop: 10 }}>{item.store_street}</Text>
+                  <Text size={16} color="#32325D" style={{ marginTop: 10 }}>{item.days_since_last_feedback}</Text>
+                  </>
                 )}
               />
             )}
