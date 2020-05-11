@@ -19,8 +19,8 @@ const { width, height } = Dimensions.get("screen");
 
 const thumbMeasure = (width - 48 - 32) / 3;
 
-var url = "http://192.168.1.2.:5000/getStores/";
-// var url = "http://flip1.engr.oregonstate.edu:5005/getStores/";
+//var url = "http://192.168.1.2.:5000/getStores/";
+var url = "http://flip1.engr.oregonstate.edu:5005/getStores/";
 
 export default class Feed extends React.Component {
 
