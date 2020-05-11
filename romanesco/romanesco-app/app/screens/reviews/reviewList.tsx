@@ -1,12 +1,12 @@
 import React, {Component} from 'react';
 import { StyleSheet, Text, View, Button,  ScrollView } from 'react-native';
-import { FeedEntry } from './components/feedEntry';
+import { ReviewFeed } from './components/reviewFeed';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import { useNavigation } from '@react-navigation/native';
 
 
-export default class Feed extends React.Component {
+export default class ReviewList extends React.Component {
   //navigation = useNavigation();
 
   state = {
@@ -49,7 +49,7 @@ export default class Feed extends React.Component {
                     });
                   }}
                 />
-                <FeedEntry></FeedEntry>
+                <ReviewFeed></ReviewFeed>
             </ScrollView>
         </View>
     )
@@ -64,6 +64,3 @@ export default class Feed extends React.Component {
     },
   });
 }
-
-
-
