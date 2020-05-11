@@ -9,14 +9,31 @@ import { View,
 import { Avatar, List, ListItem } from "react-native-elements";
 import { useEffect, useState } from 'react';
 import { Block, Text, theme } from "galio-framework";
-import { useNavigation } from '@react-navigation/native';
-import styled from 'styled-components';
+import { withNavigation } from 'react-navigation';
+import ReadMore from 'react-native-read-more-text';
+import Icon from 'react-native-vector-icons/Ionicons';
 
+// To get feed entries to fill screen
 let deviceWidth = Dimensions.get('window').width
 
-export function FeedEntry( props ) {
+// export function FeedEntry( props ) {
+export class FeedEntry extends React.Component {
 
-    const navigation = useNavigation();
+    constructor(props) {
+
+      super(props);
+
+      this.state = {
+        data: [],
+        isLoading: true,
+      };
+    }
+
+    state = {}
+
+    onChangeText = (key, val) => {
+      this.setState({ [key]: val })
+    }
 
     FlatListItemSeparator = () => {
         return (
@@ -30,25 +47,46 @@ export function FeedEntry( props ) {
           />
         );
       }
-    
-    const [isLoading, setLoading] = useState(true);
-    const [data, setData] = useState([]);
 
-    useEffect(() => {
-      fetch('http://flip1.engr.oregonstate.edu:4545/feedEntries')
+    // Used to render "Read More" when review text overflows
+    _renderTruncatedFooter = (handlePress) => {
+      return (
+        <Text style={{marginTop: 5}} onPress={handlePress}>
+          Read more
+        </Text>
+      );
+    }
+    _renderRevealedFooter = (handlePress) => {
+      return (
+        <Text style={{marginTop: 5}} onPress={handlePress}>
+          Show less
+        </Text>
+      );
+    }
+    _handleTextReady = () => {}
+
+    // Get feed entires    
+    componentDidMount() {
+        fetch('http://flip1.engr.oregonstate.edu:4545/feedEntries')
         .then((response) => response.json())
-        .then((json) => setData(json))
+        .then((json) => {this.setState({ data: json });})
         .catch((error) => console.error(error))
-        .finally(() => setLoading(false))
-    }, []);
-    
+        .finally(() => {this.setState({ isLoading: false });})
+    }  
+
+
+   // Render each feed entry in a flatlist
+   render() {
+
+    const { data, isLoading, navigation } = this.state;
+
     return (
 
     <View style={{ flex: 1, padding: 5, width: deviceWidth * 0.98 }}>
       {isLoading ? <ActivityIndicator/> : (
         <FlatList
           data={data}
-          // ItemSeparatorComponent = {FlatListItemSeparator}
+          //ItemSeparatorComponent = {FlatListItemSeparator}
           renderItem={({ item }) => (                
                 <>
 
@@ -59,7 +97,7 @@ export function FeedEntry( props ) {
                     rounded
                     source={require('../../../assets/imgs/romanescoicon.png')}
                     onPress={() => {
-                        navigation.navigate("Profile"), {
+                        this.props.navigation.navigate("Profile"), {
                         name: "testName",
                         karma: 710,
                       };}}
@@ -72,11 +110,34 @@ export function FeedEntry( props ) {
                   <View style={{backgroundColor:'#F7FAFC', padding: 3}}></View>
 
                   <View style={styles.feedBoxReview}>
+
+                    <View style={styles.feedBoxReviewText}>
+
                     <Text size={16} color="#32325D">Feedback Type: {item.store_feedback_category}, {item.store_feedback_text}</Text>
                     <View style={{backgroundColor:'#F7FAFC', flex:1 ,padding: 1.5}}></View>
-                    <Text numberOfLines={3} size={16} color="#32325D">My experience was ABSOLUTELY great/terrible! 
+                    <ReadMore numberOfLines={3}
+                    renderTruncatedFooter = {this._renderTruncatedFooter}
+                    renderRevealedFooter = {this._renderRevealedFooter}
+                    onReady={this._handleTextReady}
+                    >
+                    <Text size={16} color="#32325D">My experience was ABSOLUTELY great/terrible! 
                     Writing a longer placeholder review so we know how it will display and make sure the text cuts off after three long long lines
                     </Text>
+                    </ReadMore>
+
+                   </View>
+
+                   <View style={styles.feedBoxReviewVote}>
+
+                    <Icon name="ios-thumbs-up" size={25} color="#5E72E4" 
+                      onPress={() => { console.log("UPVOTE") }}
+                    />
+                    <Icon name="ios-thumbs-down" size={25} color="#5E72E4" 
+                      onPress={() => { console.log("DOWNVOTE") }}
+                    />
+
+                   </View> 
+
                   </View>
 
                   <View style={{backgroundColor:'#F7FAFC', flex:1 ,padding: 3}}></View>
@@ -87,29 +148,22 @@ export function FeedEntry( props ) {
                 
                 </>
           )}
+
         />
+
       )}
+
     </View>
-       
+
     );
+
+  }
+      
 }
 
-// <Text size={16} color="#32325D">Review: {item.store_feedback_text}</Text>
-
-{/* <View style={styles.container}>
-            <View style={styles.row}>
-                <Text>Name: {props.first_name}</Text>
-                <Text>Karma: {props.karma}</Text>
-            </View> 
-            <View style={styles.row}>
-                <Text>Store Name: {props.store}</Text>
-                <Text>Rating: {props.rating}</Text>
-            </View> 
-            <View style={styles.col}>
-                <Text>Grocery Trip Review: </Text>
-                <Text>{props.review_text}</Text>
-            </View> 
-        </View> */}
+// withNavigation returns a component that wraps MyBackButton and passes in the
+// navigation prop
+export default withNavigation(FeedEntry);
 
 const styles = StyleSheet.create({
     container: {
@@ -158,8 +212,24 @@ const styles = StyleSheet.create({
       , borderColor: '#F7FAFC'
       , borderRadius: 25
       , borderWidth: 1
-      , flex: 0.5
-    },        
+      , flexDirection: 'row'
+      , alignItems: 'center'
+    },    
+    feedBoxReviewText: {
+      backgroundColor:'#F7FAFC'
+      , padding: 3
+      , borderColor: '#F7FAFC'
+      , borderRadius: 25
+      , borderWidth: 1
+      , flex: 0.9
+    },
+    feedBoxReviewVote: {
+      backgroundColor:'#F7FAFC'
+      , borderColor: '#F7FAFC'
+      , borderRadius: 25
+      , borderWidth: 1
+      , flex: 0.1
+    },                    
     headline: {
        fontSize: 14,
        color:'#32325D',
