@@ -47,7 +47,7 @@ export default class Feed extends React.Component {
                     });
                   }}
                 />
-                <FeedEntry></FeedEntry>
+                <FeedEntry navigation={this.props.navigation}></FeedEntry>
             </ScrollView>
         </View>
     )
