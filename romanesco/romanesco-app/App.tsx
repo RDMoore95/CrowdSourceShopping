@@ -13,12 +13,15 @@ import  Map  from './app/screens/map/map';
 import  Stores  from './app/screens/stores/stores';
 import  SignIn from './app/screens/signin/signin';
 import  SignUp from './app/screens/signin/signup';
+import  { StoreProfile } from './app/screens/stores/storeProfile';
+import  ReviewList from './app/screens/reviews/reviewList';
 import { HomeScreen } from './app/screens/home/home';
 
 
 //import * as React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
+import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //
@@ -27,13 +30,14 @@ import { createStackNavigator } from '@react-navigation/stack';
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 const Stack = createStackNavigator();
+const Tab = createMaterialTopTabNavigator();
 
 
 export default function App() {
   return (
     
     <NavigationContainer>
-      <Stack.Navigator initialRouteName="Feed">
+      <Stack.Navigator initialRouteName="Home">
         
         <Stack.Screen 
           name="Home" 
@@ -53,8 +57,20 @@ export default function App() {
         />
 
         <Stack.Screen
+          name="ReviewList"
+          component={ReviewList}
+          
+        />
+
+        <Stack.Screen
           name="Stores"
           component={Stores}
+          
+        />
+
+        <Stack.Screen
+          name="StoreProfile"
+          component={StoreProfile}
           
         />
 
