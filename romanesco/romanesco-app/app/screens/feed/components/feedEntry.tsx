@@ -99,7 +99,7 @@ export class FeedEntry extends React.Component {
    // Render each feed entry in a flatlist
    render() {
 
-    const { data, isLoading, navigation } = this.state;
+    const { data, isLoading } = this.state;
 
     return (
 
