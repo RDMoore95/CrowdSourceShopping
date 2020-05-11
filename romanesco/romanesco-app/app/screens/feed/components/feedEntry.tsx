@@ -27,8 +27,8 @@ export class FeedEntry extends React.Component {
       this.state = {
         data: [],
         isLoading: true,
-        iconColourUp: "#5E72E4",
-        iconColourDown: "#5E72E4"
+        refresh: false,
+        firstRender: true,
       };
     }
 
@@ -68,7 +68,7 @@ export class FeedEntry extends React.Component {
     }
     _handleTextReady = () => {}
 
-    // Get feed entires    
+    // Get feed entries    
     componentDidMount() {
         fetch('http://flip1.engr.oregonstate.edu:4545/feedEntries')
         .then((response) => response.json())
@@ -79,36 +79,66 @@ export class FeedEntry extends React.Component {
 
 
   // Set right colors for icons
-  // Need to fix
-  upVote() {
-    console.warn("Upvote!")
-    this.setState({
-        // iconColourUp: "#ffd500",
-        iconColourDown: "#5E72E4"
-    })
+  upVote(item) {
+
+    // Flip value of downvote
+    item.upVote = !item.upVote;
+    // Set downvote to zero
+    item.downVote = 0;
+    // Force a refresh
+    this.setState({ refresh: !this.state.refresh})
+    return item
+  
   }
 
-  downVote() {
-    console.warn("Downvote!")
-    this.setState({
-        iconColourUp: "#5E72E4",
-        // iconColourDown: "#ffd500"
-    })
+  downVote(item) {
+
+    // Flip value of downvote
+    item.downVote = !item.downVote;
+    // Set upvote to zero
+    item.upVote = 0;
+    // Force a refresh
+    this.setState({ refresh: !this.state.refresh})
+    return item
+
   }
+
 
    // Render each feed entry in a flatlist
    render() {
 
-    const { data, isLoading } = this.state;
+    // Assign upvotes and downvotes to 0
+    // Only want to do this oncee, so use firstRender 
+    if( this.state.firstRender ){
+
+      console.warn("First render")
+
+      // Add upvote and downvote flags 
+      this.state.data.map(function(item) {
+        return item['upVote'] = 0
+      })
+      this.state.data.map(function(item) {
+        return item['downVote'] = 0
+      })
+
+      this.setState({ firstRender: !this.state.firstRender})
+
+    }
+
+
+    const { isLoading } = this.state;
 
     return (
 
     <View style={{ flex: 1, padding: 5, width: deviceWidth * 0.98 }}>
       {isLoading ? <ActivityIndicator/> : (
+
         <FlatList
-          data={data}
+          extraData={this.state.refresh} // Need this variable to change to force a refresh
+          data={this.state.data}
           //ItemSeparatorComponent = {FlatListItemSeparator}
-          renderItem={({ item }) => (                
+          renderItem={({ item }) => (
+
                 <>
 
                 <View style={styles.feedBox}>
@@ -150,11 +180,11 @@ export class FeedEntry extends React.Component {
 
                    <View style={styles.feedBoxReviewVote}>
 
-                    <Icon name="ios-thumbs-up" size={25} color={this.state.iconColourUp}
-                      onPress={()=>this.upVote()}
+                    <Icon name="ios-thumbs-up" size={25} color={(item.upVote > 0) ? '#FFD500' : '#5E72E4'}
+                      onPress={()=>{ item = this.upVote(item)}}
                     />
-                    <Icon name="ios-thumbs-down" size={25} color={this.state.iconColourDown}
-                      onPress={()=>this.downVote()}
+                    <Icon name="ios-thumbs-down" size={25} color={(item.downVote > 0) ? '#FFD500' : '#5E72E4'}
+                      onPress={()=>{ item = this.downVote(item)} }
                     />
 
                    </View> 
