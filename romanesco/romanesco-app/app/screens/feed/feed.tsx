@@ -24,8 +24,6 @@ export default class Feed extends React.Component {
         <View style={this.styles.container}>
             <ScrollView>
                 
-
-                
                 <Button
                     title="Profile"
                     color="#000"
