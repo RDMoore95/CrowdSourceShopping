@@ -5,6 +5,7 @@ import { View,
   StyleSheet, 
   ActivityIndicator, 
   FlatList,
+  TouchableHighlight,
   Dimensions } from 'react-native';
 import { Avatar, List, ListItem } from "react-native-elements";
 import { useEffect, useState } from 'react';
@@ -26,6 +27,8 @@ export class FeedEntry extends React.Component {
       this.state = {
         data: [],
         isLoading: true,
+        iconColourUp: "#5E72E4",
+        iconColourDown: "#5E72E4"
       };
     }
 
@@ -74,6 +77,24 @@ export class FeedEntry extends React.Component {
         .finally(() => {this.setState({ isLoading: false });})
     }  
 
+
+  // Set right colors for icons
+  // Need to fix
+  upVote() {
+    console.warn("Upvote!")
+    this.setState({
+        // iconColourUp: "#ffd500",
+        iconColourDown: "#5E72E4"
+    })
+  }
+
+  downVote() {
+    console.warn("Downvote!")
+    this.setState({
+        iconColourUp: "#5E72E4",
+        // iconColourDown: "#ffd500"
+    })
+  }
 
    // Render each feed entry in a flatlist
    render() {
@@ -129,11 +150,11 @@ export class FeedEntry extends React.Component {
 
                    <View style={styles.feedBoxReviewVote}>
 
-                    <Icon name="ios-thumbs-up" size={25} color="#5E72E4" 
-                      onPress={() => { console.log("UPVOTE") }}
+                    <Icon name="ios-thumbs-up" size={25} color={this.state.iconColourUp}
+                      onPress={()=>this.upVote()}
                     />
-                    <Icon name="ios-thumbs-down" size={25} color="#5E72E4" 
-                      onPress={() => { console.log("DOWNVOTE") }}
+                    <Icon name="ios-thumbs-down" size={25} color={this.state.iconColourDown}
+                      onPress={()=>this.downVote()}
                     />
 
                    </View> 
@@ -160,6 +181,18 @@ export class FeedEntry extends React.Component {
   }
       
 }
+
+
+// <TouchableHighlight
+//     onPress={()=>{console.log("pressed");}}
+//     onShowUnderlay={()=>this.setState({touchableHighlightMouseDown:true})}
+//     onHideUnderlay={()=>this.setState({touchableHighlightMouseDown:false})}>
+//     <View>
+//     <Icon name="ios-thumbs-up" size={25} color={this.state.isCompleted ? '#1DA664' : '#DE5347'}/>
+//     </View>
+// </TouchableHighlight>
+
+
 
 // withNavigation returns a component that wraps MyBackButton and passes in the
 // navigation prop
