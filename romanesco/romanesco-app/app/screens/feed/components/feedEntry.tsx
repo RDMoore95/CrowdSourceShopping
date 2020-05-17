@@ -111,7 +111,7 @@ export class FeedEntry extends React.Component {
     // Only want to do this oncee, so use firstRender 
     if( this.state.firstRender ){
 
-      console.warn("First render")
+      // console.warn("First render")
 
       // Add upvote and downvote flags 
       this.state.data.map(function(item) {
