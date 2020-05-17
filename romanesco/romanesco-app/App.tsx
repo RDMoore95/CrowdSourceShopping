@@ -153,20 +153,23 @@ const StoreStack = createStackNavigator();
 function StoreTabNav() {
 
   return (  
-      <StoreStack.Navigator>
+      <StoreStack.Navigator mode="modal">
         <StoreStack.Screen 
           name="Stores"
           component={Stores}
           options={{ headerShown: false }}
         />
-        <StoreStack.Screen
-            name="StoreProfile"
-            component={StoreProfile}
-            options={{ headerShown: false }}
-        />
+        <StoreStack.Screen name="MyModal" component={StoreProfile} />
       </StoreStack.Navigator>
     );
 }
+
+        // <StoreStack.Screen
+        //     name="StoreProfile"
+        //     component={StoreProfile}
+        //     options={{ headerShown: false }}
+        // />
+
 
 const ProfileStack = createStackNavigator();
 

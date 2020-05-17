@@ -9,7 +9,8 @@ import {
   ImageBackground
   } from 'react-native';
 import { useEffect, useState } from 'react';
-import {StoreFeed} from './components/storeFeed';
+//import {StoreFeed} from './components/storeFeed';
+import { FeedEntry } from '../feed/components/feedEntry';
 
 import { Block, Text, theme } from "galio-framework";
 import { Button } from "../../components";
@@ -20,7 +21,7 @@ const { width, height } = Dimensions.get("screen");
 
 const thumbMeasure = (width - 48 - 32) / 3;
 
-// refactor for store feed... per store? 
+// refactor for store feed... per store?
 
 
 export function StoreProfile( { route, navigation }, {} ) {
@@ -66,7 +67,7 @@ export function StoreProfile( { route, navigation }, {} ) {
                     <Button small
                       style={{ backgroundColor: argonTheme.COLORS.INFO }}
                     >
-                      RECCOMENDED STORE
+                      RECOMMENDED STORE
                     </Button>
                   </Block> 
 
@@ -162,10 +163,9 @@ export function StoreProfile( { route, navigation }, {} ) {
                     
                     > Stores </Button>
                   </Block>
-                  <StoreFeed>
-                    
-                  </StoreFeed>
                   </Block>
+
+                  <FeedEntry> </FeedEntry>
               
             </ScrollView>
  

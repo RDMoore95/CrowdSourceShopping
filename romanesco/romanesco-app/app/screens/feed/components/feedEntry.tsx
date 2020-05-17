@@ -148,7 +148,7 @@ export class FeedEntry extends React.Component {
                     rounded
                     source={require('../../../assets/imgs/romanescoicon.png')}
                     onPress={() => {
-                        this.props.navigation.navigate("Profile"), {
+                        this.props.navigation.navigate("storeProfile"), {
                         name: "testName",
                         karma: 710,
                       };}}

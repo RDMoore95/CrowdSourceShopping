@@ -1,35 +1,40 @@
 import React, { Component } from 'react';
 import { ActivityIndicator,
+  Button,
   FlatList, 
   StyleSheet, 
   Dimensions, 
   ImageBackground,
+  Text,
   View, 
   ScrollView } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
-import { useNavigation } from '@react-navigation/native';
+import { withNavigation } from 'react-navigation';
+import Modal from 'react-native-modal';
 
-import { Block, Text, theme } from "galio-framework";
-import { Button } from "../../components";
+import { Block, theme } from "galio-framework";
+//import { Button } from "../../components";
 import { Images, argonTheme } from "../../constants";
 import { HeaderHeight } from "../../constants/utils";
+import{ StoreProfile } from "./storeProfile"
 
 const { width, height } = Dimensions.get("screen");
-
 const thumbMeasure = (width - 48 - 32) / 3;
 
 //var url = "http://192.168.1.2.:5000/getStores/";
 var url = "http://flip1.engr.oregonstate.edu:5005/getStores/";
 
-export default class Feed extends React.Component {
+export default class StoreFeed extends React.Component {
 
   constructor(props) {
     super(props);
 
     this.state = {
       data: [],
-      isLoading: true
+      isLoading: true,
+      isModalVisible: false,
+      setModalVisible: false,
     };
   }
 
@@ -58,6 +63,11 @@ export default class Feed extends React.Component {
       });       
   }
 
+  toggleModal = () => {
+    console.warn("toggling")
+    this.setState({ isModalVisible: !this.state.isModalVisible})
+  };  
+
   render() {
 
     const { data, isLoading } = this.state;
@@ -65,7 +75,10 @@ export default class Feed extends React.Component {
 
     return (
 
+      <>
+
       <Block flex style={styles.profile}>
+
         <Block flex>
           <ImageBackground
             source={Images.ProfileBackground}
@@ -73,14 +86,37 @@ export default class Feed extends React.Component {
             imageStyle={styles.profileBackground}
           >
 
-            <ScrollView
-              showsVerticalScrollIndicator={false}
-              style={{ width, marginTop: '25%' }}
-            >
+          <ScrollView
+            showsVerticalScrollIndicator={false}
+            style={{ width, marginTop: '25%' }}
+          >
 
           <Block flex style={styles.profileCard}>
 
-          <Text size={24} color={argonTheme.COLORS.TEXT}>Your Favorite Stores</Text>
+          <Text size={24} color={argonTheme.COLORS.TEXT}
+                  onPress={() => {
+                        console.warn(this.state.isModalVisible)
+                        // this.props.navigation.navigate("StoreProfile"), {
+                        // name: "testName",
+                        // karma: 710,};
+                      }
+                    }
+          >Your Favorite Stores
+
+          </Text>
+
+           <View >
+            <Button
+              onPress={() => this.props.navigation.navigate('MyModal')}
+              title="Open Modal"
+            />
+            <Modal isVisible={this.state.isModalVisible}>
+              <View >
+                <Text>Hello!</Text>
+                <Button title="Hide modal" onPress={this.toggleModal} />
+              </View>
+            </Modal>
+          </View>
 
             {isLoading ? <ActivityIndicator/> : (
               <FlatList
@@ -89,9 +125,12 @@ export default class Feed extends React.Component {
                 keyExtractor={item => item.id}
                 renderItem={({ item }) => (
                   <>
-                  <Text size={16} color="#32325D" style={{ marginTop: 10 }}>{item.store_name}</Text>
-                  <Text size={16} color="#32325D" style={{ marginTop: 10 }}>{item.store_street}</Text>
-                  <Text size={16} color="#32325D" style={{ marginTop: 10 }}>{item.days_since_last_feedback}</Text>
+                  <View 
+                    >
+                    <Text size={16} color="#32325D" style={{ marginTop: 10 }}>{item.store_name}</Text>
+                    <Text size={16} color="#32325D" style={{ marginTop: 10 }}>{item.store_street}</Text>
+                    <Text size={16} color="#32325D" style={{ marginTop: 10 }}>{item.days_since_last_feedback}</Text>
+                  </View>
                   </>
                 )}
               />
@@ -107,11 +146,14 @@ export default class Feed extends React.Component {
 
       </Block>
 
+      </>
+
     );
   } 
 
-
 }
+
+export default withNavigation(StoreFeed);
 
 
 const styles = StyleSheet.create({
