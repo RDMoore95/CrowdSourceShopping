@@ -23,33 +23,10 @@ export default class Feed extends React.Component {
 
         <View style={this.styles.container}>
             <ScrollView>
-                
-                <Button
-                    title="Profile"
-                    color="#000"
-                    onPress={() => {
-                      this.props.navigation.navigate("Profile", {
-                      name: "testName",
-                      karma: 710,
-                    });
-                  }}
-                />
-                <Button
-                onPress={() => this.props.navigation.navigate("Map")}
-                title="Map"
-                color="#000"
-                />
-                <Button
-                    title="Stores"
-                    color="#000"
-                    onPress={() => {
-                      this.props.navigation.navigate("Stores", {
-                    });
-                  }}
-                />
                 <FeedEntry navigation={this.props.navigation}></FeedEntry>
             </ScrollView>
         </View>
+        
     )
   }
 
@@ -63,5 +40,27 @@ export default class Feed extends React.Component {
   });
 }
 
-
+                // <Button
+                //     title="Profile"
+                //     color="#000"
+                //     onPress={() => {
+                //       this.props.navigation.navigate("Profile", {
+                //       name: "testName",
+                //       karma: 710,
+                //     });
+                //   }}
+                // />
+                // <Button
+                // onPress={() => this.props.navigation.navigate("Map")}
+                // title="Map"
+                // color="#000"
+                // />
+                // <Button
+                //     title="Stores"
+                //     color="#000"
+                //     onPress={() => {
+                //       this.props.navigation.navigate("Stores", {
+                //     });
+                //   }}
+                // />
 

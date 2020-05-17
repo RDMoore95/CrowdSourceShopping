@@ -42,7 +42,7 @@ export default function App() {
       <MainStack.Screen
           name="SignIn"
           component={SignIn}
-          
+
         />
 
         <MainStack.Screen
@@ -57,46 +57,41 @@ export default function App() {
       
       </MainStack.Navigator>
     </NavigationContainer>
-  );/*return (
-    <NavigationContainer>{
-      <View style={styles.container}>
-        <Text>Home Screen</Text>
-      </View>
-    }</NavigationContainer>
-  );*/
+  );
+
 }
 
 function Tabs() {
 
   return (
-        <Tab.Navigator initialRouteName="Home">
-
-          <Tab.Screen 
-            name="HomeTab" 
+        <Tab.Navigator initialRouteName="Home" 
+          tabBarOptions={{
+            labelStyle: { fontSize: 11.5 },
+            // tabStyle: { width: 100 },
+            // style: { backgroundColor: 'powderblue' },
+          }}
+        >
+          <Tab.Screen
+            name="Home" 
             component={HomeTabNav}
-              />
+          />
 
           <Tab.Screen
-            name="FeedTab"
+            name="Feed"
             component={FeedTabNav}
-
           />
 
           <Tab.Screen
-            name="MapTab"
+            name="Map"
             component={MapTabNav}
-
           />
 
           
-
           <Tab.Screen
-            name="StoreTab"
+            name="Stores"
             component={StoreTabNav}
-
           />
 
-          
 
           <Tab.Screen 
             name="Profile" 
@@ -116,6 +111,7 @@ function HomeTabNav() {
         <HomeStack.Screen 
           name="Home" 
           component={HomeScreen}
+          options={{ headerShown: false }}
         />
       </HomeStack.Navigator>
     );
@@ -130,6 +126,7 @@ function FeedTabNav() {
         <FeedStack.Screen 
           name="Feed"
           component={Feed}
+          options={{ headerShown: false }}
         />
       </FeedStack.Navigator>
     );
@@ -144,6 +141,7 @@ function MapTabNav() {
         <MapStack.Screen 
           name="Map"
           component={Map}
+          options={{ headerShown: false }}
         />
 
       </MapStack.Navigator>
@@ -159,11 +157,12 @@ function StoreTabNav() {
         <StoreStack.Screen 
           name="Stores"
           component={Stores}
+          options={{ headerShown: false }}
         />
         <StoreStack.Screen
             name="StoreProfile"
             component={StoreProfile}
-
+            options={{ headerShown: false }}
         />
       </StoreStack.Navigator>
     );
@@ -178,11 +177,12 @@ function ProfileTabNav() {
         <ProfileStack.Screen
           name="UserProfile"
           component={UserProfile}
+          options={{ headerShown: false }}
         />
         <ProfileStack.Screen
             name="ReviewList"
             component={ReviewList}
-
+            options={{ headerShown: false }}
           />
       </ProfileStack.Navigator>
     );
