@@ -24,7 +24,7 @@ export default class SignUp extends React.Component {
             // fetch 
           const success = this.state.username;
           console.log('user successfully signed in!: '+this.state.username, success);
-          this.props.navigation.navigate('Home');
+          this.props.navigation.navigate('Romanesco');
         } catch (err) {
           console.log('error signing in: ' +this.state.username, err);
         }

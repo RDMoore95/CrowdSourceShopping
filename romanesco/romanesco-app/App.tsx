@@ -31,68 +31,31 @@ import { createMaterialTopTabNavigator } from '@react-navigation/material-top-ta
 
 const Stack = createStackNavigator();
 const Tab = createMaterialTopTabNavigator();
+const MainStack = createStackNavigator( );
 
 
 export default function App() {
   return (
     
     <NavigationContainer>
-      <Stack.Navigator initialRouteName="Home">
-        
-        <Stack.Screen 
-          name="Home" 
-          component={HomeScreen}
-            />
-        
-        <Stack.Screen
-          name="Feed"
-          component={Feed}
-          
-        />
-
-        <Stack.Screen
-          name="Map"
-          component={Map}
-          
-        />
-
-        <Stack.Screen
-          name="ReviewList"
-          component={ReviewList}
-          
-        />
-
-        <Stack.Screen
-          name="Stores"
-          component={Stores}
-          
-        />
-
-        <Stack.Screen
-          name="StoreProfile"
-          component={StoreProfile}
-          
-        />
-
-        <Stack.Screen 
-          name="Profile" 
-          component={UserProfile} 
-          //options={{title: 'Name'}}
-        />
-
-        <Stack.Screen
+      <MainStack.Navigator>
+      <MainStack.Screen
           name="SignIn"
           component={SignIn}
           
         />
 
-        <Stack.Screen
+        <MainStack.Screen
           name="SignUp"
           component={SignUp}
           
         />
-
-      </Stack.Navigator>
+        <MainStack.Screen
+          name="Romanesco"
+          component= {Tabs}
+        />
+      
+      </MainStack.Navigator>
     </NavigationContainer>
   );/*return (
     <NavigationContainer>{
@@ -103,6 +66,137 @@ export default function App() {
   );*/
 }
 
+function Tabs() {
+
+  return (
+        <Tab.Navigator initialRouteName="Home">
+
+          <Tab.Screen 
+            name="HomeTab" 
+            component={HomeTabNav}
+              />
+
+          <Tab.Screen
+            name="FeedTab"
+            component={FeedTabNav}
+
+          />
+
+          <Tab.Screen
+            name="MapTab"
+            component={MapTabNav}
+
+          />
+
+          
+
+          <Tab.Screen
+            name="StoreTab"
+            component={StoreTabNav}
+
+          />
+
+          
+
+          <Tab.Screen 
+            name="Profile" 
+            component={ProfileTabNav} 
+            //options={{title: 'Name'}}
+          />
+        </Tab.Navigator>
+  );
+}
+
+const HomeStack = createStackNavigator();
+
+function HomeTabNav() {
+
+  return (
+      <HomeStack.Navigator>
+        <HomeStack.Screen 
+          name="Home" 
+          component={HomeScreen}
+        />
+      </HomeStack.Navigator>
+    );
+}
+
+const FeedStack = createStackNavigator();
+
+function FeedTabNav() {
+
+  return (
+      <FeedStack.Navigator>
+        <FeedStack.Screen 
+          name="Feed"
+          component={Feed}
+        />
+      </FeedStack.Navigator>
+    );
+}
+
+const MapStack = createStackNavigator();
+
+function MapTabNav() {
+
+  return (
+      <MapStack.Navigator>
+        <MapStack.Screen 
+          name="Map"
+          component={Map}
+        />
+
+      </MapStack.Navigator>
+    );
+}
+
+const StoreStack = createStackNavigator();
+
+function StoreTabNav() {
+
+  return (  
+      <StoreStack.Navigator>
+        <StoreStack.Screen 
+          name="Stores"
+          component={Stores}
+        />
+        <StoreStack.Screen
+            name="StoreProfile"
+            component={StoreProfile}
+
+        />
+      </StoreStack.Navigator>
+    );
+}
+
+const ProfileStack = createStackNavigator();
+
+function ProfileTabNav() {
+
+  return (
+      <ProfileStack.Navigator>
+        <ProfileStack.Screen
+          name="UserProfile"
+          component={UserProfile}
+        />
+        <ProfileStack.Screen
+            name="ReviewList"
+            component={ReviewList}
+
+          />
+      </ProfileStack.Navigator>
+    );
+}
+
+const ShoppingListStack = createStackNavigator();
+/*
+function ShoppingListTabNav() {
+
+  return (
+
+    );
+}
+*/
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //
 // styles  
