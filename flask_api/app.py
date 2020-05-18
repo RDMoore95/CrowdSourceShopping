@@ -75,20 +75,6 @@ def getUserStores():
     # Some sort of model
     # Return results
 
-    result = {
-	"stores": [{
-			"id": "1",
-			"store_name": "Trader Joe",
-			"location": "SF"
-		},
-		{
-			"id": "2",
-			"store_name": "Safeway",
-			"location": "SF"
-		}
-	]
-	}
-
     print(result)
 
     print(top_stores_json)

@@ -17,14 +17,18 @@ import { Button } from "../../components";
 import { Images, argonTheme } from "../../constants";
 import { HeaderHeight } from "../../constants/utils";
 
+// let deviceWidth = Dimensions.get('window').width
 const { width, height } = Dimensions.get("screen");
-
 const thumbMeasure = (width - 48 - 32) / 3;
+let deviceWidth = Dimensions.get('window').width
 
 // refactor for store feed... per store?
 
 
 export function StoreProfile( { route, navigation }, {} ) {
+
+    // Get store_id
+    const { store_id } = route.params;
 
     const [isLoading, setLoading] = useState(true);
     const [data, setData] = useState([]);
@@ -42,17 +46,17 @@ export function StoreProfile( { route, navigation }, {} ) {
     }, []);
 
     return (    
-      <Block flex style={styles.profile}>
+      <View style={styles.profile}>
         <Block flex>
           
             <ScrollView
               showsVerticalScrollIndicator={false}
-              style={{ width, marginTop: '25%' }}
+              style={{ width, marginTop: '5%' }}
             > 
               <Block flex style={styles.profileCard}> 
                 <Block middle style={styles.avatarContainer}>
                   <Image 
-                    source={require('./Propic.png')}
+                    source={require('../../assets/imgs/tj.png')}
                     style={styles.avatar}
                   
                   /> 
@@ -129,39 +133,6 @@ export function StoreProfile( { route, navigation }, {} ) {
                     <Block style={styles.divider} />
                   </Block>
                   
-                    <Button
-                    color="transparent"
-                      textStyle={{
-                        color: "#233DD2",
-                        fontWeight: "500",
-                        fontSize: 16
-                      }}
-                    onPress={() => navigation.navigate('Feed')}
-                    title="Feed"
-                    
-                    > Feed </Button>
-                    <Button
-                    color="transparent"
-                      textStyle={{
-                        color: "#233DD2",
-                        fontWeight: "500",
-                        fontSize: 16
-                      }}
-                    onPress={() => navigation.navigate('Map')}
-                    title="Map"
-                    
-                    > Map </Button>
-                    <Button
-                    color="transparent"
-                      textStyle={{
-                        color: "#233DD2",
-                        fontWeight: "500",
-                        fontSize: 16
-                      }}
-                    onPress={() => navigation.navigate('Stores')}
-                    title="Stores"
-                    
-                    > Stores </Button>
                   </Block>
                   </Block>
 
@@ -170,24 +141,27 @@ export function StoreProfile( { route, navigation }, {} ) {
             </ScrollView>
  
         </Block>
-      </Block>
+      </View>
 
         )
 };
 
 const styles = StyleSheet.create({
   profile: {
-    marginTop: Platform.OS === "android" ? -HeaderHeight : 0,
+    // marginTop: Platform.OS === "android" ? -HeaderHeight : 0,
     // marginBottom: -HeaderHeight * 2,
-    flex: 1
+    flex: 1,
+    // width: deviceWidth * 0.8,
+    // backgroundColor: '#00000080',
   },
   profileContainer: {
-    width: width,
     height: height,
     padding: 0,
-    zIndex: 1
+    zIndex: 1,
+    width: deviceWidth * 0.8,
   },
   profileBackground: {
+    width: deviceWidth * 0.8,
     width: width,
     height: height / 2
   },
@@ -203,7 +177,7 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 0 },
     shadowRadius: 8,
     shadowOpacity: 0.2,
-    zIndex: 2
+    zIndex: 2,
   },
   info: {
     paddingHorizontal: 40

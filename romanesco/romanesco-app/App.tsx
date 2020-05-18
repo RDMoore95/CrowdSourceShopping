@@ -159,7 +159,15 @@ function StoreTabNav() {
           component={Stores}
           options={{ headerShown: false }}
         />
-        <StoreStack.Screen name="MyModal" component={StoreProfile} />
+        <StoreStack.Screen 
+          name="StoreProfileModal"
+          component={StoreProfile}
+          options={{ headerShown: false,
+            gestureDirection: 'vertical',
+            swipeVelocityImpact: 0.1,
+            springVelocityScale: -0.5,
+           }}
+        />
       </StoreStack.Navigator>
     );
 }
