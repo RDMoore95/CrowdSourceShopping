@@ -9,9 +9,7 @@ import {
   ImageBackground
   } from 'react-native';
 import { useEffect, useState } from 'react';
-//import {StoreFeed} from './components/storeFeed';
 import { FeedEntry } from '../feed/components/feedEntry';
-
 import { Block, Text, theme } from "galio-framework";
 import { Button } from "../../components";
 import { argonTheme } from "../../constants";
@@ -19,13 +17,9 @@ import { HeaderHeight } from "../../constants/utils";
 
 import Images from '../../assets/imgs';
 
-// let deviceWidth = Dimensions.get('window').width
 const { width, height } = Dimensions.get("screen");
 const thumbMeasure = (width - 48 - 32) / 3;
 let deviceWidth = Dimensions.get('window').width
-
-// refactor for store feed... per store?
-
 
 export function StoreProfile( { route, navigation }, {} ) {
 
@@ -78,7 +72,13 @@ export function StoreProfile( { route, navigation }, {} ) {
                     <Button
                       style={{ backgroundColor: argonTheme.COLORS.INFO }}
                     >
+                     <Text
+                        bold
+                        size={18}
+                        color="white"
+                      >
                       RECOMMENDED STORE
+                     </Text>                      
                     </Button>
                   </Block> 
 
@@ -139,7 +139,7 @@ export function StoreProfile( { route, navigation }, {} ) {
                   </Block>
                   </Block>
 
-                  <FeedEntry> </FeedEntry>
+                  <FeedEntry id_type = 'store' id_value = {store_id}> </FeedEntry>
               
             </ScrollView>
  
