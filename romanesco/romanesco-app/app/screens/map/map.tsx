@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import { StyleSheet, Text, View, Button,  Dimensions, ActivityIndicator, FlatList} from 'react-native';
-import MapView, { PROVIDER_GOOGLE } from 'react-native-maps';
+import MapView, { PROVIDER_GOOGLE, Callout } from 'react-native-maps';
 import { useEffect, useState } from 'react';
 import { Marker } from 'react-native-maps';
 
@@ -9,27 +9,28 @@ import { useNavigation } from '@react-navigation/native';
 export default class Map extends Component {
   //navigation = useNavigation();
 
-  // constructor(props) {
-  //   super(props);
+  constructor(props) {
+    super(props);
 
-  //   this.state = {
-  //     data: [],
-  //     isLoading: true
-  //   };
-  // }
+    this.state = {
+      data: [],
+      isLoading: true
+    };
+  }
+  
 
-  // componentDidMount() {
-  //   fetch('http://flip1.engr.oregonstate.edu:4545/map')
-  //     .then((response) => response.json())
-  //     .then((json) => {
-  //       this.setState( {data: json });
-  //     })
-  //     .catch((error) => console.error(error))
-  //     .finally(() => {
-  //       this.setState({ isLoading: false });
-  //     })
-  // }
-
+  componentDidMount() {
+    fetch('http://flip1.engr.oregonstate.edu:4545/map')
+      .then((response) => response.json())
+      .then((json) => {
+        this.setState( {markers: json });
+        //console.log(this.state.markers)
+      })
+      .catch((error) => console.error(error))
+      .finally(() => {
+        this.setState({ isLoading: false });
+      })
+  }
 
     onChangeText = (key, val) => {
       this.setState({ [key]: val })
@@ -49,13 +50,14 @@ export default class Map extends Component {
     },
   });
 
- render() {
-
-  // const {data, isLoading } = this.state;
+  render() {
+    
+    const { data, isLoading } = this.state;
   
-
-  return (
+    return (
       <View style={this.styles.container}>
+        {isLoading ? <ActivityIndicator/> : (
+
           <MapView 
           initialRegion={{ // placeholder - replace with location (get location)
               latitude: 37.78825,
@@ -65,21 +67,33 @@ export default class Map extends Component {
             }}
           provider={PROVIDER_GOOGLE}
           style={this.styles.mapStyle} 
-          /*> // markers code from react-native-maps docs - loads our markers!
+            >
           {this.state.markers.map(marker => (
-              <Marker
-                coordinate={marker.latlng}
-                title={marker.title}
-                description={marker.description}
-              />*/
-          />  
+            <Marker
+                coordinate={{ latitude: marker.store_lat, 
+                              longitude: marker.store_long}}
+                title={marker.store_name}>
+
+              <Callout>
+                <Text> {marker.store_name} </Text>
+                <Text> {marker.store_street} </Text>
+                <Button
+                  title="View Store Info"
+                ></Button>
+              </Callout>
+
+            </Marker>
+        ))}
+
+        </MapView>
+        )}           
       </View>
-    );
-
-
-
-// taaken from react-native-maps example snack
-
-   
-        }
-}
+      );
+  
+  
+  
+  // taaken from react-native-maps example snack
+  
+     
+          }
+  }

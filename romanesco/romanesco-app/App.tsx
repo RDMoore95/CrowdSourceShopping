@@ -5,7 +5,7 @@
 // This is the front end, written in React Native
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 import 'react-native-gesture-handler';
-import React from 'react';
+import React, {Component} from 'react';
 import { StyleSheet, Text, ScrollView, Image, Button, View } from 'react-native';
 import Feed from './app/screens/feed/feed';
 import { UserProfile } from './app/screens/profile/profile';
@@ -16,7 +16,8 @@ import  SignUp from './app/screens/signin/signup';
 import  { StoreProfile } from './app/screens/stores/storeProfile';
 import  ReviewList from './app/screens/reviews/reviewList';
 import { HomeScreen } from './app/screens/home/home';
-
+import { useEffect, useState } from 'react';
+import AsyncStorage from '@react-native-community/async-storage';
 
 //import * as React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
@@ -31,70 +32,76 @@ import { createMaterialTopTabNavigator } from '@react-navigation/material-top-ta
 
 const Stack = createStackNavigator();
 const Tab = createMaterialTopTabNavigator();
+const STORAGE_KEY = '@save_authToken'
 
 
-export default function App() {
-  return (
+export default class App extends Component {
+
+  render() {
+    return (
     
-    <NavigationContainer>
-      <Stack.Navigator initialRouteName="Home">
-        
-        <Stack.Screen 
-          name="Home" 
-          component={HomeScreen}
-            />
-        
-        <Stack.Screen
-          name="Feed"
-          component={Feed}
+      <NavigationContainer>
+        <Stack.Navigator initialRouteName="Home">
           
-        />
-
-        <Stack.Screen
-          name="Map"
-          component={Map}
+          <Stack.Screen 
+            name="Home" 
+            component={HomeScreen}
+              />
           
-        />
-
-        <Stack.Screen
-          name="ReviewList"
-          component={ReviewList}
-          
-        />
-
-        <Stack.Screen
-          name="Stores"
-          component={Stores}
-          
-        />
-
-        <Stack.Screen
-          name="StoreProfile"
-          component={StoreProfile}
-          
-        />
-
-        <Stack.Screen 
-          name="Profile" 
-          component={UserProfile} 
-          //options={{title: 'Name'}}
-        />
-
-        <Stack.Screen
-          name="SignIn"
-          component={SignIn}
-          
-        />
-
-        <Stack.Screen
-          name="SignUp"
-          component={SignUp}
-          
-        />
-
-      </Stack.Navigator>
-    </NavigationContainer>
-  );/*return (
+          <Stack.Screen
+            name="Feed"
+            component={Feed}
+            
+          />
+  
+          <Stack.Screen
+            name="Map"
+            component={Map}
+            
+          />
+  
+          <Stack.Screen
+            name="ReviewList"
+            component={ReviewList}
+            
+          />
+  
+          <Stack.Screen
+            name="Stores"
+            component={Stores}
+            
+          />
+  
+          <Stack.Screen
+            name="StoreProfile"
+            component={StoreProfile}
+            
+          />
+  
+          <Stack.Screen 
+            name="Profile" 
+            component={UserProfile} 
+            //options={{title: 'Name'}}
+          />
+  
+          <Stack.Screen
+            name="SignIn"
+            component={SignIn}
+            
+          />
+  
+          <Stack.Screen
+            name="SignUp"
+            component={SignUp}
+            
+          />
+  
+        </Stack.Navigator>
+      </NavigationContainer>
+    );
+  }
+  
+      /*return (
     <NavigationContainer>{
       <View style={styles.container}>
         <Text>Home Screen</Text>
@@ -117,7 +124,3 @@ const styles = StyleSheet.create({
       justifyContent: 'center',
     },
   });
-
-
-
-

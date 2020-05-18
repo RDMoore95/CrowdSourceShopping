@@ -4,6 +4,10 @@ var mysql = require('mysql');
 var bodyParser = require('body-parser');
 const bcrypt = require('bcryptjs');
 const fetch = require("node-fetch");
+const async = require('asyncawait/async');
+const await = require('asyncawait/await');
+const authToken = require('crypto');
+
 
 app.use(bodyParser.json({type:'application/json'}));
 app.use(bodyParser.urlencoded({extended:true}));
@@ -31,49 +35,112 @@ var server = app.listen(4545, function() {
     var port = server.address().port;
 });
 
+app.get('/storeDetails', function(req, res) {
+
+
+    var q = `SELECT first_name, last_name, store_name, store_feedback_category, time_added, store_feedback_text FROM 
+                Store_Feedback 
+                INNER JOIN Store ON Store_Feedback.store_id = Store.store_id 
+                INNER JOIN Store_Feedback_Category 
+                    ON Store_Feedback.store_feedback_category_id = Store_Feedback_Category.store_feedback_category_id 
+                INNER JOIN User 
+                    ON User.user_id = Store_Feedback.user_id
+                    WHERE Store.store_id = ?
+                        AND User.user_id != ?
+                    ORDER BY time_added DESC;`
+
+    con.query(q, function(error, results) {
+
+        if (error) {
+            throw(error);
+        }
+
+        else {
+            res.send(results);
+        }
+    })
+
+})
+
 app.get('/map', function(req, res) {
+
+    var q = `SELECT store_id, store_name, store_street, store_city, state_name, store_zip, store_lat, store_long
+             FROM Store
+                INNER JOIN State
+                ON Store.store_state = State.state_id;`
+
+    con.query(q, function(error, results) {
+
+        if (error) {
+            throw (error);
+        }
+
+        else {
+            res.send(results);
+        }
+    })
+
+})
+
+app.get('/mapLatLongUpdate', function(req, res) {
 
     var q = `SELECT store_name, store_street, store_city, state_name, store_zip 
              FROM Store
                 INNER JOIN State
-                ON Store.store_state = State.state_id
-                WHERE store_street = "417 Westlake Center";`
+                ON Store.store_state = State.state_id;`
+
+    var q2 = `UPDATE Store
+                SET store_lat = ?, store_long = ?
+                WHERE store_street = ?;`
 
     var request1 = "https://maps.googleapis.com/maps/api/geocode/json?address="
     var request2 = "&key=AIzaSyDQCwj-QWjaCb0oicA6xml3rnkw8o_O_X4"
+    var responses = [];
+    completed_requests = 0;
 
-    con.query(q, function(error, results) {
+    con.query(q, (async (function(error, results) {
 
-        fetch("https://maps.googleapis.com/maps/api/geocode/json?address=417+Westlake+Center,Daly+City,CA&key=AIzaSyDQCwj-QWjaCb0oicA6xml3rnkw8o_O_X4")
-                .then((response) => response.json())
-                .then((json) => {
-                    console.log(json);
-                })
-                .finally(() => {
-                    res.send(results);
-                })
-
-        // results.forEach(element => {
-        //     fetch(request1+element.store_street.replace(" ", "+")+","+element.store_city.replace(" ", "+")+","+element.state_name+request2)
-        //         .then((response) => response.json())
-        //         .then((json) => {
-        //             element["lat_long"] = json.results[0].geometry.location;
-        //         })
-        //         .catch((error) => console.error(error))
-        //         .finally(() => {
-        //             res.send(results);
-        //         })
-        //     })
-
-            if (error) {
-                throw (error);
+        for (element in results) {
+            try {
+                const response = await (fetch(request1+results[element].store_street.replace(/ /g, "+")+","+results[element].store_city.replace(" ", "+")+","+(results[element].state_name+request2)))
+                const json = await (response.json());
+                obj = {
+                    "store_name": results[element].store_name,
+                    "store_street": results[element].store_street,
+                    "store_city": results[element].store_city,
+                    "state_name": results[element].state_name,
+                    "store_zip": results[element].store_zip,
+                    "store_lat": json.results[0].geometry.location.lat,
+                    "store_long": json.results[0].geometry.location.lng
+                    };
+                responses.push(obj);
+                completed_requests++;
+                // con.query(q2,
+                //     [json.results[0].geometry.location.lat,
+                //      json.results[0].geometry.location.lng,
+                //      results[element].store_street], 
+                //         function(er, results) {
+                //          if (er) {
+                //              throw(er);
+                //          }
+                //      })
             }
-          })
-        
+            catch (e) {
+                console.log(e);
+                console.log(results[element]);
+            }
+            if ((completed_requests+1) == results.length) {
+                res.send(responses);
+            }
+        }
 
-});
+        if (error) {
+            throw (error);
+        }
+    })
+))});
 
-app.post('/signup', function(req, res) {
+app.post('/signUp', function(req, res) {
 
     var q = `INSERT INTO User 
                 (first_name, last_name, email, password, signup_date, user_country)
@@ -105,7 +172,7 @@ app.post('/signup', function(req, res) {
     
 })
 
-app.get('/login', function(req, res) {
+app.get('/signIn', function(req, res) {
 
     var q = `SELECT password 
              FROM User
@@ -136,6 +203,23 @@ app.get('/login', function(req, res) {
                 })
             }
         })
+})
+
+app.get('/userAuth', function(req, res) {
+
+    var q = `SELECT * FROM User
+                WHERE auth_token = ?;`
+
+    con.query(q, [
+        req.body.authToken
+    ], function(error, results) {
+        if (error) {
+            throw (error);
+        }
+        else {
+            res.send(results);
+        }
+    })
 })
 
 app.get('/feedEntries', function(req, res) {
