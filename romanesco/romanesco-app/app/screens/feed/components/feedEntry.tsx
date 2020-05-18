@@ -103,6 +103,12 @@ export class FeedEntry extends React.Component {
 
   }
 
+ renderSeparator = () => {
+    return (
+      <View style={{backgroundColor:'#fff', flex:1 ,padding: 10}}></View>
+    );
+  };
+
 
    // Render each feed entry in a flatlist
    render() {
@@ -128,15 +134,16 @@ export class FeedEntry extends React.Component {
 
     const { isLoading } = this.state;
 
-    return (
+    return (  
 
-    <View style={{ flex: 1, padding: 5, width: deviceWidth * 0.98 }}>
+    <View style={{ flex: 1, padding: 5, alignSelf: "center"}}>
       {isLoading ? <ActivityIndicator/> : (
 
         <FlatList
           extraData={this.state.refresh} // Need this variable to change to force a refresh
           data={this.state.data}
-          //ItemSeparatorComponent = {FlatListItemSeparator}
+          ItemSeparatorComponent={this.renderSeparator}
+          ListHeaderComponent = { this.renderSeparator }
           renderItem={({ item }) => (
 
                 <>
@@ -158,14 +165,14 @@ export class FeedEntry extends React.Component {
                     </Text>
                   </View>  
                   
-                  <View style={{backgroundColor:'#F7FAFC', padding: 3}}></View>
+                  <View style={{backgroundColor:'#fff', padding: 3}}></View>
 
                   <View style={styles.feedBoxReview}>
 
                     <View style={styles.feedBoxReviewText}>
 
                     <Text size={16} color="#32325D">Feedback Type: {item.store_feedback_category}, {item.store_feedback_text}</Text>
-                    <View style={{backgroundColor:'#F7FAFC', flex:1 ,padding: 1.5}}></View>
+                    <View style={{backgroundColor:'#fff', flex:1 ,padding: 1.5}}></View>
                     <ReadMore numberOfLines={3}
                     renderTruncatedFooter = {this._renderTruncatedFooter}
                     renderRevealedFooter = {this._renderRevealedFooter}
@@ -191,11 +198,7 @@ export class FeedEntry extends React.Component {
 
                   </View>
 
-                  <View style={{backgroundColor:'#F7FAFC', flex:1 ,padding: 3}}></View>
-
                 </View>
-                
-                <View style={{backgroundColor:'#fff', flex:1 ,padding: 3}}></View>
                 
                 </>
           )}
@@ -254,43 +257,38 @@ const styles = StyleSheet.create({
       flexDirection: 'column'
     },
     feedBox: {
-      backgroundColor:'#F7FAFC'
-      , padding: 3
-      , borderColor: '#F7FAFC'
-      , borderRadius: 25
+      backgroundColor:'#fff'
+      , paddingHorizontal: 6
+      , paddingVertical: 12
+      , marginHorizontal: theme.SIZES.BASE
+      , borderColor: '#fff'
+      , borderRadius: 10
       , borderWidth: 1
+      , shadowColor: "black"
+      , shadowOffset: { width: 0, height: 0 }
+      , shadowRadius: 8
+      , shadowOpacity: 0.2
+      , zIndex: 2
     },
     feedBoxHeader: {
-      backgroundColor:'#F7FAFC'
+      backgroundColor:'#fff'
       , padding: 3
-      , borderColor: '#F7FAFC'
-      , borderRadius: 25
-      , borderWidth: 1
       , flexDirection: 'row'
       , alignItems: 'center'
     },    
     feedBoxReview: {
-      backgroundColor:'#F7FAFC'
+      backgroundColor:'#fff'
       , padding: 3
-      , borderColor: '#F7FAFC'
-      , borderRadius: 25
-      , borderWidth: 1
       , flexDirection: 'row'
       , alignItems: 'center'
     },    
     feedBoxReviewText: {
-      backgroundColor:'#F7FAFC'
+      backgroundColor:'#fff'
       , padding: 3
-      , borderColor: '#F7FAFC'
-      , borderRadius: 25
-      , borderWidth: 1
       , flex: 0.9
     },
     feedBoxReviewVote: {
-      backgroundColor:'#F7FAFC'
-      , borderColor: '#F7FAFC'
-      , borderRadius: 25
-      , borderWidth: 1
+      backgroundColor:'#fff'
       , flex: 0.1
     },                    
     headline: {

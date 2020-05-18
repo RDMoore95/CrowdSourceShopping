@@ -27,9 +27,8 @@ const thumbMeasure = (width - 48 - 32) / 3;
 // To get feed entries to fill screen
 let deviceWidth = Dimensions.get('window').width
 
-// var url = "http://192.168.1.7:5000/getFavoriteStores/";
-var url = "http://192.168.1.7:5000";
-//var url = "http://flip1.engr.oregonstate.edu:5005/getStores/";
+//var url = "http://192.168.1.7:5000";
+var url = "http://flip1.engr.oregonstate.edu:5005";
 
 export default class StoreFeed extends React.Component {
 
@@ -59,7 +58,7 @@ export default class StoreFeed extends React.Component {
              'Content-Type': 'application/json',
          },
          body: JSON.stringify({
-             user_id: '121',
+             user_id: '5',
          }),
      }).then((response) => response.json())
       .then((json) => {
@@ -91,18 +90,18 @@ export default class StoreFeed extends React.Component {
   render() {
 
     const { data, isLoading } = this.state;
-    console.log(data);
-    console.warn(url);
+    // console.log(data);
+    // console.warn(url);
 
     return (
 
       <>
 
-      <View style={{  backgroundColor:'#fff' }}>
+      <View style={{  backgroundColor:'#fff', flexDirection: 'column' }}>
 
           <ScrollView
             showsVerticalScrollIndicator={false}
-            style={{ width, marginTop: '5%', backgroundColor:'#fff'}}
+            style={{ width, backgroundColor:'#fff'}}
           >
 
           <View style={{backgroundColor:'#fff', flex:1 ,padding: 6}}></View>
@@ -111,7 +110,8 @@ export default class StoreFeed extends React.Component {
           </Text>
           <View style={{backgroundColor:'#fff', flex:1 ,padding: 6}}></View>
 
-          <View style={{ flex: 1, padding: 5, width: deviceWidth * 0.98 }}>
+
+          <View style={{ padding: 5, width: deviceWidth * 0.98 }}>
 
             {isLoading ? <ActivityIndicator/> : (
               <FlatList
@@ -123,7 +123,10 @@ export default class StoreFeed extends React.Component {
                   <TouchableOpacity 
                     onPress={() => this.props.navigation.navigate('StoreProfileModal', 
                       {
-                        store_id: item.store_id
+                        store_id: item.store_id,
+                        store_name_fmt: item.store_name_fmt,
+                        store_street: item.store_street,
+                        store_city: item.store_city,
                       }
                     )
                     }
@@ -153,22 +156,19 @@ export default class StoreFeed extends React.Component {
               />
             )}
 
+            <View style={{backgroundColor:'#fff', flex:1 ,padding: 3}}></View>
+
           </View>  
 
-         </ScrollView>
 
-          <View style={{backgroundColor:'#fff', padding: 10}}></View>
-          
+          <View style={{backgroundColor:'#fff', padding: 6}}></View>
           <Text style={styles.storeHeadline}>
           Popular Stores Near You
           </Text>
-          
-          <ScrollView
-            showsVerticalScrollIndicator={false}
-            style={{ width, marginTop: '5%', backgroundColor:'#fff'}}
-          >
+          <View style={{backgroundColor:'#fff', flex:1 ,padding: 6}}></View>
+                    
 
-          <View style={{ flex: 1, padding: 5, width: deviceWidth * 0.98 }}>
+          <View style={{ flex: 1, padding: 5, width: deviceWidth * 0.98, alignSelf: "center"}}>
 
             {isLoading ? <ActivityIndicator/> : (
               <FlatList
@@ -180,7 +180,10 @@ export default class StoreFeed extends React.Component {
                   <TouchableOpacity 
                     onPress={() => this.props.navigation.navigate('StoreProfileModal', 
                       {
-                        store_id: item.store_id
+                        store_id: item.store_id,
+                        store_name_fmt: item.store_name_fmt,
+                        store_street: item.store_street,
+                        store_city: item.store_city,
                       }
                     )
                     }
@@ -212,8 +215,6 @@ export default class StoreFeed extends React.Component {
           </View>  
 
          </ScrollView>
-
-
 
          </View>
 

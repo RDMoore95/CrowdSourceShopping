@@ -14,8 +14,10 @@ import { FeedEntry } from '../feed/components/feedEntry';
 
 import { Block, Text, theme } from "galio-framework";
 import { Button } from "../../components";
-import { Images, argonTheme } from "../../constants";
+import { argonTheme } from "../../constants";
 import { HeaderHeight } from "../../constants/utils";
+
+import Images from '../../assets/imgs';
 
 // let deviceWidth = Dimensions.get('window').width
 const { width, height } = Dimensions.get("screen");
@@ -29,6 +31,9 @@ export function StoreProfile( { route, navigation }, {} ) {
 
     // Get store_id
     const { store_id } = route.params;
+    const { store_name_fmt } = route.params;
+    const { store_street } = route.params;
+    const { store_city } = route.params;
 
     const [isLoading, setLoading] = useState(true);
     const [data, setData] = useState([]);
@@ -46,17 +51,19 @@ export function StoreProfile( { route, navigation }, {} ) {
     }, []);
 
     return (    
+
       <View style={styles.profile}>
         <Block flex>
           
             <ScrollView
               showsVerticalScrollIndicator={false}
-              style={{ width, marginTop: '5%' }}
+              style={{ width, marginTop: '5%', backgroundColor:'#fff' }}
             > 
               <Block flex style={styles.profileCard}> 
                 <Block middle style={styles.avatarContainer}>
                   <Image 
-                    source={require('../../assets/imgs/traderjoes.png')}
+                    // source={require('../../assets/imgs/traderjoes.png')}
+                    source = {Images.stores[store_name_fmt]}
                     style={styles.avatar}
                   
                   /> 
@@ -68,7 +75,7 @@ export function StoreProfile( { route, navigation }, {} ) {
                     space="evenly"
                     style={{ marginTop: 20, paddingBottom: 24 }}
                     >
-                    <Button small
+                    <Button
                       style={{ backgroundColor: argonTheme.COLORS.INFO }}
                     >
                       RECOMMENDED STORE
@@ -91,7 +98,7 @@ export function StoreProfile( { route, navigation }, {} ) {
                       >
                          {data.price_rating}
                       </Text>
-                      <Text size={12} color={argonTheme.COLORS.TEXT}>Price Rating</Text>
+                      <Text size={12} color={argonTheme.COLORS.TEXT}>Price</Text>
                     </Block>
                     <Block middle>
                       <Text
@@ -102,7 +109,7 @@ export function StoreProfile( { route, navigation }, {} ) {
                       >
                         {data.crowd_rating}
                       </Text>
-                      <Text size={12} color={argonTheme.COLORS.TEXT}>Crowd Rating</Text>
+                      <Text size={12} color={argonTheme.COLORS.TEXT}>Traffic</Text>
                     </Block>
                     <Block middle>
                       <Text
@@ -113,7 +120,7 @@ export function StoreProfile( { route, navigation }, {} ) {
                       >
                         {data.service_rating}
                       </Text>
-                      <Text size={12} color={argonTheme.COLORS.TEXT}>Service Rating</Text>
+                      <Text size={12} color={argonTheme.COLORS.TEXT}>Service</Text>
                     </Block>
                     
                   </Block>
@@ -122,17 +129,13 @@ export function StoreProfile( { route, navigation }, {} ) {
                 <Block flex>
                   <Block middle style={styles.nameInfo}>
                     <Text bold size={28} color="#32325D">
-                      Name: {data.store_name}
+                      {store_street}
                     </Text>
                     <Text size={16} color="#32325D" style={{ marginTop: 10 }}>
-                      Location: {data.store_address}
+                      {store_city}
                     </Text>
                   </Block>
-          
-                  <Block middle style={{ marginTop: 30, marginBottom: 16 }}>
-                    <Block style={styles.divider} />
-                  </Block>
-                  
+                            
                   </Block>
                   </Block>
 
@@ -148,31 +151,31 @@ export function StoreProfile( { route, navigation }, {} ) {
 
 const styles = StyleSheet.create({
   profile: {
-    // marginTop: Platform.OS === "android" ? -HeaderHeight : 0,
-    // marginBottom: -HeaderHeight * 2,
+    backgroundColor:'#fff',
     flex: 1,
-    // width: deviceWidth * 0.8,
-    // backgroundColor: '#00000080',
   },
   profileContainer: {
     height: height,
     padding: 0,
     zIndex: 1,
     width: deviceWidth * 0.8,
+    backgroundColor:'#fff',
   },
   profileBackground: {
     width: deviceWidth * 0.8,
-    width: width,
-    height: height / 2
+    height: height / 2,
   },
   profileCard: {
     // position: "relative",
     padding: theme.SIZES.BASE,
     marginHorizontal: theme.SIZES.BASE,
     marginTop: 65,
-    borderTopLeftRadius: 6,
-    borderTopRightRadius: 6,
-    backgroundColor: theme.COLORS.WHITE,
+    borderRadius: 10,
+    borderWidth: 1,
+    // borderTopLeftRadius: 6,
+    // borderTopRightRadius: 6,
+    borderColor: '#F7FAFC',
+    backgroundColor: '#fff',
     shadowColor: "black",
     shadowOffset: { width: 0, height: 0 },
     shadowRadius: 8,
@@ -205,6 +208,7 @@ const styles = StyleSheet.create({
     marginVertical: 4,
     alignSelf: "center",
     width: thumbMeasure,
-    height: thumbMeasure
+    height: thumbMeasure,
+    backgroundColor:'#fff'
   }
 });
