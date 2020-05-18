@@ -17,6 +17,8 @@ import { Button } from "../../components";
 import { Images, argonTheme } from "../../constants";
 import { HeaderHeight } from "../../constants/utils";
 
+import {NewButton} from "../../components/newButton/newButton";
+
 const { width, height } = Dimensions.get("screen");
 
 const thumbMeasure = (width - 48 - 32) / 3;
@@ -134,28 +136,7 @@ export function UserProfile( { route, navigation }, {} ) {
                     >
                       Superstar Shopper! Trader Joe's >>>
                     </Text>
-                    <Button
-                    color="transparent"
-                      textStyle={{
-                        color: "#233DD2",
-                        fontWeight: "500",
-                        fontSize: 16
-                      }}
-                    onPress={() => navigation.navigate('Feed')}
-                    title="Feed"
-                    color="#000"
-                    > Feed </Button>
-                    <Button
-                    color="transparent"
-                      textStyle={{
-                        color: "#233DD2",
-                        fontWeight: "500",
-                        fontSize: 16
-                      }}
-                    onPress={() => navigation.navigate('Map')}
-                    title="Map"
-                    color="#000"
-                    > Map </Button>
+                    
                     <Button
                     color="transparent"
                       textStyle={{
@@ -177,27 +158,18 @@ export function UserProfile( { route, navigation }, {} ) {
                     onPress={() => navigation.navigate('ReviewList')}
                     title="Review List"
                     color="#000"
-                    > Stores </Button>
+                    > Reviews </Button>
                   </Block>
                   <Block
                     row
                     style={{ paddingBottom: 20, justifyContent: "flex-end" }}
                   >
                   </Block>
-                  <Block style={{ paddingBottom: -HeaderHeight * 2 }}>
-                    <Block row space="between" style={{ flexWrap: "wrap" }}>
-                      {Images.Viewed.map((img, imgIndex) => (
-                        <Image
-                          source={{ uri: img }}
-                          key={`viewed-${img}`}
-                          resizeMode="cover"
-                          style={styles.thumb}
-                        />
-                      ))}
-                    </Block>
-                  </Block>
+                  <NewButton/>
                 </Block>
+                
               </Block>
+              
             </ScrollView>
           </ImageBackground>
         </Block>

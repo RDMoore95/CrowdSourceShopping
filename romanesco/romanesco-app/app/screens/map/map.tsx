@@ -5,6 +5,7 @@ import { useEffect, useState } from 'react';
 import { Marker } from 'react-native-maps';
 
 import { useNavigation } from '@react-navigation/native';
+import {NewButton} from "../../components/newButton/newButton";
 
 export default class Map extends Component {
   //navigation = useNavigation();
@@ -73,6 +74,7 @@ export default class Map extends Component {
                 description={marker.description}
               />*/
           />  
+          <NewButton />
       </View>
     );
 

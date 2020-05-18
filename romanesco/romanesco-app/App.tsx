@@ -6,7 +6,7 @@
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 import 'react-native-gesture-handler';
 import React from 'react';
-import { StyleSheet, Text, ScrollView, Image, Button, View } from 'react-native';
+import { StyleSheet, Alert, Text, ScrollView, Image, Button, View, TouchableOpacity } from 'react-native';
 import Feed from './app/screens/feed/feed';
 import { UserProfile } from './app/screens/profile/profile';
 import  Map  from './app/screens/map/map';
@@ -64,7 +64,7 @@ export default function App() {
 }
 
 function Tabs() {
-
+   
   return (
         <Tab.Navigator initialRouteName="Home" 
           tabBarOptions={{
@@ -100,9 +100,12 @@ function Tabs() {
             component={ProfileTabNav} 
             //options={{title: 'Name'}}
           />
+          
         </Tab.Navigator>
   );
 }
+
+
 
 const HomeStack = createStackNavigator();
 
@@ -221,6 +224,23 @@ const styles = StyleSheet.create({
       backgroundColor: '#fff',
       alignItems: 'center',
       justifyContent: 'center',
+    },
+
+    TouchableOpacityStyle: {
+      position: 'absolute',
+      width: 50,
+      height: 50,
+      alignItems: 'center',
+      justifyContent: 'center',
+      right: 30,
+      bottom: 30,
+    },
+  
+    FloatingButtonStyle: {
+      resizeMode: 'contain',
+      width: 50,
+      height: 50,
+      //backgroundColor:'black'
     },
   });
 

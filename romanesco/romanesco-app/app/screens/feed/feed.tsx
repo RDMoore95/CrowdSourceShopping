@@ -4,7 +4,7 @@ import { FeedEntry } from './components/feedEntry';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import { useNavigation } from '@react-navigation/native';
-
+import {NewButton} from "../../components/newButton/newButton";
 
 export default class Feed extends React.Component {
   //navigation = useNavigation();
@@ -25,6 +25,7 @@ export default class Feed extends React.Component {
             <ScrollView>
                 <FeedEntry navigation={this.props.navigation}></FeedEntry>
             </ScrollView>
+            <NewButton/>
         </View>
         
     )
