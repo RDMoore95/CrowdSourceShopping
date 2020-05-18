@@ -5,7 +5,7 @@
 // This is the front end, written in React Native
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 import 'react-native-gesture-handler';
-import React, {Component} from 'react';
+import React from 'react';
 import { StyleSheet, Text, ScrollView, Image, Button, View } from 'react-native';
 import Feed from './app/screens/feed/feed';
 import { UserProfile } from './app/screens/profile/profile';
@@ -16,8 +16,7 @@ import  SignUp from './app/screens/signin/signup';
 import  { StoreProfile } from './app/screens/stores/storeProfile';
 import  ReviewList from './app/screens/reviews/reviewList';
 import { HomeScreen } from './app/screens/home/home';
-import { useEffect, useState } from 'react';
-import AsyncStorage from '@react-native-community/async-storage';
+
 
 //import * as React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
@@ -32,84 +31,181 @@ import { createMaterialTopTabNavigator } from '@react-navigation/material-top-ta
 
 const Stack = createStackNavigator();
 const Tab = createMaterialTopTabNavigator();
-const STORAGE_KEY = '@save_authToken'
+const MainStack = createStackNavigator( );
 
 
-export default class App extends Component {
-
-  render() {
-    return (
+export default function App() {
+  return (
     
-      <NavigationContainer>
-        <Stack.Navigator initialRouteName="Home">
+    <NavigationContainer>
+      <MainStack.Navigator>
+      <MainStack.Screen
+          name="SignIn"
+          component={SignIn}
+
+        />
+
+        <MainStack.Screen
+          name="SignUp"
+          component={SignUp}
           
-          <Stack.Screen 
-            name="Home" 
-            component={HomeScreen}
-              />
-          
-          <Stack.Screen
-            name="Feed"
-            component={Feed}
-            
-          />
-  
-          <Stack.Screen
-            name="Map"
-            component={Map}
-            
-          />
-  
-          <Stack.Screen
-            name="ReviewList"
-            component={ReviewList}
-            
-          />
-  
-          <Stack.Screen
-            name="Stores"
-            component={Stores}
-            
-          />
-  
-          <Stack.Screen
-            name="StoreProfile"
-            component={StoreProfile}
-            
-          />
-  
-          <Stack.Screen 
-            name="Profile" 
-            component={UserProfile} 
-            //options={{title: 'Name'}}
-          />
-  
-          <Stack.Screen
-            name="SignIn"
-            component={SignIn}
-            
-          />
-  
-          <Stack.Screen
-            name="SignUp"
-            component={SignUp}
-            
-          />
-  
-        </Stack.Navigator>
-      </NavigationContainer>
-    );
-  }
-  
-      /*return (
-    <NavigationContainer>{
-      <View style={styles.container}>
-        <Text>Home Screen</Text>
-      </View>
-    }</NavigationContainer>
-  );*/
+        />
+        <MainStack.Screen
+          name="Romanesco"
+          component= {Tabs}
+        />
+      
+      </MainStack.Navigator>
+    </NavigationContainer>
+  );
+
 }
 
+function Tabs() {
+
+  return (
+        <Tab.Navigator initialRouteName="Home" 
+          tabBarOptions={{
+            labelStyle: { fontSize: 11.5 },
+            // tabStyle: { width: 100 },
+            // style: { backgroundColor: 'powderblue' },
+          }}
+        >
+          <Tab.Screen
+            name="Home" 
+            component={HomeTabNav}
+          />
+
+          <Tab.Screen
+            name="Feed"
+            component={FeedTabNav}
+          />
+
+          <Tab.Screen
+            name="Map"
+            component={MapTabNav}
+          />
+
+          
+          <Tab.Screen
+            name="Stores"
+            component={StoreTabNav}
+          />
+
+
+          <Tab.Screen 
+            name="Profile" 
+            component={ProfileTabNav} 
+            //options={{title: 'Name'}}
+          />
+        </Tab.Navigator>
+  );
+}
+
+const HomeStack = createStackNavigator();
+
+function HomeTabNav() {
+
+  return (
+      <HomeStack.Navigator>
+        <HomeStack.Screen 
+          name="Home" 
+          component={HomeScreen}
+          options={{ headerShown: false }}
+        />
+      </HomeStack.Navigator>
+    );
+}
+
+const FeedStack = createStackNavigator();
+
+function FeedTabNav() {
+
+  return (
+      <FeedStack.Navigator>
+        <FeedStack.Screen 
+          name="Feed"
+          component={Feed}
+          options={{ headerShown: false }}
+        />
+      </FeedStack.Navigator>
+    );
+}
+
+const MapStack = createStackNavigator();
+
+function MapTabNav() {
+
+  return (
+      <MapStack.Navigator>
+        <MapStack.Screen 
+          name="Map"
+          component={Map}
+          options={{ headerShown: false }}
+        />
+
+      </MapStack.Navigator>
+    );
+}
+
+const StoreStack = createStackNavigator();
+
+function StoreTabNav() {
+
+  return (  
+      <StoreStack.Navigator mode="modal">
+        <StoreStack.Screen 
+          name="Stores"
+          component={Stores}
+          options={{ headerShown: false }}
+        />
+        <StoreStack.Screen 
+          name="StoreProfileModal"
+          component={StoreProfile}
+          options={{ headerShown: false,
+            gestureDirection: 'vertical',
+            swipeVelocityImpact: 0.1,
+            springVelocityScale: -0.5,
+           }}
+        />
+      </StoreStack.Navigator>
+    );
+}
+
+        // <StoreStack.Screen
+        //     name="StoreProfile"
+        //     component={StoreProfile}
+        //     options={{ headerShown: false }}
+        // />
+
+
+const ProfileStack = createStackNavigator();
+
+function ProfileTabNav() {
+
+  return (
+      <ProfileStack.Navigator>
+        <ProfileStack.Screen
+          name="UserProfile"
+          component={UserProfile}
+          options={{ headerShown: false }}
+        />
+        <ProfileStack.Screen
+            name="ReviewList"
+            component={ReviewList}
+            options={{ headerShown: false }}
+          />
+      </ProfileStack.Navigator>
+    );
+}
+
+const ShoppingListStack = createStackNavigator();
+/*
+function ShoppingListTabNav() {
+  return (
+    );
+}
+*/
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //
 // styles  

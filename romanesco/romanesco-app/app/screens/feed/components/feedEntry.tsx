@@ -14,10 +14,14 @@ import { withNavigation } from 'react-navigation';
 import ReadMore from 'react-native-read-more-text';
 import Icon from 'react-native-vector-icons/Ionicons';
 
+import Images from '../../../assets/imgs';
+
 // To get feed entries to fill screen
 let deviceWidth = Dimensions.get('window').width
 
-// export function FeedEntry( props ) {
+//var url = "http://192.168.1.7:5000";
+var url = "http://flip1.engr.oregonstate.edu:5005";
+
 export class FeedEntry extends React.Component {
 
     constructor(props) {
@@ -44,7 +48,6 @@ export class FeedEntry extends React.Component {
             style={{
               height: 1,
               width: deviceWidth * 0.8,
-              // width: "100%",
               backgroundColor: "#000",
             }}
           />
@@ -68,15 +71,34 @@ export class FeedEntry extends React.Component {
     }
     _handleTextReady = () => {}
 
-    // Get feed entries    
-    componentDidMount() {
-        fetch('http://flip1.engr.oregonstate.edu:4545/feedEntries')
-        .then((response) => response.json())
-        .then((json) => {this.setState({ data: json });})
-        .catch((error) => console.error(error))
-        .finally(() => {this.setState({ isLoading: false });})
-    }  
+    // // Get feed entries    
+    // componentDidMount() {
+    //     fetch('http://flip1.engr.oregonstate.edu:4545/feedEntries')
+    //     .then((response) => response.json())
+    //     .then((json) => {this.setState({ data: json });})
+    //     .catch((error) => console.error(error))
+    //     .finally(() => {this.setState({ isLoading: false });})
+    // }  
 
+    // Get feed entries
+    componentDidMount() {
+      fetch(url + '/getFeedEntries/', {
+           method: 'POST',
+           headers: {
+               Accept: 'application/json',
+               'Content-Type': 'application/json',
+           },
+           body: JSON.stringify({
+               id_type: this.props.id_type,
+               id_value: this.props.id_value,
+           }),
+       }).then((response) => response.json())
+        .then((json) => {
+          this.setState({ data: json });
+        }).finally(() => {
+          this.setState({ isLoading: false });
+        });       
+    }
 
   // Set right colors for icons
   upVote(item) {
@@ -103,6 +125,12 @@ export class FeedEntry extends React.Component {
 
   }
 
+ renderSeparator = () => {
+    return (
+      <View style={{backgroundColor:'#fff', flex:1 ,padding: 10}}></View>
+    );
+  };
+
 
    // Render each feed entry in a flatlist
    render() {
@@ -110,8 +138,6 @@ export class FeedEntry extends React.Component {
     // Assign upvotes and downvotes to 0
     // Only want to do this oncee, so use firstRender 
     if( this.state.firstRender ){
-
-      console.warn("First render")
 
       // Add upvote and downvote flags 
       this.state.data.map(function(item) {
@@ -128,15 +154,16 @@ export class FeedEntry extends React.Component {
 
     const { isLoading } = this.state;
 
-    return (
+    return (  
 
-    <View style={{ flex: 1, padding: 5, width: deviceWidth * 0.98 }}>
+    <View style={{ flex: 1, padding: 5, alignSelf: "center", backgroundColor: "#fff"}}>
       {isLoading ? <ActivityIndicator/> : (
 
         <FlatList
           extraData={this.state.refresh} // Need this variable to change to force a refresh
           data={this.state.data}
-          //ItemSeparatorComponent = {FlatListItemSeparator}
+          ItemSeparatorComponent={this.renderSeparator}
+          ListHeaderComponent = { this.renderSeparator }
           renderItem={({ item }) => (
 
                 <>
@@ -146,11 +173,11 @@ export class FeedEntry extends React.Component {
                   <View style={styles.feedBoxHeader}>
                     <Avatar
                     rounded
-                    source={require('../../../assets/imgs/romanescoicon.png')}
+                    source = {Images.reputation[item.user_reputation_category_id]}
+                    // source={require('../../../assets/imgs/L2.jpg')}
                     onPress={() => {
                         this.props.navigation.navigate("Profile"), {
-                        name: "testName",
-                        karma: 710,
+                        user_id: item.user_id,
                       };}}
                      />  
                     <Text numberOfLines={1} style={styles.headline}> 
@@ -158,14 +185,14 @@ export class FeedEntry extends React.Component {
                     </Text>
                   </View>  
                   
-                  <View style={{backgroundColor:'#F7FAFC', padding: 3}}></View>
+                  <View style={{backgroundColor:'#fff', padding: 3}}></View>
 
                   <View style={styles.feedBoxReview}>
 
                     <View style={styles.feedBoxReviewText}>
 
                     <Text size={16} color="#32325D">Feedback Type: {item.store_feedback_category}, {item.store_feedback_text}</Text>
-                    <View style={{backgroundColor:'#F7FAFC', flex:1 ,padding: 1.5}}></View>
+                    <View style={{backgroundColor:'#fff', flex:1 ,padding: 1.5}}></View>
                     <ReadMore numberOfLines={3}
                     renderTruncatedFooter = {this._renderTruncatedFooter}
                     renderRevealedFooter = {this._renderRevealedFooter}
@@ -191,11 +218,7 @@ export class FeedEntry extends React.Component {
 
                   </View>
 
-                  <View style={{backgroundColor:'#F7FAFC', flex:1 ,padding: 3}}></View>
-
                 </View>
-                
-                <View style={{backgroundColor:'#fff', flex:1 ,padding: 3}}></View>
                 
                 </>
           )}
@@ -254,43 +277,38 @@ const styles = StyleSheet.create({
       flexDirection: 'column'
     },
     feedBox: {
-      backgroundColor:'#F7FAFC'
-      , padding: 3
-      , borderColor: '#F7FAFC'
-      , borderRadius: 25
+      backgroundColor:'#fff'
+      , paddingHorizontal: 6
+      , paddingVertical: 12
+      , marginHorizontal: theme.SIZES.BASE
+      , borderColor: '#fff'
+      , borderRadius: 10
       , borderWidth: 1
+      , shadowColor: "black"
+      , shadowOffset: { width: 0, height: 0 }
+      , shadowRadius: 8
+      , shadowOpacity: 0.2
+      , zIndex: 2
     },
     feedBoxHeader: {
-      backgroundColor:'#F7FAFC'
+      backgroundColor:'#fff'
       , padding: 3
-      , borderColor: '#F7FAFC'
-      , borderRadius: 25
-      , borderWidth: 1
       , flexDirection: 'row'
       , alignItems: 'center'
     },    
     feedBoxReview: {
-      backgroundColor:'#F7FAFC'
+      backgroundColor:'#fff'
       , padding: 3
-      , borderColor: '#F7FAFC'
-      , borderRadius: 25
-      , borderWidth: 1
       , flexDirection: 'row'
       , alignItems: 'center'
     },    
     feedBoxReviewText: {
-      backgroundColor:'#F7FAFC'
+      backgroundColor:'#fff'
       , padding: 3
-      , borderColor: '#F7FAFC'
-      , borderRadius: 25
-      , borderWidth: 1
       , flex: 0.9
     },
     feedBoxReviewVote: {
-      backgroundColor:'#F7FAFC'
-      , borderColor: '#F7FAFC'
-      , borderRadius: 25
-      , borderWidth: 1
+      backgroundColor:'#fff'
       , flex: 0.1
     },                    
     headline: {

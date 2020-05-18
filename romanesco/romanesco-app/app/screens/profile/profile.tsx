@@ -14,49 +14,64 @@ import { createStackNavigator } from '@react-navigation/stack';
 
 import { Block, Text, theme } from "galio-framework";
 import { Button } from "../../components";
-import { Images, argonTheme } from "../../constants";
+import { argonTheme } from "../../constants";
 import { HeaderHeight } from "../../constants/utils";
 
+import { FeedEntry } from '../feed/components/feedEntry';
+import Images from '../../assets/imgs';
+
 const { width, height } = Dimensions.get("screen");
-
 const thumbMeasure = (width - 48 - 32) / 3;
+let deviceWidth = Dimensions.get('window').width
 
-// how are we doing accounts?
-
+// var url = "http://192.168.1.7:5000";
+var url = "http://flip1.engr.oregonstate.edu:5005";
 
 export function UserProfile( { route, navigation }, {} ) {
+
+    // const { user_id } = route.params;
+    const { user_id } = useState('9');
 
     const [isLoading, setLoading] = useState(true);
     const [data, setData] = useState([]);
 
+    // useEffect(() => {
+    //   fetch('http://flip1.engr.oregonstate.edu:4545/profile')
+    //     .then((response) => response.json())
+    //     .then((json) => setData(json[0]))
+    //     .catch((error) => console.error(error))
+    //     .finally(() => setLoading(false))
+    // }, []);
+
     useEffect(() => {
-      fetch('http://flip1.engr.oregonstate.edu:4545/profile')
-        .then((response) => response.json())
+    const requestOptions = {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ user_id: '9', })
+    };
+    fetch(url + '/getUserProfile/', requestOptions)
+        .then(response => response.json())
         .then((json) => setData(json[0]))
         .catch((error) => console.error(error))
         .finally(() => setLoading(false))
     }, []);
 
-    //const { name } = route.params;
-    //const { karma } = route.params;
     return (    
-      <Block flex style={styles.profile}>
+
+      <View style={styles.profile}>
         <Block flex>
-          <ImageBackground
-            source={Images.ProfileBackground}
-            style={styles.profileContainer}
-            imageStyle={styles.profileBackground}
-          >
+          
             <ScrollView
               showsVerticalScrollIndicator={false}
-              style={{ width, marginTop: '25%' }}
-            >
-              <Block flex style={styles.profileCard}>
+              style={{ width, marginTop: '5%', backgroundColor:'#fff' }}
+            > 
+              <Block flex style={styles.profileCard}> 
                 <Block middle style={styles.avatarContainer}>
-                  <Image
-                    source={require('./Propic.png')}
+                  <Image 
+                    source = {Images.reputation[data.user_reputation_category_id]}
                     style={styles.avatar}
-                  />
+                  
+                  /> 
                 </Block>
                 <Block style={styles.info}>
                   <Block
@@ -64,20 +79,26 @@ export function UserProfile( { route, navigation }, {} ) {
                     row
                     space="evenly"
                     style={{ marginTop: 20, paddingBottom: 24 }}
-                  >
-                    <Button
-                      small
-                      style={{ backgroundColor: argonTheme.COLORS.INFO }}
                     >
-                      TOP
-                    </Button>
                     <Button
-                      small
-                      style={{ backgroundColor: argonTheme.COLORS.DEFAULT }}
+                      style={{ backgroundColor: argonTheme.COLORS.INFO}}
                     >
-                      SHOPPER
+                    <Text
+                        bold
+                        size={20}
+                        color="white"
+                      >
+                      {data.user_reputation_category_name}
+                     </Text>
                     </Button>
+                  </Block> 
+
+                  <Block row space="between">
+                  <Text bold size={28} color="#32325D">
+                      {data.store_rating}
+                    </Text>
                   </Block>
+
                   <Block row space="between">
                     <Block middle>
                       <Text
@@ -113,6 +134,7 @@ export function UserProfile( { route, navigation }, {} ) {
                       <Text size={12} color={argonTheme.COLORS.TEXT}>Comments</Text>
                     </Block>
                   </Block>
+
                 </Block>
                 <Block flex>
                   <Block middle style={styles.nameInfo}>
@@ -122,7 +144,8 @@ export function UserProfile( { route, navigation }, {} ) {
                     <Text size={16} color="#32325D" style={{ marginTop: 10 }}>
                       San Francisco, USA
                     </Text>
-                  </Block>
+                  </Block>    
+
                   <Block middle style={{ marginTop: 30, marginBottom: 16 }}>
                     <Block style={styles.divider} />
                   </Block>
@@ -134,96 +157,55 @@ export function UserProfile( { route, navigation }, {} ) {
                     >
                       Superstar Shopper! Trader Joe's >>>
                     </Text>
-                    <Button
-                    color="transparent"
-                      textStyle={{
-                        color: "#233DD2",
-                        fontWeight: "500",
-                        fontSize: 16
-                      }}
-                    onPress={() => navigation.navigate('Feed')}
-                    title="Feed"
-                    color="#000"
-                    > Feed </Button>
-                    <Button
-                    color="transparent"
-                      textStyle={{
-                        color: "#233DD2",
-                        fontWeight: "500",
-                        fontSize: 16
-                      }}
-                    onPress={() => navigation.navigate('Map')}
-                    title="Map"
-                    color="#000"
-                    > Map </Button>
-                    <Button
-                    color="transparent"
-                      textStyle={{
-                        color: "#233DD2",
-                        fontWeight: "500",
-                        fontSize: 16
-                      }}
-                    onPress={() => navigation.navigate('Stores')}
-                    title="Stores"
-                    color="#000"
-                    > Stores </Button>
+
                   </Block>
-                  <Block
-                    row
-                    style={{ paddingBottom: 20, justifyContent: "flex-end" }}
-                  >
+
                   </Block>
-                  <Block style={{ paddingBottom: -HeaderHeight * 2 }}>
-                    <Block row space="between" style={{ flexWrap: "wrap" }}>
-                      {Images.Viewed.map((img, imgIndex) => (
-                        <Image
-                          source={{ uri: img }}
-                          key={`viewed-${img}`}
-                          resizeMode="cover"
-                          style={styles.thumb}
-                        />
-                      ))}
-                    </Block>
+
                   </Block>
-                </Block>
-              </Block>
+
+                  <FeedEntry id_type = 'user' id_value = '9'> </FeedEntry>
+              
             </ScrollView>
-          </ImageBackground>
+ 
         </Block>
-      </Block>
+      </View>
 
         )
 };
 
 const styles = StyleSheet.create({
   profile: {
-    marginTop: Platform.OS === "android" ? -HeaderHeight : 0,
-    // marginBottom: -HeaderHeight * 2,
-    flex: 1
+    backgroundColor:'#fff',
+    flex: 1,
   },
   profileContainer: {
-    width: width,
     height: height,
     padding: 0,
-    zIndex: 1
+    zIndex: 1,
+    width: deviceWidth * 0.8,
+    backgroundColor:'#fff',
   },
   profileBackground: {
-    width: width,
-    height: height / 2
+    width: deviceWidth * 0.8,
+    height: height / 2,
   },
   profileCard: {
     // position: "relative",
     padding: theme.SIZES.BASE,
     marginHorizontal: theme.SIZES.BASE,
     marginTop: 65,
-    borderTopLeftRadius: 6,
-    borderTopRightRadius: 6,
-    backgroundColor: theme.COLORS.WHITE,
+    borderRadius: 10,
+    borderWidth: 1,
+    // borderTopLeftRadius: 6,
+    // borderTopRightRadius: 6,
+    borderColor: '#F7FAFC',
+    backgroundColor: '#fff',
     shadowColor: "black",
     shadowOffset: { width: 0, height: 0 },
     shadowRadius: 8,
     shadowOpacity: 0.2,
-    zIndex: 2
+    zIndex: 2,
   },
   info: {
     paddingHorizontal: 40
@@ -251,6 +233,7 @@ const styles = StyleSheet.create({
     marginVertical: 4,
     alignSelf: "center",
     width: thumbMeasure,
-    height: thumbMeasure
+    height: thumbMeasure,
+    backgroundColor:'#fff'
   }
 });

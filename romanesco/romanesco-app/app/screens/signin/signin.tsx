@@ -6,27 +6,27 @@ import { createStackNavigator } from '@react-navigation/stack';
 
 // based on signin code taken from https://gist.github.com/dabit3/1c6b1808c9bdf10138f51dae46418d8c & tweaked 
 
-export default class SignIn extends React.Component {
+export default class SignUp extends React.Component {
     //navigation = useNavigation();
 
     state = {
-        email: '', password: ''
+        username: '', password: ''
       }
       onChangeText = (key, val) => {
         this.setState({ [key]: val })
       }
       signIn = async () => {
-        const { email, password, } = this.state
+        const { username, password, } = this.state
         try {
 
 
           // Signin Code
             // fetch 
-          const success = this.state.email;
-          console.log('user successfully signed in!: '+this.state.email, success);
-          this.props.navigation.navigate('Home');
+          const success = this.state.username;
+          console.log('user successfully signed in!: '+this.state.username, success);
+          this.props.navigation.navigate('Romanesco');
         } catch (err) {
-          console.log('error signing in: ' +this.state.email, err);
+          console.log('error signing in: ' +this.state.username, err);
         }
       }
      
@@ -62,10 +62,10 @@ export default class SignIn extends React.Component {
             <Text>Welcome to Romanesco! Please sign in below. Or tap the button to sign up.</Text>
             <TextInput
               style={this.styles.input}
-              placeholder='Email'
+              placeholder='Username'
               autoCapitalize="none"
               placeholderTextColor='white'
-              onChangeText={val => this.onChangeText('email', val)}
+              onChangeText={val => this.onChangeText('username', val)}
             />
             <TextInput
               style={this.styles.input}

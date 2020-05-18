@@ -5,14 +5,13 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import { useNavigation } from '@react-navigation/native';
 
+import feedStyles from '../components/feedStyles';
 
 export default class Feed extends React.Component {
-  //navigation = useNavigation();
 
   state = {
       
     }
-
 
     onChangeText = (key, val) => {
       this.setState({ [key]: val })
@@ -23,33 +22,10 @@ export default class Feed extends React.Component {
 
         <View style={this.styles.container}>
             <ScrollView>
-                
-                <Button
-                    title="Profile"
-                    color="#000"
-                    onPress={() => {
-                      this.props.navigation.navigate("Profile", {
-                      name: "testName",
-                      karma: 710,
-                    });
-                  }}
-                />
-                <Button
-                onPress={() => this.props.navigation.navigate("Map")}
-                title="Map"
-                color="#000"
-                />
-                <Button
-                    title="Stores"
-                    color="#000"
-                    onPress={() => {
-                      this.props.navigation.navigate("Stores", {
-                    });
-                  }}
-                />
-                <FeedEntry navigation={this.props.navigation}></FeedEntry>
+                <FeedEntry navigation={this.props.navigation} id_type = 'all' id_value = '0'> </FeedEntry>
             </ScrollView>
         </View>
+
     )
   }
 
@@ -58,10 +34,7 @@ export default class Feed extends React.Component {
       flex: 1,
       backgroundColor: '#fff',
       alignItems: 'center',
-      justifyContent: 'center',
+      //justifyContent: 'center',
     },
   });
 }
-
-
-
