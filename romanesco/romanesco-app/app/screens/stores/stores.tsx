@@ -15,8 +15,9 @@ import { createStackNavigator } from '@react-navigation/stack';
 import { withNavigation } from 'react-navigation';
 import Modal from 'react-native-modal';
 
+import Images from '../../assets/imgs';
+
 import { Block, theme } from "galio-framework";
-import { Images, argonTheme } from "../../constants";
 import { HeaderHeight } from "../../constants/utils";
 import{ StoreProfile } from "./storeProfile"
 
@@ -26,8 +27,9 @@ const thumbMeasure = (width - 48 - 32) / 3;
 // To get feed entries to fill screen
 let deviceWidth = Dimensions.get('window').width
 
-//var url = "http://192.168.1.2.:5000/getStores/";
-var url = "http://flip1.engr.oregonstate.edu:5005/getStores/";
+// var url = "http://192.168.1.7:5000/getFavoriteStores/";
+var url = "http://192.168.1.7:5000";
+//var url = "http://flip1.engr.oregonstate.edu:5005/getStores/";
 
 export default class StoreFeed extends React.Component {
 
@@ -36,6 +38,7 @@ export default class StoreFeed extends React.Component {
 
     this.state = {
       data: [],
+      top_data: [],
       isLoading: true,
       isModalVisible: false,
       setModalVisible: false,
@@ -49,7 +52,7 @@ export default class StoreFeed extends React.Component {
     }
 
   componentDidMount() {
-    fetch(url, {
+    fetch(url + '/getFavoriteStores/', {
          method: 'POST',
          headers: {
              Accept: 'application/json',
@@ -61,7 +64,21 @@ export default class StoreFeed extends React.Component {
      }).then((response) => response.json())
       .then((json) => {
         this.setState({ data: json });
-      })
+      }).then(
+          fetch(url + '/getTopStores/', {
+                   method: 'POST',
+                   headers: {
+                       Accept: 'application/json',
+                       'Content-Type': 'application/json',
+                   },
+                   body: JSON.stringify({
+                       user_id: '121',
+                   }),
+               }).then((response) => response.json())
+                .then((json) => {
+                  this.setState({ top_data: json });
+                })
+      )
       .finally(() => {
         this.setState({ isLoading: false });
       });       
@@ -75,6 +92,7 @@ export default class StoreFeed extends React.Component {
 
     const { data, isLoading } = this.state;
     console.log(data);
+    console.warn(url);
 
     return (
 
@@ -114,7 +132,7 @@ export default class StoreFeed extends React.Component {
                   <View style={styles.feedBoxHeader}>
                     <Avatar
                     rounded
-                    source={require('../../assets/imgs/romanescoicon.png')}
+                    source = {Images.stores[item.store_name_fmt]}
                      />  
                     <Text numberOfLines={1} style={styles.headline}> 
                     {item.store_name} at {item.store_street}
@@ -139,54 +157,47 @@ export default class StoreFeed extends React.Component {
 
          </ScrollView>
 
-          <View style={{backgroundColor:'#fff', flex:1 ,padding: 6}}></View>
+          <View style={{backgroundColor:'#fff', padding: 10}}></View>
+          
           <Text style={styles.storeHeadline}>
-          Top Stores Near You
+          Popular Stores Near You
           </Text>
-
+          
           <ScrollView
             showsVerticalScrollIndicator={false}
             style={{ width, marginTop: '5%', backgroundColor:'#fff'}}
           >
 
-           <View >
-            <Button
-              onPress={() => this.props.navigation.navigate('StoreProfileModal', 
-                {
-                  storeId: 10,
-                }
-                )
-              }
-              title="Open Modal"
-            />
-            <Modal isVisible={this.state.isModalVisible}>
-              <View >
-                <Text>Hello!</Text>
-                <Button title="Hide modal" onPress={this.toggleModal} />
-              </View>
-            </Modal>
-          </View>
-
           <View style={{ flex: 1, padding: 5, width: deviceWidth * 0.98 }}>
 
             {isLoading ? <ActivityIndicator/> : (
               <FlatList
-                data={this.state.data}
+                data={this.state.top_data}
                 keyExtractor={item => item.id}
                 renderItem={({ item }) => (
                   <>
                   <View style={styles.feedBox}>
                   <TouchableOpacity 
                     onPress={() => this.props.navigation.navigate('StoreProfileModal', 
-                    {
-                      store_id: item.store_id
-                    }
+                      {
+                        store_id: item.store_id
+                      }
                     )
                     }
                   >
-                    <Text size={16} color="#32325D" style={{ marginTop: 10 }}>{item.store_name}</Text>
-                    <Text size={16} color="#32325D" style={{ marginTop: 10 }}>{item.store_street}</Text>
-                    <Text size={16} color="#32325D" style={{ marginTop: 10 }}>{item.days_since_last_feedback}</Text>
+                  <View style={styles.feedBoxHeader}>
+                    <Avatar
+                    rounded
+                    source = {Images.stores[item.store_name_fmt]}
+                     />  
+                    <Text numberOfLines={1} style={styles.headline}> 
+                    {item.store_name} at {item.store_street}                    
+                    </Text>
+                  </View> 
+                    <Text size={16} color="#32325D" style={{ marginTop: 10 }}>
+                       {item.total_feedback} ratings from {item.shoppers} Romanescos in the last month
+                    </Text>
+
                   </TouchableOpacity>
 
                   </View>
@@ -201,16 +212,6 @@ export default class StoreFeed extends React.Component {
           </View>  
 
          </ScrollView>
-
-
-
-
-
-
-
-
-
-
 
 
 

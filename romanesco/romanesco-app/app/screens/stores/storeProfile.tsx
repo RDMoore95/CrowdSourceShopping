@@ -56,7 +56,7 @@ export function StoreProfile( { route, navigation }, {} ) {
               <Block flex style={styles.profileCard}> 
                 <Block middle style={styles.avatarContainer}>
                   <Image 
-                    source={require('../../assets/imgs/tj.png')}
+                    source={require('../../assets/imgs/traderjoes.png')}
                     style={styles.avatar}
                   
                   /> 
