@@ -14,10 +14,14 @@ import { withNavigation } from 'react-navigation';
 import ReadMore from 'react-native-read-more-text';
 import Icon from 'react-native-vector-icons/Ionicons';
 
+import Images from '../../../assets/imgs';
+
 // To get feed entries to fill screen
 let deviceWidth = Dimensions.get('window').width
 
-// export function FeedEntry( props ) {
+//var url = "http://192.168.1.7:5000";
+var url = "http://flip1.engr.oregonstate.edu:5005";
+
 export class FeedEntry extends React.Component {
 
     constructor(props) {
@@ -44,7 +48,6 @@ export class FeedEntry extends React.Component {
             style={{
               height: 1,
               width: deviceWidth * 0.8,
-              // width: "100%",
               backgroundColor: "#000",
             }}
           />
@@ -68,15 +71,34 @@ export class FeedEntry extends React.Component {
     }
     _handleTextReady = () => {}
 
-    // Get feed entries    
-    componentDidMount() {
-        fetch('http://flip1.engr.oregonstate.edu:4545/feedEntries')
-        .then((response) => response.json())
-        .then((json) => {this.setState({ data: json });})
-        .catch((error) => console.error(error))
-        .finally(() => {this.setState({ isLoading: false });})
-    }  
+    // // Get feed entries    
+    // componentDidMount() {
+    //     fetch('http://flip1.engr.oregonstate.edu:4545/feedEntries')
+    //     .then((response) => response.json())
+    //     .then((json) => {this.setState({ data: json });})
+    //     .catch((error) => console.error(error))
+    //     .finally(() => {this.setState({ isLoading: false });})
+    // }  
 
+    // Get feed entries
+    componentDidMount() {
+      fetch(url + '/getFeedEntries/', {
+           method: 'POST',
+           headers: {
+               Accept: 'application/json',
+               'Content-Type': 'application/json',
+           },
+           body: JSON.stringify({
+               id_type: this.props.id_type,
+               id_value: this.props.id_value,
+           }),
+       }).then((response) => response.json())
+        .then((json) => {
+          this.setState({ data: json });
+        }).finally(() => {
+          this.setState({ isLoading: false });
+        });       
+    }
 
   // Set right colors for icons
   upVote(item) {
@@ -117,8 +139,6 @@ export class FeedEntry extends React.Component {
     // Only want to do this oncee, so use firstRender 
     if( this.state.firstRender ){
 
-      // console.warn("First render")
-
       // Add upvote and downvote flags 
       this.state.data.map(function(item) {
         return item['upVote'] = 0
@@ -136,7 +156,7 @@ export class FeedEntry extends React.Component {
 
     return (  
 
-    <View style={{ flex: 1, padding: 5, alignSelf: "center"}}>
+    <View style={{ flex: 1, padding: 5, alignSelf: "center", backgroundColor: "#fff"}}>
       {isLoading ? <ActivityIndicator/> : (
 
         <FlatList
@@ -153,11 +173,11 @@ export class FeedEntry extends React.Component {
                   <View style={styles.feedBoxHeader}>
                     <Avatar
                     rounded
-                    source={require('../../../assets/imgs/romanescoicon.png')}
+                    source = {Images.reputation[item.user_reputation_category_id]}
+                    // source={require('../../../assets/imgs/L2.jpg')}
                     onPress={() => {
-                        this.props.navigation.navigate("storeProfile"), {
-                        name: "testName",
-                        karma: 710,
+                        this.props.navigation.navigate("Profile"), {
+                        user_id: item.user_id,
                       };}}
                      />  
                     <Text numberOfLines={1} style={styles.headline}> 
