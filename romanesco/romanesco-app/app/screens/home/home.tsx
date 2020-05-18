@@ -50,6 +50,16 @@ export function HomeScreen({ navigation}) {
                   title="Map"
                   color="#000"
                 />
+        <Button
+                  onPress={() => navigation.navigate("ShoppingListList")}
+                  title="ShoppingListList"
+                  color="#000"
+                />
+        <Button
+                  onPress={() => navigation.navigate("ShoppingList")}
+                  title="ShoppingList"
+                  color="#000"
+                />        
       </View>
     );
   }

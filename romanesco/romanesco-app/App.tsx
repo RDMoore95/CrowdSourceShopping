@@ -16,7 +16,8 @@ import  SignUp from './app/screens/signin/signup';
 import  { StoreProfile } from './app/screens/stores/storeProfile';
 import  ReviewList from './app/screens/reviews/reviewList';
 import { HomeScreen } from './app/screens/home/home';
-
+import { ShoppingList } from './app/screens/shoppingList/shoppingListEdit';
+import { ShoppingListList } from './app/screens/shoppingList/shoppingListList';
 
 //import * as React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
@@ -53,6 +54,7 @@ export default function App() {
         <MainStack.Screen
           name="Romanesco"
           component= {Tabs}
+          options={{ headerLeft: null }}
         />
       
       </MainStack.Navigator>
@@ -111,6 +113,16 @@ function HomeTabNav() {
         <HomeStack.Screen 
           name="Home" 
           component={HomeScreen}
+          options={{ headerShown: false }}
+        />
+        <HomeStack.Screen 
+          name="ShoppingList" 
+          component={ShoppingList}
+          options={{ headerShown: false }}
+        />
+        <HomeStack.Screen 
+          name="ShoppingListList" 
+          component={ShoppingListList}
           options={{ headerShown: false }}
         />
       </HomeStack.Navigator>
