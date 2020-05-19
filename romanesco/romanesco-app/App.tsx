@@ -33,7 +33,6 @@ const Stack = createStackNavigator();
 const Tab = createMaterialTopTabNavigator();
 const MainStack = createStackNavigator( );
 
-
 export default function App() {
   return (
     
@@ -96,8 +95,7 @@ function Tabs() {
           <Tab.Screen 
             name="Profile" 
             component={ProfileTabNav} 
-            //options={{title: 'Name'}}
-          />
+          />          
         </Tab.Navigator>
   );
 }
@@ -164,8 +162,8 @@ function StoreTabNav() {
           component={StoreProfile}
           options={{ headerShown: false,
             gestureDirection: 'vertical',
-            swipeVelocityImpact: 0.1,
-            springVelocityScale: -0.5,
+            swipeVelocityImpact: 10,
+            springVelocityScale: 4,
            }}
         />
       </StoreStack.Navigator>
@@ -188,7 +186,7 @@ function ProfileTabNav() {
         <ProfileStack.Screen
           name="UserProfile"
           component={UserProfile}
-          options={{ headerShown: false }}
+          options={{ headerShown: false }}          
         />
         <ProfileStack.Screen
             name="ReviewList"
