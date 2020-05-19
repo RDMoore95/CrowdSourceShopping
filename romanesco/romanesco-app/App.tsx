@@ -200,9 +200,7 @@ function ProfileTabNav() {
 const ShoppingListStack = createStackNavigator();
 /*
 function ShoppingListTabNav() {
-
   return (
-
     );
 }
 */
@@ -220,7 +218,3 @@ const styles = StyleSheet.create({
       justifyContent: 'center',
     },
   });
-
-
-
-

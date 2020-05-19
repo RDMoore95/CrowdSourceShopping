@@ -6,27 +6,27 @@ import { createStackNavigator } from '@react-navigation/stack';
 
 // based on signin code taken from https://gist.github.com/dabit3/1c6b1808c9bdf10138f51dae46418d8c & tweaked 
 
-export default class SignUp extends React.Component {
+export default class SignIn extends React.Component {
     //navigation = useNavigation();
 
     state = {
-        username: '', password: ''
+        email: '', password: ''
       }
       onChangeText = (key, val) => {
         this.setState({ [key]: val })
       }
       signIn = async () => {
-        const { username, password, } = this.state
+        const { email, password, } = this.state
         try {
 
 
           // Signin Code
             // fetch 
-          const success = this.state.username;
-          console.log('user successfully signed in!: '+this.state.username, success);
+          const success = this.state.email;
+          console.log('user successfully signed in!: '+this.state.email, success);
           this.props.navigation.navigate('Romanesco');
         } catch (err) {
-          console.log('error signing in: ' +this.state.username, err);
+          console.log('error signing in: ' +this.state.email, err);
         }
       }
      
@@ -65,7 +65,7 @@ export default class SignUp extends React.Component {
               placeholder='Username'
               autoCapitalize="none"
               placeholderTextColor='white'
-              onChangeText={val => this.onChangeText('username', val)}
+              onChangeText={val => this.onChangeText('email', val)}
             />
             <TextInput
               style={this.styles.input}
@@ -78,7 +78,7 @@ export default class SignUp extends React.Component {
             
             <Button
               title='Sign In'
-              onPress={this.signIn}
+              onPress = {() => this.login(this.state.email, this.state.password)}
             />
           </View>
         )

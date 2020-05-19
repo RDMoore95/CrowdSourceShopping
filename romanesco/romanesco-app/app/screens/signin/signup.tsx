@@ -1,5 +1,7 @@
 import React from 'react';
-import { StyleSheet, TextInput, View, Button,  ListView } from 'react-native';
+import { StyleSheet, TextInput, View, Button,  ListView, AppRegistry,AsyncStorage,Text,TouchableHighlight} from 'react-native';
+import { Formik } from 'formik';
+// import { FormLabel, FormInput, FormValidationMessage } from 'react-native-elements'
 import { useNavigation } from '@react-navigation/native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
@@ -10,26 +12,81 @@ import { createStackNavigator } from '@react-navigation/stack';
 
 export default class SignUp extends React.Component {
     //props.navigation = useNavigation();
+
+    validateEmail = (text) => {
+      console.log(text);
+      let reg = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
+      if (reg.test(text) === false) {
+        console.log("Email is Not Correct");
+        this.setState({ email: text })
+        return false;
+      }
+      else {
+        this.setState({ email: text })
+        console.log("Email is Correct");
+        this.setState({correct_email: true});
+      }
+    }
+
+    validateZipCode = (text) => {
+      console.log(text);
+      let reg = /^\d{5}(-\d{4})?$/;
+      if (reg.test(text) === false) {
+        console.log("Zip Code is not valid");
+        this.setState( {zip_code: text })
+        return false;
+      }
+      else {
+        this.setState({ zip_code: text})
+        console.log("Zip Code is Valid");
+        this.setState({correct_zipcode: true});
+      }
+    }
     
     state = {
-        username: '', password: '', dob: '', email: '', zip_code: ''
+        email: '', password: '', first_name: '', last_name: '', zip_code: '', correct_email: false, correct_zipcode: false
     }
     onChangeText = (key, val) => {
         this.setState({ [key]: val })
     }
-    signUp = async () => {
-        const { username, password, email, zip_code } = this.state
+    signUp = async (email: any, first_name: any, last_name: any, password: any, zip_code: any) => {
+
+      if (this.state.correct_email == true && this.state.correct_zipcode == true) {
+
         try {
 
+          const requestOptions = {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ 
+              email: email,
+              first_name: first_name,
+              last_name: last_name,
+              password: password,
+              zip_code: zip_code
+             })
+            };
+  
+              fetch('http://flip1.engr.oregonstate.edu:4545/signUp', requestOptions)
+                .then(response => response.json)
+                .then(json => console.log(json))
+                .catch(json => alert(json.error))
+            
+          } catch (err) {
+            console.log(err);
+          }
 
-          // here place your signup logic
-            fetch()
-          const success = this.state.email;
-          console.log('user successfully signed up!: ' + this.state.username, success);
-          this.props.navigation.navigate('Home');
-        } catch (err) {
-          console.log('error signing up: ' + this.state.username, err);
+      } else {
+
+        if (this.state.correct_zipcode == false) {
+          alert("Please enter a valid zipcode!");
         }
+        if (this.state.correct_email == false) {
+          alert("Please enter a valid email!");
+        }
+        
+      }
+
     }
      
     styles = StyleSheet.create({
@@ -60,42 +117,46 @@ export default class SignUp extends React.Component {
             style={this.styles.input}
             placeholder='Email'
             autoCapitalize="none"
+            maxLength={320}
             placeholderTextColor='white'
-            onChangeText={val => this.onChangeText('email', val)}
+            onChangeText={val => this.validateEmail(val)}
           />
           <TextInput
             style={this.styles.input}
-            placeholder='Username'
+            placeholder='First Name'
             autoCapitalize="none"
+            maxLength={50}
             placeholderTextColor='white'
-            onChangeText={val => this.onChangeText('username', val)}
+            onChangeText={val => this.onChangeText('first_name', val)}
+          />
+          <TextInput
+            style={this.styles.input}
+            placeholder='Last Name'
+            autoCapitalize="none"
+            maxLength={50}
+            placeholderTextColor='white'
+            onChangeText={val => this.onChangeText('last_name', val)}
           />
           <TextInput
             style={this.styles.input}
             placeholder='Password'
             secureTextEntry={true}
             autoCapitalize="none"
+            maxLength={30}
             placeholderTextColor='white'
             onChangeText={val => this.onChangeText('password', val)}
           />
           <TextInput
             style={this.styles.input}
-            placeholder='Birthday'
-            secureTextEntry={true}
-            autoCapitalize="none"
-            placeholderTextColor='white'
-            onChangeText={val => this.onChangeText('birthday', val)}
-          />
-          <TextInput
-            style={this.styles.input}
             placeholder='Zip Code'
             autoCapitalize="none"
+            maxLength={10}
             placeholderTextColor='white'
-            onChangeText={val => this.onChangeText('zip_code', val)}
+            onChangeText={val => this.validateZipCode(val)}
           />
           <Button
             title='Sign Up'
-            onPress={this.signUp}
+            onPress={() => this.signUp(this.state.email, this.state.first_name, this.state.last_name, this.state.password, this.state.zip_code)}
           />
         </View>
         )
