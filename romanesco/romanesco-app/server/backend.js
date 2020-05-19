@@ -2,6 +2,8 @@ var express = require('express');
 var app = express();
 var mysql = require('mysql');
 var bodyParser = require('body-parser');
+var cors = require('cors');
+var jwt = require("jsonwebtoken");
 const bcrypt = require('bcryptjs');
 const fetch = require("node-fetch");
 const async = require('asyncawait/async');
@@ -10,7 +12,14 @@ const authToken = require('crypto');
 
 
 app.use(bodyParser.json({type:'application/json'}));
+app.use(cors());
 app.use(bodyParser.urlencoded({extended:true}));
+
+// var Users = require("./routes/User");
+
+// app.use("/users", Users);
+
+process.env.SECRET_KEY = "top_sekret";
 
 var con = mysql.createConnection({
 
@@ -142,32 +151,51 @@ app.get('/mapLatLongUpdate', function(req, res) {
 
 app.post('/signUp', function(req, res) {
 
-    var q = `INSERT INTO User 
-                (first_name, last_name, email, password, signup_date, user_country)
-            VALUES (?, ?, ?, NOW(), ?, 
-                (SELECT country_id FROM Country
-                 WHERE country_name = ?))`
+    var q = `SELECT user_id FROM User
+                WHERE email = ?;`
 
-    bcrypt.genSalt(10, function(err, salt) {
-        bcrypt.hash(req.body.password, salt, function(err, hash) {
-            con.query(q,[
-                req.body.first_name,
-                req.body.last_name,
-                req.body.email,
-                hash,
-                date,
-                req.body.country_name
+    var q2 = `INSERT INTO User 
+                (first_name, last_name, email, password, signup_date, zip_code)
+            VALUES (?, ?, ?, ?, ?, ?);`
+
+    var date  = new Date().toJSON().slice(0, 10);
+
+    con.query(q, [
+            req.body.email        
             ], function(error, results) {
-                if (error) {
-                    throw (error);
-                }
-        
-                else {
-                    res.send(results);
-                }
+
+        if (error) {
+            throw(error);
+        }
+
+        else if (results == false) {
+            bcrypt.genSalt(10, function(err, salt) {
+                bcrypt.hash(req.body.password, salt, function(err, hash) {
+                    con.query(q2,[
+                        req.body.first_name,
+                        req.body.last_name,
+                        req.body.email,
+                        hash.toString(),
+                        date,
+                        req.body.zip_code
+                    ], function(error, results) {
+                        if (error) {
+                            throw (error);
+                        }
+                
+                        else {
+                            console.log(results);
+                        }
+                    })
+                })
             })
-        })
+        } else {
+            res.json({ error: "User already exists" });
+        }
+
     })
+
+
     
     
 })
@@ -189,16 +217,17 @@ app.get('/signIn', function(req, res) {
             }
 
             else {
-                bcrypt.compare(req.password, results.password, function(err, result) {
+                bcrypt.compare(req.body.password, results.password, function(err, result) {
                     if (err) {
+                        res.send("USER DOES NOT EXIST");
                         throw (err);
                     }
 
                     else {
                         res.send(result);
-                        if (result) {
-                            con.query()
-                        }
+                        // if (result) {
+                        //     con.query()
+                        // }
                     }
                 })
             }
