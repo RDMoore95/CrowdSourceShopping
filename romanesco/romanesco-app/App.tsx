@@ -6,7 +6,7 @@
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 import 'react-native-gesture-handler';
 import React from 'react';
-import { StyleSheet, Text, ScrollView, Image, Button, View } from 'react-native';
+import { StyleSheet, Alert, Text, ScrollView, Image, Button, View, TouchableOpacity } from 'react-native';
 import Feed from './app/screens/feed/feed';
 import { UserProfile } from './app/screens/profile/profile';
 import  Map  from './app/screens/map/map';
@@ -16,7 +16,8 @@ import  SignUp from './app/screens/signin/signup';
 import  { StoreProfile } from './app/screens/stores/storeProfile';
 import  ReviewList from './app/screens/reviews/reviewList';
 import { HomeScreen } from './app/screens/home/home';
-
+import { ShoppingList } from './app/screens/shoppingList/shoppingListEdit';
+import { ShoppingListList } from './app/screens/shoppingList/shoppingListList';
 
 //import * as React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
@@ -38,7 +39,7 @@ export default function App() {
   return (
     
     <NavigationContainer>
-      <MainStack.Navigator>
+      <MainStack.Navigator initialRouteName="Romanesco" >
       <MainStack.Screen
           name="SignIn"
           component={SignIn}
@@ -53,6 +54,7 @@ export default function App() {
         <MainStack.Screen
           name="Romanesco"
           component= {Tabs}
+          options={{ headerLeft: null }}
         />
       
       </MainStack.Navigator>
@@ -62,7 +64,7 @@ export default function App() {
 }
 
 function Tabs() {
-
+   
   return (
         <Tab.Navigator initialRouteName="Home" 
           tabBarOptions={{
@@ -98,9 +100,12 @@ function Tabs() {
             component={ProfileTabNav} 
             //options={{title: 'Name'}}
           />
+          
         </Tab.Navigator>
   );
 }
+
+
 
 const HomeStack = createStackNavigator();
 
@@ -111,6 +116,16 @@ function HomeTabNav() {
         <HomeStack.Screen 
           name="Home" 
           component={HomeScreen}
+          options={{ headerShown: false }}
+        />
+        <HomeStack.Screen 
+          name="ShoppingList" 
+          component={ShoppingList}
+          options={{ headerShown: false }}
+        />
+        <HomeStack.Screen 
+          name="ShoppingListList" 
+          component={ShoppingListList}
           options={{ headerShown: false }}
         />
       </HomeStack.Navigator>
@@ -219,4 +234,5 @@ const styles = StyleSheet.create({
       alignItems: 'center',
       justifyContent: 'center',
     },
+
   });

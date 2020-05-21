@@ -6,6 +6,7 @@ import { createStackNavigator } from '@react-navigation/stack';
 import { useNavigation } from '@react-navigation/native';
 
 import feedStyles from '../components/feedStyles';
+import {NewButton} from "../../components/newButton/newButton";
 
 export default class Feed extends React.Component {
 
@@ -24,6 +25,7 @@ export default class Feed extends React.Component {
             <ScrollView>
                 <FeedEntry navigation={this.props.navigation} id_type = 'all' id_value = '0'> </FeedEntry>
             </ScrollView>
+            <NewButton/>
         </View>
 
     )
