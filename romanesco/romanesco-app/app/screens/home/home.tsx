@@ -1,6 +1,6 @@
 import React from 'react';
 import { StyleSheet, Text, View, Button,  ScrollView } from 'react-native';
-
+import {NewButton} from "../../components/newButton/newButton";
 export function HomeScreen({ navigation}) {
     return (
       <View style={styles.container}>
@@ -50,6 +50,17 @@ export function HomeScreen({ navigation}) {
                   title="Map"
                   color="#000"
                 />
+        <Button
+                  onPress={() => navigation.navigate("ShoppingListList")}
+                  title="ShoppingListList"
+                  color="#000"
+                />
+        <Button
+                  onPress={() => navigation.navigate("ShoppingList")}
+                  title="ShoppingList"
+                  color="#000"
+                />   
+        <NewButton/>     
       </View>
     );
   }

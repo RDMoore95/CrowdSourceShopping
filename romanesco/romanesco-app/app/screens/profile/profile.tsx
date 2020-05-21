@@ -17,8 +17,13 @@ import { Button } from "../../components";
 import { argonTheme } from "../../constants";
 import { HeaderHeight } from "../../constants/utils";
 
+
 import { FeedEntry } from '../feed/components/feedEntry';
 import Images from '../../assets/imgs';
+
+import {NewButton} from "../../components/newButton/newButton";
+
+
 
 const { width, height } = Dimensions.get("screen");
 const thumbMeasure = (width - 48 - 32) / 3;
@@ -157,7 +162,6 @@ export function UserProfile( { route, navigation }, {} ) {
                     >
                       Superstar Shopper! Trader Joe's >>>
                     </Text>
-
                   </Block>
 
                   </Block>
@@ -165,10 +169,14 @@ export function UserProfile( { route, navigation }, {} ) {
                   </Block>
 
                   <FeedEntry id_type = 'user' id_value = '9'> </FeedEntry>
+                  <NewButton/>
+
+                
+
               
             </ScrollView>
- 
-        </Block>
+            </Block>
+
       </View>
 
         )
