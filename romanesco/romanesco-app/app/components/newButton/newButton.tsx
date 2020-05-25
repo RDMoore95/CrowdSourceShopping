@@ -15,7 +15,7 @@ export function NewButton(){
     clickHandler = () => {
         //function to handle click on floating Action Button
         // Alert.alert('Floating Button Clicked');
-        navigation.navigate('StoreProfileModal', 
+        navigation.navigate('InputPrompt', 
           {
             store_id: '10',
             store_name_fmt: 'My Store',
@@ -24,11 +24,6 @@ export function NewButton(){
           }
         );
       };
-
-    // clickHandler = () => {
-    //     //function to handle click on floating Action Button
-    //     Alert.alert('Floating Button Clicked');
-    // };
 
     return (
         <TouchableOpacity
@@ -53,7 +48,7 @@ const styles = StyleSheet.create({
       flex: 1,
       backgroundColor: '#fff',
       alignItems: 'center',
-      justifyContent: 'center',
+      // justifyContent: 'center',
     },
 
     TouchableOpacityStyle: {

@@ -12,8 +12,8 @@ import pandas as pd
 app = Flask(__name__)
 
 # Get MySQL credentials
-# exec(open("/Users/walkerag/Documents/osu/cs467/project_paths.py").read())
-exec(open("./project_paths.py").read())
+exec(open("/Users/walkerag/Documents/osu/cs467/project_paths.py").read())
+# exec(open("./project_paths.py").read())
 
 # DB connection
 db_connection = create_engine(db_connection_str)
@@ -217,6 +217,61 @@ def pullUserProfile(user_id):
 	return result_json
 
 
+def pullStoreCategory():
+
+	# List of store feedback categories
+	query = '''
+    SELECT DISTINCT
+    store_feedback_category
+    , store_feedback_category_id
+    FROM Store_Feedback_Category
+    '''
+
+	result = pd.read_sql(query, con=db_connection)
+
+	# Add an ID
+	result['id'] = result.index.astype(str)
+
+	result_json = result.to_json(orient = 'records')
+	# print(result_json)
+	return result_json
+
+
+def pullBarcode(barcodeData):
+
+	print("Pulling barcode data")
+
+	# Determine if item is already in database
+	query = '''
+    (
+    SELECT 
+    item_name
+    , 1 as item_found
+    FROM Item
+    WHERE item_upc = '{barcodeData}'
+    LIMIT 1
+    )
+    UNION ALL
+    (
+    SELECT 'Not Found' as item_name
+    , 0 as item_found
+    )
+    LIMIT 1
+    '''
+
+	query = query.format(barcodeData = barcodeData)
+	result = pd.read_sql(query, con=db_connection)
+	print(result)
+
+	# Add an ID
+	result['id'] = result.index.astype(str)
+
+	result_json = result.to_json(orient = 'records')
+	print(result_json)
+	return result_json
+
+
+
 @app.route('/getFavoriteStores/', methods=['POST', 'GET'])
 def getFavoriteStores():
 
@@ -248,6 +303,29 @@ def getUserProfile():
 	result_json = pullUserProfile(request.json['user_id'])
 	return result_json, 201    
 
+@app.route('/getBarcode/', methods=['POST', 'GET'])
+def getBarcode():
+
+	print("GET BARCODE")
+	print(request.json)
+	result_json = pullBarcode(request.json['barcodeData'])
+	return result_json, 201 
+
+@app.route('/getStoreCategory/', methods=['POST', 'GET'])
+def getStoreCategory():
+
+	print("GET STORE CATEGORY")
+	result_json = pullStoreCategory()
+	return result_json, 201 
+
+@app.route('/addItem/', methods=['POST', 'GET'])
+def addItem():
+
+	print("Adding Item")
+	print(request.json)
+	return 0
+	# result_json = pullBarcode(request.json['barcodeData'])
+	# return result_json, 201 
 
 if __name__ == '__main__':
     app.run(debug=True)
