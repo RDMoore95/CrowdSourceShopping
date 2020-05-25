@@ -78,7 +78,7 @@ export default class SignIn extends React.Component {
             
             <Button
               title='Sign In'
-              onPress = {() => this.login(this.state.email, this.state.password)}
+              onPress = {() => this.signIn(this.state.email, this.state.password)}
             />
           </View>
         )

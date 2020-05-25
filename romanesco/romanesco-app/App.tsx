@@ -9,12 +9,18 @@ import React from 'react';
 import { StyleSheet, Alert, Text, ScrollView, Image, Button, View, TouchableOpacity } from 'react-native';
 import Feed from './app/screens/feed/feed';
 import { UserProfile } from './app/screens/profile/profile';
+import  InputPrompt  from './app/screens/input/inputPrompt';
+import  InputBarcode  from './app/screens/input/inputBarcode';
+import  InputBarcodeScanned  from './app/screens/input/inputBarcodeScanned';
+import  InputStoreCategory  from './app/screens/input/inputStoreCategory';
+import  InputStoreFeedback  from './app/screens/input/inputStoreFeedback';
 import  Map  from './app/screens/map/map';
 import  Stores  from './app/screens/stores/stores';
 import  SignIn from './app/screens/signin/signin';
 import  SignUp from './app/screens/signin/signup';
 import  { StoreProfile } from './app/screens/stores/storeProfile';
 import  ReviewList from './app/screens/reviews/reviewList';
+// import { NewButton } from './app/components/newButton/newButton';
 import { HomeScreen } from './app/screens/home/home';
 import { ShoppingList } from './app/screens/shoppingList/shoppingListEdit';
 import { ShoppingListList } from './app/screens/shoppingList/shoppingListList';
@@ -33,7 +39,6 @@ import { createMaterialTopTabNavigator } from '@react-navigation/material-top-ta
 const Stack = createStackNavigator();
 const Tab = createMaterialTopTabNavigator();
 const MainStack = createStackNavigator( );
-
 
 export default function App() {
   return (
@@ -180,20 +185,13 @@ function StoreTabNav() {
           component={StoreProfile}
           options={{ headerShown: false,
             gestureDirection: 'vertical',
-            swipeVelocityImpact: 0.1,
-            springVelocityScale: -0.5,
+            swipeVelocityImpact: 10,
+            springVelocityScale: 4,
            }}
         />
       </StoreStack.Navigator>
     );
 }
-
-        // <StoreStack.Screen
-        //     name="StoreProfile"
-        //     component={StoreProfile}
-        //     options={{ headerShown: false }}
-        // />
-
 
 const ProfileStack = createStackNavigator();
 
@@ -204,13 +202,38 @@ function ProfileTabNav() {
         <ProfileStack.Screen
           name="UserProfile"
           component={UserProfile}
-          options={{ headerShown: false }}
+          options={{ headerShown: false }}          
         />
         <ProfileStack.Screen
             name="ReviewList"
             component={ReviewList}
             options={{ headerShown: false }}
           />
+        <ProfileStack.Screen 
+          name="InputPrompt"
+          component={InputPrompt}
+          options={{ headerShown: false }}
+        />        
+        <ProfileStack.Screen 
+          name="InputBarcode"
+          component={InputBarcode}
+          options={{ headerShown: false }}
+        />                
+        <ProfileStack.Screen 
+          name="InputBarcodeScanned"
+          component={InputBarcodeScanned}
+          options={{ headerShown: false }}
+        />     
+        <ProfileStack.Screen 
+          name="InputStoreCategory"
+          component={InputStoreCategory}
+          options={{ headerShown: false }}
+        />
+        <ProfileStack.Screen 
+          name="InputStoreFeedback"
+          component={InputStoreFeedback}
+          options={{ headerShown: false }}
+        />                           
       </ProfileStack.Navigator>
     );
 }

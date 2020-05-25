@@ -40,13 +40,6 @@ export function UserProfile( { route, navigation }, {} ) {
     const [isLoading, setLoading] = useState(true);
     const [data, setData] = useState([]);
 
-    // useEffect(() => {
-    //   fetch('http://flip1.engr.oregonstate.edu:4545/profile')
-    //     .then((response) => response.json())
-    //     .then((json) => setData(json[0]))
-    //     .catch((error) => console.error(error))
-    //     .finally(() => setLoading(false))
-    // }, []);
 
     useEffect(() => {
     const requestOptions = {
