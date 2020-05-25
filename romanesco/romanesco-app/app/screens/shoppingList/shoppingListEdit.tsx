@@ -6,22 +6,48 @@ import {
   ScrollView,
   ActivityIndicator,
   Dimensions,
-  FlatList
+  FlatList,
+  Alert, 
+  Modal, 
+  TextInput
   } from 'react-native';
 import { useEffect, useState } from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
-
+import { withNavigation } from 'react-navigation';
 import { Block, Text, theme } from "galio-framework";
 import { Button } from "../../components";
 import { Images, argonTheme } from "../../constants";
 import { HeaderHeight } from "../../constants/utils";
+import Icon from 'react-native-vector-icons/Ionicons';
 
 const { width, height } = Dimensions.get("screen");
 
 const thumbMeasure = (width - 48 - 32) / 3;
 
-export function ShoppingList( { route, navigation }, {} ) {
+//const url = "localhost:5000";
+const url = "http://flip1.engr.oregonstate.edu:5005";
+
+export class ShoppingList extends React.Component {
+
+    constructor(props) {
+
+      super(props);
+
+      this.state = {
+        data: [],
+        isLoading: false,
+        refresh: false,
+        firstRender: true,
+        modalTag1Visible: false,
+        modalTag2Visible: false,
+        modalTag3Visible: false,
+        modalAddVisible: false,
+        text_buffer: ""
+      };
+    }
+
+    state = {}
 
     FlatListItemSeparator = () => {
         return (
@@ -35,64 +61,296 @@ export function ShoppingList( { route, navigation }, {} ) {
         );
       }
     
-    const [isLoading, setLoading] = useState(true);
-    const [data, setData] = useState([]);
     /*
-    const data = {
-        "TP" : {name: "TP", price: "0.99", quantity: "1", units: "package"}, 
-        "Yeast" : {name: "Yeast", price: "1.00", quantity: "3", units: "package"}, 
-        "Bagged.Potatoes" : {name: "Potatoes", price: "5.00", quantity: "5", units: "LBs"}
-    }
+    
     */
-    useEffect(() => {
-      fetch('http://flip1.engr.oregonstate.edu:4545/user/shoppinglists/list')
-        .then((response) => response.json())
-        .then((json) => setData(json))
-        .catch((error) => console.error(error))
-        .finally(() => setLoading(false))
-    }, []);
+   componentDidMount() {
+    /*
+    this.setState({ loading: true });
+    fetch(url + '/shoppingList/' + this.props.user_id + this.props.list_id,  {
+         method: 'POST',
+         headers: {
+             Accept: 'application/json',
+             'Content-Type': 'application/json',
+         },
+         body: JSON.stringify({
+             id_type: this.props.id_type,
+             id_value: this.props.id_value,
+         }),
+     }).then((response) => response.json())
+      .then((json) => {
+        this.setState({ data: json });
+      }).finally(() => {
+        this.setState({ isLoading: false });
+      });     
+      */  
+     this.setState(
+         {
+             data:  [
+                {name: "TP", price: "0.99", quantity: "1", units: "package"}, 
+                {name: "Yeast", price: "1.00", quantity: "3", units: "package"}, 
+                {name: "Potatoes", price: "5.00", quantity: "5", units: "LBs"}
+            ]
+     }
+     )
+  }
+  
+  renderSeparator = () => {
+    return (
+      <View style={{backgroundColor:'#fff', flex:1 ,padding: 10}}></View>
+    );
+  };
 
-    return (    
-      <Block flex style={styles.profile}>
+  setModalTag1Visible = (visible) => {
+    this.setState({ modalTag1Visible: visible });
+  }
+
+  setModalTag2Visible = (visible) => {
+    this.setState({ modalTag2Visible: visible });
+  }
+
+  setModalTag3Visible = (visible) => {
+    this.setState({ modalTag3Visible: visible });
+  }
+
+  setModalAddVisible = (visible) => {
+    this.setState({ modalAddVisible: visible });
+  }
+
+   // Render each feed entry in a flatlist
+   render() {  
+
+       return ( 
+      <ScrollView >
         <Block flex>
 
 
               <Block flex style={styles.profileCard}>
                 <Block middle style={styles.avatarContainer}>
-                <Text size={28} color="#32325D" style={{ marginTop: 10 }}>
+                <Text size={28} color="#32325D" style={{ marginTop: height * .15 }}>
                       Shopping List
                     </Text>
                                                                                               
 
                 </Block>
-                
+                    <Button 
+                        style = {styles.listButton}
+                        onPress={() => Alert.alert('Reccomend button pressed')}>
+                        <Icon
+                          name="md-pizza" size={25}
+                        />
+                    </Button>
+                    <Button 
+                        style = {styles.listButton}
+                        onPress={() => this.setModalAddVisible()}>
+                        <Icon
+                          name="ios-add-circle-outline" size={25}
+                        />
+                    </Button>
+
+                    <Modal
+                                animationType="slide"
+                                transparent={false}
+                                visible={this.state.modalAddVisible}
+                                onRequestClose={() => {
+                                  Alert.alert("Modal has been closed.");
+                                }}
+                            >
+                              <View style={styles.centeredView}>
+                                <View style={styles.modalView}>
+                                  <Text style={styles.modalText}>Add an item!</Text>
+                                  <TextInput
+                                    style={styles.input}
+                                    placeholder='What are you shopping for?'
+                                    autoCapitalize="none"
+                                    maxLength={50}
+                                    placeholderTextColor='white'
+                                    onChangeText={val => this.onChangeText('text_buffer', val)}
+                                  />
+                                  <Button
+                                    style={styles.listButton}
+                                    onPress={() => 
+                                      this.setModalAddVisible(!this.state.modalAddVisible) }>
+                                    <Text>Submit</Text>
+                                  </Button>  
+                                  <Button
+                                    style={styles.listButton}
+                                    onPress={() => 
+                                      this.setModalAddVisible(!this.state.modalAddVisible) }>
+                                    <Text>Cancel</Text>
+                                  </Button>
+                                </View>
+                              </View>
+                            </Modal>
+
+                    <View style={{flexDirection: "row"}}>
+                        <Button style={styles.tag1}
+                        onPress={() => this.setModalTag1Visible()}>
+                            <Text>Add Tag</Text>
+                        </Button>
+
+                        <Modal
+                                animationType="slide"
+                                transparent={false}
+                                visible={this.state.modalTag1Visible}
+                                onRequestClose={() => {
+                                  Alert.alert("Modal has been closed.");
+                                }}
+                            >
+                              <View style={styles.centeredView}>
+                                <View style={styles.modalView}>
+                                  <Text style={styles.modalText}>Tag 1!</Text>
+                                  <TextInput
+                                    style={styles.input}
+                                    placeholder=' Tag 1'
+                                    autoCapitalize="none"
+                                    maxLength={50}
+                                    placeholderTextColor='white'
+                                    onChangeText={val => this.onChangeText('text_buffer', val) }
+                                  />
+                                  <Button
+                                    style={styles.listButton}
+                                    onPress={() => 
+                                      this.setModalTag1Visible(!this.state.modalTag1Visible) }>
+                                    <Text>Submit</Text>
+                                  </Button>  
+                                  <Button
+                                    style={styles.listButton}
+                                    onPress={() => 
+                                      this.setModalTag1Visible(!this.state.modalTag1Visible) }>
+                                    <Text>Cancel</Text>
+                                  </Button>
+                                </View>
+                              </View>
+                            </Modal>
+
+                        <Button style={styles.tag2}
+                        onPress={() => this.setModalTag2Visible()}>
+                            <Text>Add Tag</Text>
+                        </Button>
+
+                        <Modal
+                                animationType="slide"
+                                transparent={false}
+                                visible={this.state.modalTag2Visible}
+                                onRequestClose={() => {
+                                  Alert.alert("Modal has been closed.");
+                                }}
+                            >
+                              <View style={styles.centeredView}>
+                                <View style={styles.modalView}>
+                                  <Text style={styles.modalText}>Tag 2!</Text>
+                                  <TextInput
+                                    style={styles.input}
+                                    placeholder=' Tag 1'
+                                    autoCapitalize="none"
+                                    maxLength={50}
+                                    placeholderTextColor='white'
+                                    onChangeText={val => this.onChangeText('text_buffer', val) }
+                                  />
+                                  <Button
+                                    style={styles.listButton}
+                                    onPress={() => 
+                                      this.setModalTag2Visible(!this.state.modalTag2Visible) }>
+                                    <Text>Submit</Text>
+                                  </Button>  
+                                  <Button
+                                    style={styles.listButton}
+                                    onPress={() => 
+                                      this.setModalTag2Visible(!this.state.modalTag2Visible) }>
+                                    <Text>Cancel</Text>
+                                  </Button>
+                                </View>
+                              </View>
+                            </Modal>
+
+                        <Button style={styles.tag3}
+                        onPress={() => this.setModalTag3Visible()}>
+                            <Text>Add Tag</Text>
+                        </Button>
+
+                        <Modal
+                                animationType="slide"
+                                transparent={false}
+                                visible={this.state.modalTag3Visible}
+                                onRequestClose={() => {
+                                  Alert.alert("Modal has been closed.");
+                                }}
+                            >
+                              <View style={styles.centeredView}>
+                                <View style={styles.modalView}>
+                                  <Text style={styles.modalText}>Tag 3!</Text>
+                                  <TextInput
+                                    style={styles.input}
+                                    placeholder=' Tag 3'
+                                    autoCapitalize="none"
+                                    maxLength={50}
+                                    placeholderTextColor='white'
+                                    onChangeText={val => this.onChangeText('text_buffer', val) }
+                                  />
+                                  <Button
+                                    style={styles.listButton}
+                                    onPress={() => 
+                                      this.setModalTag3Visible(!this.state.modalTag3Visible) }>
+                                    <Text>Submit</Text>
+                                  </Button>  
+                                  <Button
+                                    style={styles.listButton}
+                                    onPress={() => 
+                                      this.setModalTag3Visible(!this.state.modalTag3Visible) }>
+                                    <Text>Cancel</Text>
+                                  </Button>
+                                </View>
+                              </View>
+                            </Modal>
+
+
+                    </View>
                 <Block>
                     <View style={{ flex: 1, padding: 24 }}>
-                       
+                    {this.state.isLoading ? <ActivityIndicator/> : (
                             <FlatList
-                                data={data}
-                                ItemSeparatorComponent = {FlatListItemSeparator}
-                                renderItem={({ item }) => (
-                                    <View>
+                                data={this.state.data}
+                                ItemSeparatorComponent={this.renderSeparator}
+                                ListHeaderComponent = { this.renderSeparator }
+                                renderItem={({ item, id }) => (
+                                <View>
+                                    <View style={styles.listRow}>
                                         <Text>Name: {item.name}</Text>
                                         <Text>Price: {item.price}</Text>
+                                        <Icon
+                                          name="ios-close-circle-outline" size={25}
+                                          onPress={() => Alert.alert('Remove Item')}
+                                        />
                                     </View>
-                              )}
+                                </View>)}
+                                keyExtractor={(item, index) => index.toString()}
                             />
-
-                        </View>
+                            )}                
+                    </View>
                 </Block>
-                
-                
               </Block>
-
         </Block>
-      </Block>
+      </ScrollView>
 
         )
-};
+    };
+}
 
 const styles = StyleSheet.create({
+    tag1: {flex: 1, color: theme.COLORS.LIGHT_GREEN},
+    tag2: {flex: 1, color: theme.COLORS.GREEN},
+    tag3: {flex: 1, color: theme.COLORS.DARK_GREEN},
+    listButton: {
+        width: width * .8,
+        height: height * .1,
+        color: theme.COLORS.GREEN
+    },
+  listRow: {
+    flex: 1,
+    flexDirection: 'row',
+    justifyContent: 'space-between'
+  },
   profile: {
     marginTop: Platform.OS === "android" ? -HeaderHeight : 0,
     // marginBottom: -HeaderHeight * 2,
@@ -149,5 +407,52 @@ const styles = StyleSheet.create({
     alignSelf: "center",
     width: thumbMeasure,
     height: thumbMeasure
-  }
+  },
+  centeredView: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    marginTop: 22
+  },
+  modalView: {
+    margin: 20,
+    backgroundColor: "white",
+    borderRadius: 20,
+    padding: 35,
+    alignItems: "center",
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 2
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 5
+  },
+  openButton: {
+    backgroundColor: "#F194FF",
+    borderRadius: 20,
+    padding: 10,
+    elevation: 2
+  },
+  textStyle: {
+    color: "white",
+    fontWeight: "bold",
+    textAlign: "center"
+  },
+  modalText: {
+    marginBottom: 15,
+    textAlign: "center"
+  }, 
+  input: {
+    width: 350,
+    height: 55,
+    backgroundColor: '#42A5F5',
+    margin: 10,
+    padding: 8,
+    color: 'white',
+    borderRadius: 14,
+    fontSize: 18,
+    fontWeight: '500',
+  },
 });

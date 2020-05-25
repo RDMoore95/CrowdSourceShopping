@@ -68,7 +68,7 @@ function Tabs() {
   return (
         <Tab.Navigator initialRouteName="Home" 
           tabBarOptions={{
-            labelStyle: { fontSize: 11.5 },
+            // labelStyle: { fontSize: 11.5 },
             // tabStyle: { width: 100 },
             // style: { backgroundColor: 'powderblue' },
           }}
@@ -114,8 +114,8 @@ function HomeTabNav() {
   return (
       <HomeStack.Navigator>
         <HomeStack.Screen 
-          name="Home" 
-          component={HomeScreen}
+          name="ShoppingListList" 
+          component={ShoppingListList}
           options={{ headerShown: false }}
         />
         <HomeStack.Screen 
@@ -123,9 +123,10 @@ function HomeTabNav() {
           component={ShoppingList}
           options={{ headerShown: false }}
         />
+        
         <HomeStack.Screen 
-          name="ShoppingListList" 
-          component={ShoppingListList}
+          name="Home" 
+          component={HomeScreen}
           options={{ headerShown: false }}
         />
       </HomeStack.Navigator>
