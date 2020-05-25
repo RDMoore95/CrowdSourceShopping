@@ -71,7 +71,7 @@ export default class StoreFeed extends React.Component {
                        'Content-Type': 'application/json',
                    },
                    body: JSON.stringify({
-                       user_id: '121',
+                       user_id: '5',
                    }),
                }).then((response) => response.json())
                 .then((json) => {

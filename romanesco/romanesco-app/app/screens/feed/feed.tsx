@@ -25,7 +25,7 @@ export default class Feed extends React.Component {
             <ScrollView>
                 <FeedEntry navigation={this.props.navigation} id_type = 'all' id_value = '0'> </FeedEntry>
             </ScrollView>
-            <NewButton/>
+            <NewButton navigation={this.props.navigation}></NewButton>
         </View>
 
     )

@@ -9,13 +9,18 @@ import React from 'react';
 import { StyleSheet, Alert, Text, ScrollView, Image, Button, View, TouchableOpacity } from 'react-native';
 import Feed from './app/screens/feed/feed';
 import { UserProfile } from './app/screens/profile/profile';
+import  InputPrompt  from './app/screens/input/inputPrompt';
+import  InputBarcode  from './app/screens/input/inputBarcode';
+import  InputBarcodeScanned  from './app/screens/input/inputBarcodeScanned';
+import  InputStoreCategory  from './app/screens/input/inputStoreCategory';
+import  InputStoreFeedback  from './app/screens/input/inputStoreFeedback';
 import  Map  from './app/screens/map/map';
 import  Stores  from './app/screens/stores/stores';
 import  SignIn from './app/screens/signin/signin';
 import  SignUp from './app/screens/signin/signup';
 import  { StoreProfile } from './app/screens/stores/storeProfile';
 import  ReviewList from './app/screens/reviews/reviewList';
-import { NewButton } from './app/components/newButton/newButton';
+// import { NewButton } from './app/components/newButton/newButton';
 import { HomeScreen } from './app/screens/home/home';
 import { ShoppingList } from './app/screens/shoppingList/shoppingListEdit';
 import { ShoppingListList } from './app/screens/shoppingList/shoppingListList';
@@ -143,12 +148,6 @@ function FeedTabNav() {
           component={Feed}
           options={{ headerShown: false }}
         />
-        <FeedStack.Screen 
-          name="NewButton"
-          component={NewButton}
-          options={{ headerShown: false,
-           }}
-        />        
       </FeedStack.Navigator>
     );
 }
@@ -193,13 +192,6 @@ function StoreTabNav() {
     );
 }
 
-        // <StoreStack.Screen
-        //     name="StoreProfile"
-        //     component={StoreProfile}
-        //     options={{ headerShown: false }}
-        // />
-
-
 const ProfileStack = createStackNavigator();
 
 function ProfileTabNav() {
@@ -216,6 +208,31 @@ function ProfileTabNav() {
             component={ReviewList}
             options={{ headerShown: false }}
           />
+        <ProfileStack.Screen 
+          name="InputPrompt"
+          component={InputPrompt}
+          options={{ headerShown: false }}
+        />        
+        <ProfileStack.Screen 
+          name="InputBarcode"
+          component={InputBarcode}
+          options={{ headerShown: false }}
+        />                
+        <ProfileStack.Screen 
+          name="InputBarcodeScanned"
+          component={InputBarcodeScanned}
+          options={{ headerShown: false }}
+        />     
+        <ProfileStack.Screen 
+          name="InputStoreCategory"
+          component={InputStoreCategory}
+          options={{ headerShown: false }}
+        />
+        <ProfileStack.Screen 
+          name="InputStoreFeedback"
+          component={InputStoreFeedback}
+          options={{ headerShown: false }}
+        />                           
       </ProfileStack.Navigator>
     );
 }
