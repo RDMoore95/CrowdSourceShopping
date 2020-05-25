@@ -15,6 +15,7 @@ import  SignIn from './app/screens/signin/signin';
 import  SignUp from './app/screens/signin/signup';
 import  { StoreProfile } from './app/screens/stores/storeProfile';
 import  ReviewList from './app/screens/reviews/reviewList';
+import { NewButton } from './app/components/newButton/newButton';
 import { HomeScreen } from './app/screens/home/home';
 import { ShoppingList } from './app/screens/shoppingList/shoppingListEdit';
 import { ShoppingListList } from './app/screens/shoppingList/shoppingListList';
@@ -142,6 +143,12 @@ function FeedTabNav() {
           component={Feed}
           options={{ headerShown: false }}
         />
+        <FeedStack.Screen 
+          name="NewButton"
+          component={NewButton}
+          options={{ headerShown: false,
+           }}
+        />        
       </FeedStack.Navigator>
     );
 }
