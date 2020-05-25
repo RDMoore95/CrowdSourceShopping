@@ -21,8 +21,8 @@ import { Switch } from 'react-native-switch';
 // To get feed entries to fill screen
 let deviceWidth = Dimensions.get('window').width
 
-var url = "http://192.168.1.7:5000";
-// var url = "http://flip1.engr.oregonstate.edu:5005";
+// var url = "http://192.168.1.7:5000";
+var url = "http://flip1.engr.oregonstate.edu:5005";
 
 export default class InputBarcodeScanned extends React.Component {  
 
@@ -35,9 +35,11 @@ export default class InputBarcodeScanned extends React.Component {
       isLoading: true,
       refresh: false,
       barcodeData: this.props.route.params.barcodeData,
-      text: '',
+      item_name: 'Known',
       price: '',
       sale: false,
+      store_id: '67',
+      user_id: '9',
     };
   }
 
@@ -61,48 +63,32 @@ export default class InputBarcodeScanned extends React.Component {
 
 
   // Adding item to database
-  addItem(){
+  addPriceFeedback(){
 
-    fetch(url + '/addItem/', {
+    fetch(url + '/addPriceFeedback/', {
                    method: 'POST',
                    headers: {
                        Accept: 'application/json',
                        'Content-Type': 'application/json',
                    },
                    body: JSON.stringify({
-                       user_id: '5',
-                       text: this.state.text,
+                       user_id: this.state.user_id,
+                       item_name: this.state.item_name,
+                       barcodeData: this.state.barcodeData,
                        price: this.state.price,
-                       val: this.state.val,
+                       sale: this.state.sale,
+                       store_id: this.state.store_id,
+                   })
     })
-    })
-    console.warn("Submit")
-    console.warn(this.state.text)
-    console.warn(this.state.price)
-    console.warn(this.state.val)
-
   }
 
-  addPrice(){
-
-    console.warn("Submit")
-    console.warn(this.state.text)
-    console.warn(this.state.price)
-    console.warn(this.state.val)
-
-  }
-
-
-  // Render each feed entry in a flatlist
   render() {
-
-    // console.log(this.props.route.params.barcodeData);
-    // console.log(this.props);
 
       if( this.state.isLoading )
         return null;
 
       // KNOWN ITEM
+      // Show item name
       if ( this.state.data[0]["item_found"] == '1' ){
 
         return(
@@ -111,6 +97,8 @@ export default class InputBarcodeScanned extends React.Component {
 
           <View style={styles.container}>
 
+          <TouchableWithoutFeedback onPress={ () => { Keyboard.dismiss() } }>
+
           <View style={{ flex: 1, padding: 5, alignSelf: "center", backgroundColor: "#fff"}}>
 
                   <View style={{backgroundColor:'#fff', padding: 10}}></View>      
@@ -118,39 +106,55 @@ export default class InputBarcodeScanned extends React.Component {
                   <View style={styles.feedBox}>
 
                       <Text
-                        style={{height: 40}}
-                        fontSize = {26}                        
+                        style={{ fontSize: 26, textAlign: 'center' }}                    
+                      >{this.state.barcodeData}</Text>
+
+                      <View style={{backgroundColor:'#fff', padding: 10}}></View>
+
+                      <Text
+                        style={{ fontSize: 20, textAlign: 'center' }}                    
                       >{this.state.data[0]["item_name"]}</Text>
 
-                      <View style={{backgroundColor:'#fff', padding: 3}}></View>
+                      <View style={{backgroundColor:'#fff', padding: 10}}></View>
 
                       <TextInput
-                        style={{height: 40}}
-                        fontSize = {26}
-                        placeholder="Price"
+                        style={{height: 40, fontSize: 20, textAlign: 'center' }}
+                        placeholder="Enter Price"
                         keyboardType={'numeric'}
+                        defaultValue={this.state.price}
+                        onChangeText={(price) => this.setState({price})}
                       />
 
-                      <View style={{backgroundColor:'#fff', padding: 3}}></View>
+                      <View style={{backgroundColor:'#fff', padding: 10}}></View>
 
-                      <Text fontSize={26} color="#32325D">1234</Text>
-                      <Text fontSize={26} color="#32325D">+5 Reputation</Text>
+                      <Text
+                        style={{ fontSize: 20, textAlign: 'center' }}                    
+                      >Item on Sale?</Text>
 
+                      <View style={{backgroundColor:'#fff', padding: 5}}></View>
+
+                      <View style={{alignItems: 'center'}}>
                       <Switch
-                      value={true}
-                      onValueChange={(val) => console.log(val)}
+                      value={false}
+                      onValueChange={(sale) => this.setState({sale})}
                       disabled={false}
-                      activeText={'On'}
-                      inActiveText={'Off'}
+                      activeText={'Yes'}
+                      inActiveText={'No'}
                       backgroundActive={'green'}
                       backgroundInactive={'gray'}
                       circleActiveColor={'#30a566'}
-                      circleInActiveColor={'#000000'}/>
+                      circleInActiveColor={'#000000'}
+                      />
+                      </View>
+
+                      <View style={{backgroundColor:'#fff', padding: 20}}></View>
 
                       <Button
-                      title = 'Submit Price'
+                      title = 'Submit'
                       onPress={() => {
-                        this.props.navigation.navigate("InputPrompt", {submissionSuccess: true});}}
+                        this.addPriceFeedback()
+                        this.props.navigation.navigate("InputPrompt", {submissionSuccess: true});
+                      }}
                       >                      
                       </Button>
 
@@ -159,6 +163,8 @@ export default class InputBarcodeScanned extends React.Component {
                   <View style={{backgroundColor:'#fff', padding: 10}}></View>
 
            </View>
+
+           </TouchableWithoutFeedback>
 
            </View>       
 
@@ -169,6 +175,7 @@ export default class InputBarcodeScanned extends React.Component {
        }  
 
        // UNKNOWN ITEM
+       // Prompt user to enter name
         return(
 
           <>
@@ -204,9 +211,7 @@ export default class InputBarcodeScanned extends React.Component {
                       <TextInput
                         style={{height: 40, fontSize: 20, textAlign: 'center' }}
                         placeholder="Enter Name"
-                        // onChangeText={this.state.text => setText(this.state.text)}
-                        defaultValue={this.state.text}
-                        onChangeText={(text) => this.setState({text})}
+                        onChangeText={(item_name) => this.setState({item_name})}
                       />
 
                       <View style={{backgroundColor:'#fff', padding: 10}}></View>
@@ -230,7 +235,7 @@ export default class InputBarcodeScanned extends React.Component {
                       <View style={{alignItems: 'center'}}>
                       <Switch
                       value={false}
-                      onValueChange={(val) => this.setState({val})}
+                      onValueChange={(sale) => this.setState({sale})}
                       disabled={false}
                       activeText={'Yes'}
                       inActiveText={'No'}
@@ -246,7 +251,7 @@ export default class InputBarcodeScanned extends React.Component {
                       <Button
                       title = 'Submit'
                       onPress={() => {
-                        this.addItem() // Add item to database
+                        this.addPriceFeedback() // Add item to database
                         this.props.navigation.navigate("InputPrompt", {submissionSuccess: true});
                       }}
                       >                      

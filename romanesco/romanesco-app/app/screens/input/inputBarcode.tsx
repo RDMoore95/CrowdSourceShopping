@@ -26,7 +26,6 @@ export default function InputBarcode() {
   }, []);
 
   handleBarCodeScanned = ({ type, data }) => {
-    // alert(`Bar code with type ${type} and data ${data} has been scanned!`);
     let barcodeType = type;
     let barcodeData = data;
     navigation.navigate("InputBarcodeScanned", {barcodeData: barcodeData})

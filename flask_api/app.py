@@ -12,8 +12,8 @@ import pandas as pd
 app = Flask(__name__)
 
 # Get MySQL credentials
-exec(open("/Users/walkerag/Documents/osu/cs467/project_paths.py").read())
-# exec(open("./project_paths.py").read())
+# exec(open("/Users/walkerag/Documents/osu/cs467/project_paths.py").read())
+exec(open("./project_paths.py").read())
 
 # DB connection
 db_connection = create_engine(db_connection_str)
@@ -237,6 +237,118 @@ def pullStoreCategory():
 	return result_json
 
 
+def insertStoreFeedback(user_id, store_id, store_feedback_text, store_feedback_category_id, store_feedback_positive):
+
+	print("Adding store feedback")
+
+	# ADD STORE FEEDBACK
+	if store_feedback_text != '':
+
+		add_store_feedback_query = '''
+		INSERT INTO Store_Feedback (store_id, user_id, time_added, store_feedback_text, store_feedback_category_id)
+		SELECT 
+		{store_id} as store_id
+		, {user_id} as user_id
+		, NOW() as time_added
+		, '{store_feedback_text}' as store_feedback_text
+		, {store_feedback_category_id} as store_feedback_category_id
+		;
+		'''
+
+		add_store_feedback_query_fmt = add_store_feedback_query.format(
+			store_id = store_id
+			, user_id = user_id
+			, store_feedback_text = store_feedback_text
+			, store_feedback_category_id = store_feedback_category_id)
+
+		print(add_store_feedback_query_fmt)
+
+		with db_connection.connect() as connection:
+			result = connection.execute(add_store_feedback_query_fmt)
+
+
+def insertPriceFeedback(user_id, item_name, barcodeData, price, sale, store_id):
+
+	print("Adding price feedback")
+	print(item_name)
+
+	# ADD ITEM TO DATABASE IF NEW
+	if (item_name != 'Known') & (item_name != ''):
+
+		print("New item found")
+		print(item_name)
+
+		add_item_query = '''
+		INSERT INTO Item (item_name, item_upc, item_description, date_added, item_size, item_size_unit)
+		SELECT 
+		'{item_name}' as item_name
+		, {barcodeData} as item_upc
+		, 'Unknown' as item_description
+		, NOW() as date_added
+		, 0 as item_size
+		, 'Unknown' as item_size_unit;
+		'''
+
+		add_item_query_fmt = add_item_query.format(item_name = item_name
+			, barcodeData = barcodeData)
+
+		print(add_item_query_fmt)
+
+		with db_connection.connect() as connection:
+			result = connection.execute(add_item_query_fmt)
+
+
+	# GET ITEM_ID
+	get_item_id_query = '''
+		SELECT item_id 
+		FROM Item WHERE item_upc = {barcodeData}
+		'''.format(barcodeData = barcodeData)
+	print(get_item_id_query)	
+	item_id_dat = pd.read_sql(get_item_id_query, con=db_connection)
+
+	# If item exists, try to add price
+	if item_id_dat.shape[0]	== 1:
+
+		# Get item_id
+		item_id = item_id_dat.iloc[0]['item_id']
+		print(item_id)
+
+		# Create sale flag
+		sale_flag = 0
+		if sale:
+			sale_flag = 1
+	
+		# Check if valid price, if so add feedback
+		if (float(price) > 0) & (float(price) < 100):
+
+			print("Adding price feedback")	
+			print(price)
+
+			add_price_feedback_query = '''
+			INSERT INTO Price_Feedback (store_id, user_id, item_id, price, price_currency, sale_flag, price_feedback_text, time_added)
+			SELECT 
+			{store_id} as store_id
+			, {user_id} as user_id
+			, {item_id} as item_id
+			, {price} as price
+			, 'usd' as price_currency
+			, {sale_flag} as sale_flag
+			, 'None' as price_feedback_text
+			, NOW() as time_added;
+			'''
+
+			add_price_feedback_query_fmt = add_price_feedback_query.format(user_id = user_id
+				, store_id = store_id
+				, item_id = item_id
+				, price = price
+				, sale_flag = sale_flag)
+
+			print(add_price_feedback_query_fmt)
+
+			with db_connection.connect() as connection:
+				result = connection.execute(add_price_feedback_query_fmt)
+
+
 def pullBarcode(barcodeData):
 
 	print("Pulling barcode data")
@@ -248,7 +360,7 @@ def pullBarcode(barcodeData):
     item_name
     , 1 as item_found
     FROM Item
-    WHERE item_upc = '{barcodeData}'
+    WHERE item_upc = {barcodeData}
     LIMIT 1
     )
     UNION ALL
@@ -269,7 +381,6 @@ def pullBarcode(barcodeData):
 	result_json = result.to_json(orient = 'records')
 	print(result_json)
 	return result_json
-
 
 
 @app.route('/getFavoriteStores/', methods=['POST', 'GET'])
@@ -318,14 +429,34 @@ def getStoreCategory():
 	result_json = pullStoreCategory()
 	return result_json, 201 
 
-@app.route('/addItem/', methods=['POST', 'GET'])
-def addItem():
+@app.route('/addStoreFeedback/', methods=['POST'])
+def addStoreFeedback():
 
-	print("Adding Item")
-	print(request.json)
-	return 0
-	# result_json = pullBarcode(request.json['barcodeData'])
-	# return result_json, 201 
+	print("Adding store feedback")
+	insertStoreFeedback(
+		request.json['user_id']
+		, request.json['store_id']		
+		, request.json['store_feedback_text']
+		, request.json['store_feedback_category_id']
+		, request.json['store_feedback_positive']
+	)
+
+	return "good", 201
+
+@app.route('/addPriceFeedback/', methods=['POST'])
+def addPriceFeedback():
+
+	print("Adding price feedback")
+	insertPriceFeedback(
+		request.json['user_id']
+		, request.json['item_name']
+		, request.json['barcodeData']
+		, request.json['price']
+		, request.json['sale']
+		, request.json['store_id']
+	)
+
+	return "good", 201
 
 if __name__ == '__main__':
     app.run(debug=True)

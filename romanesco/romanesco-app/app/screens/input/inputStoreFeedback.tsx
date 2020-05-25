@@ -21,8 +21,8 @@ import { Switch } from 'react-native-switch';
 // To get feed entries to fill screen
 let deviceWidth = Dimensions.get('window').width
 
-var url = "http://192.168.1.7:5000";
-// var url = "http://flip1.engr.oregonstate.edu:5005";
+// var url = "http://192.168.1.7:5000";
+var url = "http://flip1.engr.oregonstate.edu:5005";
 
 export default class InputStoreFeedback extends React.Component {  
 
@@ -31,13 +31,13 @@ export default class InputStoreFeedback extends React.Component {
     super(props)
 
     this.state = {
-      data: [],
       isLoading: true,
-      refresh: false,
+      store_id: '67',
+      user_id: '9',      
       store_feedback_category: this.props.route.params.store_feedback_category,
-      store_feedback_category_id: this.props.route.params.store_feedback_category_id,
-      text: '',
-      positive: false,
+      store_feedback_text: '',
+      store_feedback_category_id: this.props.route.params.store_feedback_category_id,      
+      store_feedback_positive: false,
     };
   }
 
@@ -51,11 +51,12 @@ export default class InputStoreFeedback extends React.Component {
                        'Content-Type': 'application/json',
                    },
                    body: JSON.stringify({
-                       user_id: '5',
-                       text: this.state.text,
+                       user_id: this.state.user_id,
+                       store_id: this.state.store_id,
+                       store_feedback_text: this.state.store_feedback_text,
                        store_feedback_category_id: this.state.store_feedback_category_id,
-                       store_id: '1',
-                     })
+                       store_feedback_positive: this.state.store_feedback_positive,
+                   })
     })
 
   }
@@ -84,11 +85,9 @@ export default class InputStoreFeedback extends React.Component {
                       <View style={{backgroundColor:'#fff', padding: 3}}></View>
 
                       <TextInput
-                        style={{height: 120, fontSize: 20, textAlign: 'center' }}
+                        style={{height: 120, fontSize: 26, textAlign: 'center'}}
                         placeholder="Tell us about your trip"
-                        // onChangeText={this.state.text => setText(this.state.text)}
-                        defaultValue={this.state.text}
-                        onChangeText={(text) => this.setState({text})}
+                        onChangeText={(store_feedback_text) => this.setState({store_feedback_text})}
                       />
 
                       <View style={{backgroundColor:'#fff', padding: 3}}></View>
@@ -102,7 +101,7 @@ export default class InputStoreFeedback extends React.Component {
                       <View style={{alignItems: 'center'}}>
                       <Switch
                       value={false}
-                      onValueChange={(val) => this.setState({val})}
+                      onValueChange={(store_feedback_positive) => this.setState({store_feedback_positive})}
                       disabled={false}
                       activeText={'Yes'}
                       inActiveText={'No'}
@@ -113,13 +112,14 @@ export default class InputStoreFeedback extends React.Component {
                       />
                       </View>
 
-                      <View style={{backgroundColor:'#fff', padding: 5}}></View>
+                      <View style={{backgroundColor:'#fff', padding: 10}}></View>
 
                       <Button
                       title = 'Submit Feedback'
                       onPress={() => {
                         this.addStoreFeedback()
-                        this.props.navigation.navigate("InputPrompt", {submissionSuccess: true});}}
+                        this.props.navigation.navigate("InputPrompt", {submissionSuccess: true})
+                        ;}}
                       >                      
                       </Button>
 

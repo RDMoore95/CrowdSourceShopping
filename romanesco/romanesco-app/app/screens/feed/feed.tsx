@@ -1,5 +1,9 @@
 import React, {Component} from 'react';
-import { StyleSheet, Text, View, Button,  ScrollView } from 'react-native';
+import { StyleSheet, 
+  Text, 
+  View, 
+  Button, 
+  ScrollView} from 'react-native';
 import { FeedEntry } from './components/feedEntry';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
@@ -11,7 +15,6 @@ import {NewButton} from "../../components/newButton/newButton";
 export default class Feed extends React.Component {
 
   state = {
-      
     }
 
     onChangeText = (key, val) => {
@@ -22,8 +25,9 @@ export default class Feed extends React.Component {
   return (
 
         <View style={this.styles.container}>
-            <ScrollView>
-                <FeedEntry navigation={this.props.navigation} id_type = 'all' id_value = '0'> </FeedEntry>
+            <ScrollView
+            >
+            <FeedEntry navigation={this.props.navigation} id_type = 'all' id_value = '0'> </FeedEntry>
             </ScrollView>
             <NewButton navigation={this.props.navigation}></NewButton>
         </View>

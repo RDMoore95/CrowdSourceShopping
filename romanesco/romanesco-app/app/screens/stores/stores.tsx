@@ -90,8 +90,6 @@ export default class StoreFeed extends React.Component {
   render() {
 
     const { data, isLoading } = this.state;
-    // console.log(data);
-    // console.warn(url);
 
     return (
 

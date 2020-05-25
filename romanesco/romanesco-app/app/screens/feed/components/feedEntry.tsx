@@ -71,34 +71,25 @@ export class FeedEntry extends React.Component {
     }
     _handleTextReady = () => {}
 
-    // // Get feed entries    
-    // componentDidMount() {
-    //     fetch('http://flip1.engr.oregonstate.edu:4545/feedEntries')
-    //     .then((response) => response.json())
-    //     .then((json) => {this.setState({ data: json });})
-    //     .catch((error) => console.error(error))
-    //     .finally(() => {this.setState({ isLoading: false });})
-    // }  
-
-    // Get feed entries
-    componentDidMount() {
-      fetch(url + '/getFeedEntries/', {
-           method: 'POST',
-           headers: {
-               Accept: 'application/json',
-               'Content-Type': 'application/json',
-           },
-           body: JSON.stringify({
-               id_type: this.props.id_type,
-               id_value: this.props.id_value,
-           }),
-       }).then((response) => response.json())
-        .then((json) => {
-          this.setState({ data: json });
-        }).finally(() => {
-          this.setState({ isLoading: false });
-        });       
-    }
+  // Get feed entries
+  componentDidMount() {
+    fetch(url + '/getFeedEntries/', {
+         method: 'POST',
+         headers: {
+             Accept: 'application/json',
+             'Content-Type': 'application/json',
+         },
+         body: JSON.stringify({
+             id_type: this.props.id_type,
+             id_value: this.props.id_value,
+         }),
+     }).then((response) => response.json())
+      .then((json) => {
+        this.setState({ data: json });
+      }).finally(() => {
+        this.setState({ isLoading: false });
+      });       
+  }
 
   // Set right colors for icons
   upVote(item) {
@@ -191,15 +182,15 @@ export class FeedEntry extends React.Component {
 
                     <View style={styles.feedBoxReviewText}>
 
-                    <Text size={16} color="#32325D">Feedback Type: {item.store_feedback_category}, {item.store_feedback_text}</Text>
+                    <Text size={16} color="#32325D">Feedback Type: {item.store_feedback_category}</Text>
                     <View style={{backgroundColor:'#fff', flex:1 ,padding: 1.5}}></View>
                     <ReadMore numberOfLines={3}
                     renderTruncatedFooter = {this._renderTruncatedFooter}
                     renderRevealedFooter = {this._renderRevealedFooter}
                     onReady={this._handleTextReady}
                     >
-                    <Text size={16} color="#32325D">My experience was ABSOLUTELY great/terrible! 
-                    Writing a longer placeholder review so we know how it will display and make sure the text cuts off after three long long lines
+                    <Text size={16} color="#32325D">
+                    {item.store_feedback_text}
                     </Text>
                     </ReadMore>
 
@@ -235,17 +226,8 @@ export class FeedEntry extends React.Component {
       
 }
 
-
-// <TouchableHighlight
-//     onPress={()=>{console.log("pressed");}}
-//     onShowUnderlay={()=>this.setState({touchableHighlightMouseDown:true})}
-//     onHideUnderlay={()=>this.setState({touchableHighlightMouseDown:false})}>
-//     <View>
-//     <Icon name="ios-thumbs-up" size={25} color={this.state.isCompleted ? '#1DA664' : '#DE5347'}/>
-//     </View>
-// </TouchableHighlight>
-
-
+// My experience was ABSOLUTELY great/terrible! 
+// Writing a longer placeholder review so we know how it will display and make sure the text cuts off after three long long lines
 
 // withNavigation returns a component that wraps MyBackButton and passes in the
 // navigation prop
