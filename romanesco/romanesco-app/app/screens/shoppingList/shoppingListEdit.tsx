@@ -36,6 +36,7 @@ export class ShoppingList extends React.Component {
 
       this.state = {
         data: [],
+        tags: [],
         isLoading: false,
         refresh: false,
         firstRender: true,
@@ -91,7 +92,16 @@ export class ShoppingList extends React.Component {
                 {name: "Yeast", price: "1.00", quantity: "3", units: "package"}, 
                 {name: "Potatoes", price: "5.00", quantity: "5", units: "LBs"}
             ]
-     }
+            
+        })
+        this.setState(
+        {
+            tags: [
+               {name: 'Baking'},
+               {name: 'Cooking'},
+               {name: 'Frozen'},
+           ]
+        }
      )
   }
   
@@ -183,8 +193,22 @@ export class ShoppingList extends React.Component {
                               </View>
                             </Modal>
 
-                    <View style={{flexDirection: "row"}}>
-                        <Button style={styles.tag1}
+                    <View style={{flexDirection: "row"}} >
+                        <FlatList
+                                data={this.state.tags}
+                                horizontal = {true}
+                                ItemSeparatorComponent={this.renderSeparator}
+                                ListHeaderComponent = { this.renderSeparator }
+                                renderItem={({ item, id }) => (
+                                <View>
+                                    <View flex>
+                                        <Text>{item.name}</Text>
+                                    </View>
+                                </View>)}
+                                keyExtractor={(item, index) => index.toString()}
+                            />
+                        <Button flex
+                        style={styles.tag1}
                         onPress={() => this.setModalTag1Visible()}>
                             <Text>Add Tag</Text>
                         </Button>
@@ -224,85 +248,7 @@ export class ShoppingList extends React.Component {
                               </View>
                             </Modal>
 
-                        <Button style={styles.tag2}
-                        onPress={() => this.setModalTag2Visible()}>
-                            <Text>Add Tag</Text>
-                        </Button>
-
-                        <Modal
-                                animationType="slide"
-                                transparent={false}
-                                visible={this.state.modalTag2Visible}
-                                onRequestClose={() => {
-                                  Alert.alert("Modal has been closed.");
-                                }}
-                            >
-                              <View style={styles.centeredView}>
-                                <View style={styles.modalView}>
-                                  <Text style={styles.modalText}>Tag 2!</Text>
-                                  <TextInput
-                                    style={styles.input}
-                                    placeholder=' Tag 1'
-                                    autoCapitalize="none"
-                                    maxLength={50}
-                                    placeholderTextColor='white'
-                                    onChangeText={val => this.onChangeText('text_buffer', val) }
-                                  />
-                                  <Button
-                                    style={styles.listButton}
-                                    onPress={() => 
-                                      this.setModalTag2Visible(!this.state.modalTag2Visible) }>
-                                    <Text>Submit</Text>
-                                  </Button>  
-                                  <Button
-                                    style={styles.listButton}
-                                    onPress={() => 
-                                      this.setModalTag2Visible(!this.state.modalTag2Visible) }>
-                                    <Text>Cancel</Text>
-                                  </Button>
-                                </View>
-                              </View>
-                            </Modal>
-
-                        <Button style={styles.tag3}
-                        onPress={() => this.setModalTag3Visible()}>
-                            <Text>Add Tag</Text>
-                        </Button>
-
-                        <Modal
-                                animationType="slide"
-                                transparent={false}
-                                visible={this.state.modalTag3Visible}
-                                onRequestClose={() => {
-                                  Alert.alert("Modal has been closed.");
-                                }}
-                            >
-                              <View style={styles.centeredView}>
-                                <View style={styles.modalView}>
-                                  <Text style={styles.modalText}>Tag 3!</Text>
-                                  <TextInput
-                                    style={styles.input}
-                                    placeholder=' Tag 3'
-                                    autoCapitalize="none"
-                                    maxLength={50}
-                                    placeholderTextColor='white'
-                                    onChangeText={val => this.onChangeText('text_buffer', val) }
-                                  />
-                                  <Button
-                                    style={styles.listButton}
-                                    onPress={() => 
-                                      this.setModalTag3Visible(!this.state.modalTag3Visible) }>
-                                    <Text>Submit</Text>
-                                  </Button>  
-                                  <Button
-                                    style={styles.listButton}
-                                    onPress={() => 
-                                      this.setModalTag3Visible(!this.state.modalTag3Visible) }>
-                                    <Text>Cancel</Text>
-                                  </Button>
-                                </View>
-                              </View>
-                            </Modal>
+                        
 
 
                     </View>
