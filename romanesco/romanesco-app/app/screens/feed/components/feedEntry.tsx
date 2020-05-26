@@ -19,7 +19,7 @@ import Images from '../../../assets/imgs';
 // To get feed entries to fill screen
 let deviceWidth = Dimensions.get('window').width
 
-//var url = "http://192.168.1.7:5000";
+//var url = "localhost:5000";
 var url = "http://flip1.engr.oregonstate.edu:5005";
 
 export class FeedEntry extends React.Component {
