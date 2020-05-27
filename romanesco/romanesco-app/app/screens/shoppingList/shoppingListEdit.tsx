@@ -88,18 +88,18 @@ export class ShoppingList extends React.Component {
      this.setState(
          {
              data:  [
-                {name: "TP", price: "0.99", quantity: "1", units: "package"}, 
-                {name: "Yeast", price: "1.00", quantity: "3", units: "package"}, 
-                {name: "Potatoes", price: "5.00", quantity: "5", units: "LBs"}
+                {id: "1", name: "TP", price: "0.99", quantity: "1", units: "package"}, 
+                {id: "2", name: "Yeast", price: "1.00", quantity: "3", units: "package"}, 
+                {id: "3", name: "Potatoes", price: "5.00", quantity: "5", units: "LBs"}
             ]
             
         })
         this.setState(
         {
             tags: [
-               {name: 'Baking'},
-               {name: 'Cooking'},
-               {name: 'Frozen'},
+               {id: "1", name: 'Baking'},
+               {id: "2", name: 'Cooking'},
+               {id: "3", name: 'Frozen'},
            ]
         }
      )
@@ -193,7 +193,12 @@ export class ShoppingList extends React.Component {
                               </View>
                             </Modal>
 
-                    <View style={{flexDirection: "row"}} >
+                    <View  >
+                        <Button flex
+                            style={styles.tag1}
+                            onPress={() => this.setModalTag1Visible()}>
+                                <Text>Add Tag</Text>
+                        </Button>
                         <FlatList
                                 data={this.state.tags}
                                 horizontal = {true}
@@ -205,13 +210,9 @@ export class ShoppingList extends React.Component {
                                         <Text>{item.name}</Text>
                                     </View>
                                 </View>)}
-                                keyExtractor={(item, index) => index.toString()}
+                                keyExtractor={(item, id) => id.toString()}
                             />
-                        <Button flex
-                        style={styles.tag1}
-                        onPress={() => this.setModalTag1Visible()}>
-                            <Text>Add Tag</Text>
-                        </Button>
+                        
 
                         <Modal
                                 animationType="slide"
@@ -270,7 +271,7 @@ export class ShoppingList extends React.Component {
                                         />
                                     </View>
                                 </View>)}
-                                keyExtractor={(item, index) => index.toString()}
+                                keyExtractor={(item, id) => id.toString()}
                             />
                             )}                
                     </View>
