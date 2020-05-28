@@ -11,6 +11,7 @@ import {
 import { useEffect, useState } from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
+import { useNavigation } from '@react-navigation/native';
 
 import { Block, Text, theme } from "galio-framework";
 import { Button } from "../../components";
@@ -32,7 +33,9 @@ let deviceWidth = Dimensions.get('window').width
 // var url = "http://192.168.1.7:5000";
 var url = "http://flip1.engr.oregonstate.edu:5005";
 
-export function UserProfile( { route, navigation }, {} ) {
+export function UserProfile( { route }, {} ) {
+
+    const navigation = useNavigation();
 
     // const { user_id } = route.params;
     const { user_id } = useState('9');
@@ -161,7 +164,7 @@ export function UserProfile( { route, navigation }, {} ) {
 
                   </Block>
 
-                  <FeedEntry id_type = 'user' id_value = '9'> </FeedEntry>
+                  <FeedEntry navigation={navigation} id_type = 'user' id_value = '9'> </FeedEntry>
                   <NewButton/>
 
                 

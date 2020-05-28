@@ -14,6 +14,7 @@ import { Block, Text, theme } from "galio-framework";
 import { Button } from "../../components";
 import { argonTheme } from "../../constants";
 import { HeaderHeight } from "../../constants/utils";
+import { useNavigation } from '@react-navigation/native';
 
 import Images from '../../assets/imgs';
 
@@ -21,7 +22,9 @@ const { width, height } = Dimensions.get("screen");
 const thumbMeasure = (width - 48 - 32) / 3;
 let deviceWidth = Dimensions.get('window').width
 
-export function StoreProfile( { route, navigation }, {} ) {
+export function StoreProfile( { route }, {} ) {
+
+    const navigation = useNavigation();
 
     // Get store_id
     const { store_id } = route.params;
@@ -139,7 +142,7 @@ export function StoreProfile( { route, navigation }, {} ) {
                   </Block>
                   </Block>
 
-                  <FeedEntry id_type = 'store' id_value = {store_id}> </FeedEntry>
+                  <FeedEntry navigation={navigation} id_type = 'store' id_value = {store_id}> </FeedEntry>
               
             </ScrollView>
  
@@ -148,6 +151,8 @@ export function StoreProfile( { route, navigation }, {} ) {
 
         )
 };
+
+
 
 const styles = StyleSheet.create({
   profile: {
