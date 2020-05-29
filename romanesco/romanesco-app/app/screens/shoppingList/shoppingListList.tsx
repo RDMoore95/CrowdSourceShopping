@@ -21,7 +21,7 @@ import { Images, argonTheme } from "../../constants";
 import { HeaderHeight } from "../../constants/utils";
 import Icon from 'react-native-vector-icons/Ionicons';
 
-import { NewModal } from "./components/newModal";
+import { NewButton } from "../../components/newButton/newButton";
 
 const { width, height } = Dimensions.get("screen");
 
@@ -175,7 +175,6 @@ export class ShoppingListList extends React.Component {
                                     <View style={styles.listRow}>
                                         <View style={{flex: 4}}>
                                             <Text>{item.name}</Text>
-                                            <Text>Main tag: {item.tag}</Text>
                                         </View>
                                         <View style= {{flex: 1}}>
                                         <Icon
@@ -190,6 +189,7 @@ export class ShoppingListList extends React.Component {
                               )}
                             />
                           )}
+                         
                         </View>
                 </Block>
                 
@@ -197,6 +197,7 @@ export class ShoppingListList extends React.Component {
               </Block>
 
         </Block>
+        <NewButton />
       </ScrollView>
 
         )

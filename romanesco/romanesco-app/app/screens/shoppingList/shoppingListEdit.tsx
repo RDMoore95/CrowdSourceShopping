@@ -193,66 +193,6 @@ export class ShoppingList extends React.Component {
                               </View>
                             </Modal>
 
-                    <View  >
-                        <Button flex
-                            style={styles.tag1}
-                            onPress={() => this.setModalTag1Visible()}>
-                                <Text>Add Tag</Text>
-                        </Button>
-                        <FlatList
-                                data={this.state.tags}
-                                horizontal = {true}
-                                ItemSeparatorComponent={this.renderSeparator}
-                                ListHeaderComponent = { this.renderSeparator }
-                                renderItem={({ item, id }) => (
-                                <View>
-                                    <View flex>
-                                        <Text>{item.name}</Text>
-                                    </View>
-                                </View>)}
-                                keyExtractor={(item, id) => id.toString()}
-                            />
-                        
-
-                        <Modal
-                                animationType="slide"
-                                transparent={false}
-                                visible={this.state.modalTag1Visible}
-                                onRequestClose={() => {
-                                  Alert.alert("Modal has been closed.");
-                                }}
-                            >
-                              <View style={styles.centeredView}>
-                                <View style={styles.modalView}>
-                                  <Text style={styles.modalText}>Tag 1!</Text>
-                                  <TextInput
-                                    style={styles.input}
-                                    placeholder=' Tag 1'
-                                    autoCapitalize="none"
-                                    maxLength={50}
-                                    placeholderTextColor='white'
-                                    onChangeText={val => this.onChangeText('text_buffer', val) }
-                                  />
-                                  <Button
-                                    style={styles.listButton}
-                                    onPress={() => 
-                                      this.setModalTag1Visible(!this.state.modalTag1Visible) }>
-                                    <Text>Submit</Text>
-                                  </Button>  
-                                  <Button
-                                    style={styles.listButton}
-                                    onPress={() => 
-                                      this.setModalTag1Visible(!this.state.modalTag1Visible) }>
-                                    <Text>Cancel</Text>
-                                  </Button>
-                                </View>
-                              </View>
-                            </Modal>
-
-                        
-
-
-                    </View>
                 <Block>
                     <View style={{ flex: 1, padding: 24 }}>
                     {this.state.isLoading ? <ActivityIndicator/> : (
@@ -263,8 +203,7 @@ export class ShoppingList extends React.Component {
                                 renderItem={({ item, id }) => (
                                 <View>
                                     <View style={styles.listRow}>
-                                        <Text>Name: {item.name}</Text>
-                                        <Text>Price: {item.price}</Text>
+                                        <Text>{item.name}</Text>
                                         <Icon
                                           name="ios-close-circle-outline" size={25}
                                           onPress={() => Alert.alert('Remove Item')}
