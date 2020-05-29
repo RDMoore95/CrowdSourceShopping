@@ -178,7 +178,7 @@ export class ShoppingListList extends React.Component {
                                         </View>
                                         <View style= {{flex: 1}}>
                                         <Icon
-                                            name="ios-checkbox-outline" size={25}
+                                            name="ios-arrow-forward" size={25}
                                             onPress={() => this.props.navigation.navigate("ShoppingList")}
                                           />
                                         </View>
