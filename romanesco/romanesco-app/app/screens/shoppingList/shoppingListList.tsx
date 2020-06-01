@@ -21,7 +21,7 @@ import { Images, argonTheme } from "../../constants";
 import { HeaderHeight } from "../../constants/utils";
 import Icon from 'react-native-vector-icons/Ionicons';
 
-import { NewModal } from "./components/newModal";
+import { NewButton } from "../../components/newButton/newButton";
 
 const { width, height } = Dimensions.get("screen");
 
@@ -87,9 +87,9 @@ export class ShoppingListList extends React.Component {
      this.setState(
          {
              data:  [
-                {id: 1, name: "List 1", tag: "Baking", quantity: "1", units: "package"}, 
-                {id: 2, name: "List 2", tag: "Stew", quantity: "3", units: "package"}, 
-                {id: 3, name: "List 3", tag: "Restock", quantity: "5", units: "LBs"}
+                {id: "1", name: "List 1", tag: "Baking", quantity: "1", units: "package"}, 
+                {id: "2", name: "List 2", tag: "Stew", quantity: "3", units: "package"}, 
+                {id: "3", name: "List 3", tag: "Restock", quantity: "5", units: "LBs"}
             ]
      }
      )   
@@ -173,14 +173,13 @@ export class ShoppingListList extends React.Component {
                                 renderItem={({ item, id }) => (
                                 <View>
                                     <View style={styles.listRow}>
-                                        <View flex style={{flex: 4}}>
+                                        <View style={{flex: 4}}>
                                             <Text>{item.name}</Text>
-                                            <Text>Main tag: {item.tag}</Text>
                                         </View>
-                                        <View flex style= {{flex: 1}}>
+                                        <View style= {{flex: 1}}>
                                         <Icon
                                             name="ios-checkbox-outline" size={25}
-                                            onPress={() => this.props.navigation.navigate("ShoppingList", {listID: item.id})}
+                                            onPress={() => this.props.navigation.navigate("ShoppingList")}
                                           />
                                         </View>
                                         
@@ -190,6 +189,7 @@ export class ShoppingListList extends React.Component {
                               )}
                             />
                           )}
+                         
                         </View>
                 </Block>
                 
@@ -197,6 +197,7 @@ export class ShoppingListList extends React.Component {
               </Block>
 
         </Block>
+        <NewButton />
       </ScrollView>
 
         )
