@@ -6,6 +6,7 @@ import android.net.Uri;
 
 import com.facebook.react.PackageList;
 import com.facebook.react.ReactApplication;
+import com.reactnativecommunity.geolocation.GeolocationPackage;
 import com.facebook.react.ReactNativeHost;
 import com.facebook.react.ReactPackage;
 import com.facebook.react.shell.MainReactPackage;
@@ -33,6 +34,8 @@ public class MainApplication extends Application implements ReactApplication {
     null
   );
 
+  new RNFusedLocationPackage() in MainApplication.java
+
   private final ReactNativeHost mReactNativeHost = new ReactNativeHost(this) {
     @Override
     public boolean getUseDeveloperSupport() {
@@ -58,6 +61,14 @@ public class MainApplication extends Application implements ReactApplication {
       } else {
         return UpdatesController.getInstance().getLaunchAssetFile();
       }
+    }
+    
+    @Override
+    protected List<ReactPackage> getPackages() {
+    return Arrays.asList(
+            new MainReactPackage(),
+            new GeolocationPackage()
+      );
     }
 
     @Override

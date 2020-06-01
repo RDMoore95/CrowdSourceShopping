@@ -7,6 +7,7 @@ target 'romanescoapp' do
   rnPrefix = "../node_modules/react-native"
 
   # React Native and its dependencies
+  pod 'react-native-geolocation', path: '../node_modules/@react-native-community/geolocation'
   pod 'FBLazyVector', :path => "#{rnPrefix}/Libraries/FBLazyVector"
   pod 'FBReactNativeSpec', :path => "#{rnPrefix}/Libraries/FBReactNativeSpec"
   pod 'RCTRequired', :path => "#{rnPrefix}/Libraries/RCTRequired"
@@ -40,6 +41,4 @@ target 'romanescoapp' do
   # Automatically detect installed unimodules
   use_unimodules!
 
-  # react-native-cli autolinking
-  use_native_modules!
 end
