@@ -8,7 +8,7 @@ import 'react-native-gesture-handler';
 import React from 'react';
 import { StyleSheet, Alert, Text, ScrollView, Image, Button, View, TouchableOpacity } from 'react-native';
 import Feed from './app/screens/feed/feed';
-import { UserProfile } from './app/screens/profile/profile';
+import UserProfile from './app/screens/profile/profile';
 import  InputPrompt  from './app/screens/input/inputPrompt';
 import  InputBarcode  from './app/screens/input/inputBarcode';
 import  InputBarcodeScanned  from './app/screens/input/inputBarcodeScanned';
@@ -44,7 +44,7 @@ export default function App() {
   return (
     
     <NavigationContainer>
-      <MainStack.Navigator initialRouteName="Romanesco" >
+      <MainStack.Navigator>
       <MainStack.Screen
           name="SignIn"
           component={SignIn}

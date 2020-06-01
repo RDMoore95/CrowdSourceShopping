@@ -10,6 +10,17 @@ const async = require('asyncawait/async');
 const await = require('asyncawait/await');
 const authToken = require('crypto');
 
+if(typeof(String.prototype.trim) === "undefined")
+{
+    String.prototype.trim = function() 
+    {
+        return String(this).replace(/^\s+|\s+$/g, '');
+    };
+}
+
+const interval = function () {
+    console.log("timer");
+}
 
 app.use(bodyParser.json({type:'application/json'}));
 app.use(cors());
@@ -149,6 +160,136 @@ app.get('/mapLatLongUpdate', function(req, res) {
     })
 ))});
 
+const storeExists = async (function (store_street) {
+
+    var q = `SELECT * FROM Store
+                WHERE store_street = ?;`
+
+    con.query(q,[
+        store_street
+    ], function(error, result) {
+
+        if (error) {
+            return (error);
+        }
+
+        else {
+            return result !== false;
+        }
+
+    })
+
+})
+
+const addLocalStores = async (function (lat, long) {
+
+    var q2 = `INSERT INTO Store
+                (store_name, store_lat, store_long, store_active_flag, store_street, store_city, store_state, store_zip)
+            VALUES (?, ?, ?, ?, ?, ?,
+                 (SELECT state_id FROM State
+                     WHERE state_name = ?), ?);`
+
+    var first_request = "https://maps.googleapis.com/maps/api/place/textsearch/json?query=grocery+stores&radius=8000&location="
+    var zip_request = "https://maps.googleapis.com/maps/api/geocode/json?latlng="
+    var subsequent_request = "https://maps.googleapis.com/maps/api/place/textsearch/json?pagetoken="
+    var end_request = "&key=AIzaSyDQCwj-QWjaCb0oicA6xml3rnkw8o_O_X4"
+
+    var full_request = first_request + lat + "," + long + end_request;
+
+    console.log(full_request);
+
+    const first_response = await (fetch(full_request));
+    const first_json = await (first_response.json());
+
+    response_jsons = [first_json];
+
+    // if (first_json.hasOwnProperty("next_page_token")) {
+    //     var second_response = await (fetch(subsequent_request+first_json.next_page_token+end_request));
+    //     var second_json = await (second_response.json());
+    //     console.log(second_json);
+    //     response_jsons.push(second_json);
+    // }
+
+    // if (second_json.hasOwnProperty("next_page_token")) {
+    //     var third_response = await (fetch(subsequent_request + second_json.next_page_token + end_request));
+    //     var third_json = await (third_response.json());
+    //     console.log(third_json);
+    //     response_jsons.push(third_json);
+    // }
+    
+    var name;
+    var lat;
+    var long;
+    var active;
+    var street;
+    var city;
+    var state;
+    var zip;
+    var store_exists = false;
+
+    try {
+
+        //console.log(response_jsons.length);
+        for (var i = 0; i < response_jsons.length; i++) {
+
+            //console.log(response_jsons[i]);
+
+            for (var j = 0; j < response_jsons[i].results.length; j++) {
+    
+                name = response_jsons[i].results[j].name
+    
+                lat = response_jsons[i].results[j].geometry.location.lat;
+    
+                long = response_jsons[i].results[j].geometry.location.lng;
+    
+                if (response_jsons[i].results[j].business_status == 'OPERATIONAL') {
+                    active = 1;
+                } else {
+                    active = 0;
+                }
+    
+                street = response_jsons[i].results[j].formatted_address.split(",")[0]
+        
+                city = response_jsons[i].results[j].formatted_address.split(",")[1].trim()
+        
+                state = response_jsons[i].results[j].formatted_address.split(",")[2].split(" ")[1]
+        
+                zip = response_jsons[i].results[j].formatted_address.split(",")[2].split(" ")[2]
+    
+                console.log(name,lat,long,active,street,city,state,zip);
+    
+                store_exists = await (storeExists(street));
+
+                if (store_exists) {
+
+                    con.query(q2, [
+                        name,
+                        lat,
+                        long,
+                        active,
+                        street,
+                        city,
+                        state,
+                        zip
+                    ], function(error, results) {
+                        if (error) {
+                            console.log(error);
+                        }
+                        else {
+                            console.log(results);
+                                }
+                        });
+                }
+
+                store_exists = false;
+            }    
+        }
+    
+    } catch (e) {
+        console.log(e);
+    }       
+});
+
 app.post('/signUp', function(req, res) {
 
     var q = `SELECT user_id FROM User
@@ -157,6 +298,13 @@ app.post('/signUp', function(req, res) {
     var q2 = `INSERT INTO User 
                 (first_name, last_name, email, password, signup_date, zip_code)
             VALUES (?, ?, ?, ?, ?, ?);`
+    
+    var q3 = `SELECT user_id FROM User
+                WHERE email = ?;`
+
+    var q4 = `INSERT INTO User_Reputation
+                (user_id, user_reputation, user_reputation_category_id, user_received_upvotes, user_received_downvotes, user_received_net, user_given_upvotes, user_given_downvotes, user_given_net)
+            VALUES (?, 0, 1, 0, 0, 0, 0, 0, 0);`
 
     var date  = new Date().toJSON().slice(0, 10);
 
@@ -171,6 +319,10 @@ app.post('/signUp', function(req, res) {
         else if (results == false) {
             bcrypt.genSalt(10, function(err, salt) {
                 bcrypt.hash(req.body.password, salt, function(err, hash) {
+
+                    console.log(hash.toString());
+                    console.log(hash.toString().length);
+
                     con.query(q2,[
                         req.body.first_name,
                         req.body.last_name,
@@ -184,13 +336,41 @@ app.post('/signUp', function(req, res) {
                         }
                 
                         else {
-                            console.log(results);
+                            con.query(q3, [
+                                req.body.email
+                            ], function(error, userResult) {
+
+                                if (error) { 
+                                    throw (error)
+                                }
+
+                                else {
+
+                                    con.query(q4, [
+                                        userResult[0].user_id
+                                    ], function(error, finalResult) {
+
+                                        if (error) {
+                                            throw (error)
+                                        }
+
+                                        else {
+                                            console.log(finalResult)
+                                            addLocalStores(req.body.lat, req.body.long);
+                                        }
+                                    })
+
+                                }
+
+                            })
                         }
                     })
                 })
             })
         } else {
-            res.json({ error: "User already exists" });
+            res.send([
+                {error: "User Already Exists"}
+            ]);
         }
 
     })
@@ -200,31 +380,44 @@ app.post('/signUp', function(req, res) {
     
 })
 
-app.get('/signIn', function(req, res) {
+app.post('/signIn', function(req, res) {
 
-    var q = `SELECT password 
+    var q = `SELECT user_id, password 
              FROM User
              WHERE email = ?`
 
     var q2 = `UPDATE
     `
-
     con.query(q,
         [req.body.email
         ], function(error, results) {
-            if (error) {
-                throw (error);
+            if (results == false) {
+                console.log("incorrect login");
+                results = [
+
+                    {user_id: null}
+                ]
+                res.send(results);
             }
 
             else {
-                bcrypt.compare(req.body.password, results.password, function(err, result) {
+
+                console.log(results[0].password.toString());
+
+                bcrypt.compare(req.body.password, results[0].password.toString(), function(err, result) {
                     if (err) {
-                        res.send("USER DOES NOT EXIST");
+                        console.log("compare error");
                         throw (err);
                     }
 
-                    else {
-                        res.send(result);
+                    if (result == false) {
+                        console.log("password incorrect");
+
+                    }
+
+                    else if (result == true) {
+                        console.log(results);
+                        res.send(results);
                         // if (result) {
                         //     con.query()
                         // }
