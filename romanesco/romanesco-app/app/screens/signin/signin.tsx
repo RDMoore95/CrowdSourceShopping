@@ -1,6 +1,7 @@
 import React from 'react';
 import { StyleSheet, Text, TextInput, Image, View, Button,  ListView } from 'react-native';
 import { AsyncStorage } from 'react-native';
+import * as Location from 'expo-location';
 import { useNavigation } from '@react-navigation/native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
@@ -21,39 +22,65 @@ export default class SignIn extends React.Component {
     }
   }
 
+  findCoordinates = async () => {
+
+    let { status } = await Location.requestPermissionsAsync();
+
+    if (status !== 'granted') {
+      console.log("location permission denied");
+    }
+
+    else {
+      let location = await Location.getCurrentPositionAsync({});
+      this.setState({lat: location.coords.latitude});
+      this.setState({long: location.coords.longitude});
+      this.setState({coordinates_received: true});
+      console.log(this.state.lat, this.state.long);
+    }
+    
+  };
+
+
   state = {
-      email: '', password: '', userId: ''
+      email: '', password: '', userId: '', lat: ',', long: '', coordinates_received: false
     }
 
     onChangeText = (key, val) => {
       this.setState({ [key]: val })
     }
 
-    signIn = async (email: any, password: any) => {
+    signIn = async (email: any, password: any, lat: any, long: any) => {
       try {
+
+        var permissions = {
+          email: email,
+          password: password
+        }
+
+        if (this.state.coordinates_received) {
+          permissions.lat = lat;
+          permissions.long = long;
+        }
 
         const requestOptions = {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ 
-            email: email,
-            password: password,
-           })
+          body: JSON.stringify(permissions)
           };
 
           fetch('http://flip1.engr.oregonstate.edu:4545/signIn', requestOptions)
               .then(response => response.json())
               .then((json) => {
                 //console.log(json[0].user_id);
-                this.setState( {['userId']: json[0].user_id.toString()});
-
-                if (this.state.userId == null) {
-                  alert("Please enter valid credentials, or tap sign up")
+                if (json[0].error) {
+                  alert(json[0].error);
                 }
 
                 else {
                   //console.log(this.state.userId.toString());
+                  this.setState( {['userId']: json[0].user_id.toString()});
                   this.setUserId(this.state.userId.toString());
+                  console.log(this.state.userId);
                   this.props.navigation.navigate('Romanesco');
                 }
               })
@@ -90,6 +117,10 @@ export default class SignIn extends React.Component {
       },
     });
 
+    componentDidMount() {
+      this.findCoordinates();
+    }
+
     render() {
       return (
         <View style={this.styles.container}>
@@ -119,7 +150,7 @@ export default class SignIn extends React.Component {
           <Button
             title='Sign In'
             // onPress = {() => this.login(this.state.email, this.state.password)}
-            onPress = {() => this.signIn(this.state.email, this.state.password)}
+            onPress = {() => this.signIn(this.state.email, this.state.password, this.state.lat, this.state.long)}
           />
         </View>
       )

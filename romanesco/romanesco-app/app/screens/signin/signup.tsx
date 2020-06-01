@@ -29,7 +29,6 @@ export default class SignUp extends React.Component {
       console.log("Email is Correct");
       this.setState({correct_email: true});
       console.log(this.state.email);
-      console.log("coordinates",this.state.coordinates_received);
     }
   }
 
@@ -64,6 +63,7 @@ export default class SignUp extends React.Component {
       this.setState({lat: location.coords.latitude});
       this.setState({long: location.coords.longitude});
       this.setState({coordinates_received: true});
+      console.log(this.state.lat, this.state.long);
     }
     
   };
@@ -87,21 +87,25 @@ export default class SignUp extends React.Component {
   }
   signUp = async (email: any, first_name: any, last_name: any, password: any, zip_code: any, lat: any, long: any) => {
 
+    var permissions = {
+      email: email,
+      first_name: first_name,
+      last_name: last_name,
+      password: password,
+      zip_code: zip_code
+    }
+
+    if (this.state.coordinates_received) {
+      permissions.lat = lat;
+      permissions.long = long;
+    }
 
       try {
 
         const requestOptions = {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ 
-            email: email,
-            first_name: first_name,
-            last_name: last_name,
-            password: password,
-            zip_code: zip_code,
-            lat: lat,
-            long: long
-           })
+          body: JSON.stringify(permissions)
           };
 
           console.log(requestOptions);

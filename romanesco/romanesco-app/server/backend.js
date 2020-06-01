@@ -160,30 +160,9 @@ app.get('/mapLatLongUpdate', function(req, res) {
     })
 ))});
 
-const storeExists = async (function (store_street) {
-
-    var q = `SELECT * FROM Store
-                WHERE store_street = ?;`
-
-    con.query(q,[
-        store_street
-    ], function(error, result) {
-
-        if (error) {
-            return (error);
-        }
-
-        else {
-            return result !== false;
-        }
-
-    })
-
-})
-
 const addLocalStores = async (function (lat, long) {
 
-    var q2 = `INSERT INTO Store
+    var q2 = `INSERT IGNORE INTO Store
                 (store_name, store_lat, store_long, store_active_flag, store_street, store_city, store_state, store_zip)
             VALUES (?, ?, ?, ?, ?, ?,
                  (SELECT state_id FROM State
@@ -225,7 +204,6 @@ const addLocalStores = async (function (lat, long) {
     var city;
     var state;
     var zip;
-    var store_exists = false;
 
     try {
 
@@ -256,11 +234,11 @@ const addLocalStores = async (function (lat, long) {
         
                 zip = response_jsons[i].results[j].formatted_address.split(",")[2].split(" ")[2]
     
-                console.log(name,lat,long,active,street,city,state,zip);
-    
-                store_exists = await (storeExists(street));
-
-                if (store_exists) {
+                if ([name,lat,long,active,street,city,state,zip].some(function(i) {
+                    return i === null;
+                })) {
+                    continue;
+                }
 
                     con.query(q2, [
                         name,
@@ -279,9 +257,7 @@ const addLocalStores = async (function (lat, long) {
                             console.log(results);
                                 }
                         });
-                }
 
-                store_exists = false;
             }    
         }
     
@@ -393,10 +369,10 @@ app.post('/signIn', function(req, res) {
         ], function(error, results) {
             if (results == false) {
                 console.log("incorrect login");
-                results = [
+                results = [{
 
-                    {user_id: null}
-                ]
+                    error: "Email or Password Incorrect"
+                }]
                 res.send(results);
             }
 
@@ -412,12 +388,15 @@ app.post('/signIn', function(req, res) {
 
                     if (result == false) {
                         console.log("password incorrect");
-
+                        res.send([{
+                            error: "Email or Password Incorrect"
+                        }])
                     }
 
                     else if (result == true) {
                         console.log(results);
                         res.send(results);
+                        addLocalStores(req.body.lat, req.body.long);
                         // if (result) {
                         //     con.query()
                         // }
