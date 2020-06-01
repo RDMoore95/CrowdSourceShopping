@@ -87,7 +87,7 @@ export default class SignUp extends React.Component {
   }
   signUp = async (email: any, first_name: any, last_name: any, password: any, zip_code: any, lat: any, long: any) => {
 
-    var permissions = {
+    var options = {
       email: email,
       first_name: first_name,
       last_name: last_name,
@@ -96,8 +96,8 @@ export default class SignUp extends React.Component {
     }
 
     if (this.state.coordinates_received) {
-      permissions.lat = lat;
-      permissions.long = long;
+      options.lat = lat;
+      options.long = long;
     }
 
       try {
@@ -105,7 +105,7 @@ export default class SignUp extends React.Component {
         const requestOptions = {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(permissions)
+          body: JSON.stringify(options)
           };
 
           console.log(requestOptions);

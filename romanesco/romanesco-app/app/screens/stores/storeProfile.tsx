@@ -28,9 +28,16 @@ export function StoreProfile( { route, navigation }, {} ) {
     const { store_name_fmt } = route.params;
     const { store_street } = route.params;
     const { store_city } = route.params;
+    var image_src = Images.stores[store_name_fmt];
+    if (Images.stores[store_name_fmt]) {
+      image_src = Images.stores[store_name_fmt];
+    } else {
+      image_src = Images.stores['romanescostoredefault']
+    }
 
     const [isLoading, setLoading] = useState(true);
     const [data, setData] = useState([]);
+  
 
     // store_name, store_address, price_rating, crowd_rating, service_rating, store_rating are the data variables
     // I mocked - but feel free to change!
@@ -57,7 +64,7 @@ export function StoreProfile( { route, navigation }, {} ) {
                 <Block middle style={styles.avatarContainer}>
                   <Image 
                     // source={require('../../assets/imgs/traderjoes.png')}
-                    source = {Images.stores[store_name_fmt]}
+                    source = {image_src}
                     style={styles.avatar}
                   
                   /> 

@@ -6,7 +6,8 @@ import { View,
   ActivityIndicator, 
   FlatList,
   TouchableHighlight,
-  Dimensions } from 'react-native';
+  Dimensions,
+  RefreshControl } from 'react-native';
 import { Avatar, List, ListItem } from "react-native-elements";
 import { useEffect, useState } from 'react';
 import { Block, Text, theme } from "galio-framework";
@@ -33,7 +34,32 @@ export class FeedEntry extends React.Component {
         isLoading: true,
         refresh: false,
         firstRender: true,
+        refreshing: false
       };
+
+      this.getFeedEntries();
+
+    }
+
+    getFeedEntries = async () => {
+
+      fetch(url + '/getFeedEntries/', {
+        method: 'POST',
+        headers: {
+            Accept: 'application/json',
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            id_type: this.props.id_type,
+            id_value: this.props.id_value,
+        }),
+    }).then((response) => response.json())
+     .then((json) => {
+       this.setState({ data: json });
+     }).finally(() => {
+       this.setState({ isLoading: false });
+     });
+
     }
 
     state = {}
@@ -72,24 +98,7 @@ export class FeedEntry extends React.Component {
     _handleTextReady = () => {}
 
   // Get feed entries
-  componentDidMount() {
-    fetch(url + '/getFeedEntries/', {
-         method: 'POST',
-         headers: {
-             Accept: 'application/json',
-             'Content-Type': 'application/json',
-         },
-         body: JSON.stringify({
-             id_type: this.props.id_type,
-             id_value: this.props.id_value,
-         }),
-     }).then((response) => response.json())
-      .then((json) => {
-        this.setState({ data: json });
-      }).finally(() => {
-        this.setState({ isLoading: false });
-      });       
-  }
+
 
   // Set right colors for icons
   upVote(item) {
@@ -122,6 +131,13 @@ export class FeedEntry extends React.Component {
     );
   };
 
+  _onRefresh () {
+    this.setState({refreshing: true});
+
+    this.getFeedEntries().then(() => {
+      this.setState({refreshing: false});
+    });
+  }
 
    // Render each feed entry in a flatlist
    render() {
@@ -151,6 +167,9 @@ export class FeedEntry extends React.Component {
       {isLoading ? <ActivityIndicator/> : (
 
         <FlatList
+          refreshControl={
+            <RefreshControl refreshing={this.state.refreshing} onRefresh={this._onRefresh.bind(this)}/>
+          }
           extraData={this.state.refresh} // Need this variable to change to force a refresh
           data={this.state.data}
           ItemSeparatorComponent={this.renderSeparator}

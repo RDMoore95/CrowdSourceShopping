@@ -1,11 +1,16 @@
 import React, {Component} from 'react';
 import { StyleSheet, Text, View, Button,  Dimensions, ActivityIndicator, FlatList} from 'react-native';
-import MapView, { PROVIDER_GOOGLE, Callout } from 'react-native-maps';
+import MapView, { PROVIDER_GOOGLE, Callout, CalloutSubview } from 'react-native-maps';
 import { useEffect, useState } from 'react';
+import * as Location from 'expo-location';
 import { Marker } from 'react-native-maps';
-
+import Modal from 'react-native-modal';
+import{ StoreProfile } from "../stores/storeProfile";
+import { NavigationContainer } from '@react-navigation/native';
 import { useNavigation } from '@react-navigation/native';
 import {NewButton} from "../../components/newButton/newButton";
+import { TouchableHighlight, TouchableOpacity } from 'react-native-gesture-handler';
+import { color } from 'react-native-reanimated';
 
 export default class Map extends Component {
   //navigation = useNavigation();
@@ -14,28 +19,42 @@ export default class Map extends Component {
     super(props);
 
     this.state = {
-      data: [],
-      isLoading: true
+      isLoading: true,
+      coordinates_received: false
     };
-  }
-  
 
-  componentDidMount() {
     fetch('http://flip1.engr.oregonstate.edu:4545/map')
       .then((response) => response.json())
       .then((json) => {
         this.setState( {markers: json });
+        this.findCoordinates();
         //console.log(this.state.markers)
       })
       .catch((error) => console.error(error))
       .finally(() => {
         this.setState({ isLoading: false });
       })
+
   }
 
-    onChangeText = (key, val) => {
-      this.setState({ [key]: val })
+  findCoordinates = async () => {
+
+    let { status } = await Location.requestPermissionsAsync();
+
+    if (status !== 'granted') {
+      console.log("location permission denied");
     }
+
+    else {
+      let location = await Location.getCurrentPositionAsync({});
+      this.setState({lat: Number(location.coords.latitude)});
+      this.setState({long: Number(location.coords.longitude)});
+      this.setState({coordinates_received: true});
+      // console.log(this.state.lat, this.state.long);
+      // console.log("number", Number(this.state.lat), Number(this.state.long));
+    }
+    
+  };
 
   styles = StyleSheet.create({
     container: {
@@ -52,35 +71,44 @@ export default class Map extends Component {
   });
 
   render() {
-    
-    const { data, isLoading } = this.state;
-  
+
+    const {markers, isLoading, lat, long, coordinates_received} = this.state;    
+ 
     return (
       <View style={this.styles.container}>
-        {isLoading ? <ActivityIndicator/> : (
+        {isLoading || !coordinates_received ? <ActivityIndicator/> : (
 
           <MapView 
           initialRegion={{ // placeholder - replace with location (get location)
-              latitude: 37.78825,
-              longitude: -122.4324,
+              latitude: lat,
+              longitude: long,
               latitudeDelta: 0.0922,
               longitudeDelta: 0.0421,
             }}
           provider={PROVIDER_GOOGLE}
           style={this.styles.mapStyle} 
             >
-          {this.state.markers.map(marker => (
-            <Marker
+          {markers.map(marker => (
+            <Marker key={marker.store_id}
                 coordinate={{ latitude: marker.store_lat, 
                               longitude: marker.store_long}}
                 title={marker.store_name}>
 
-              <Callout>
+              <Callout
+                onPress={() => this.props.navigation.navigate('StoreProfileModal', 
+                {
+                  store_id: marker.store_id,
+                  store_name_fmt: marker.store_name,
+                  store_street: marker.store_street,
+                  store_city: marker.store_city,
+                }
+              )
+              }>
                 <Text> {marker.store_name} </Text>
                 <Text> {marker.store_street} </Text>
-                <Button
-                  title="View Store Info"
-                ></Button>
+                <TouchableOpacity>
+                  <Text style={styles.viewStoreText}>Touch View Store Details</Text>
+                </TouchableOpacity>
               </Callout>
 
             </Marker>
@@ -99,3 +127,10 @@ export default class Map extends Component {
      
           }
   }
+
+  const styles = StyleSheet.create({
+    viewStoreText: {
+      fontSize: 16,
+      color: "blue"
+    }
+  });
