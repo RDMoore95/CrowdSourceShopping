@@ -110,7 +110,13 @@ def pullFeedEntries(id_type, id):
 	        , CAST(Store_Feedback.time_added as char) as time_added
 	        , Store_Feedback.store_feedback_text
 	        , u.user_id
-	        , ur.user_reputation_category_id
+	        , CASE 
+			WHEN COALESCE(r.reputation, 0) > 25 THEN 2
+			WHEN COALESCE(r.reputation, 0) > 100 THEN 3
+			WHEN COALESCE(r.reputation, 0) > 250 THEN 4
+			WHEN COALESCE(r.reputation, 0) > 500 THEN 5
+			WHEN COALESCE(r.reputation, 0) > 1000 THEN 6
+			ELSE 1 END as user_reputation_category_id
 	        , Store_Feedback.store_feedback_id
 	    	FROM Store_Feedback 
 	    	INNER JOIN Store ON Store_Feedback.store_id = Store.store_id 
@@ -118,8 +124,23 @@ def pullFeedEntries(id_type, id):
 	        ON Store_Feedback.store_feedback_category_id = Store_Feedback_Category.store_feedback_category_id 
 	    	INNER JOIN User u
 	        ON u.user_id = Store_Feedback.user_id
-	        INNER JOIN User_Reputation ur
-	        ON ur.user_id = u.user_id
+	        INNER JOIN
+			(
+	        SELECT
+	        user_id
+	        , CAST(GREATEST(0, SUM(response_vote)) as UNSIGNED) as reputation
+	        FROM
+	        (
+	        SELECT sf.user_id, sr.store_response_vote as response_vote
+	        FROM Store_Response sr INNER JOIN Store_Feedback sf
+	        ON sr.store_feedback_id = sf.store_feedback_id
+	        UNION ALL
+	        SELECT pf.user_id, pr.price_response_vote as response_vote
+	        FROM Price_Response pr INNER JOIN Price_Feedback pf
+	        ON pr.price_feedback_id = pf.price_feedback_id
+	        ) x
+	        GROUP BY user_id
+	        ) r on u.user_id = r.user_id
 	        ORDER BY Store_Feedback.time_added DESC
 	        LIMIT 30;
 		    '''
@@ -135,7 +156,13 @@ def pullFeedEntries(id_type, id):
 	        , CAST(Store_Feedback.time_added as char) as time_added
 	        , Store_Feedback.store_feedback_text
 	        , u.user_id
-	        , ur.user_reputation_category_id
+	        , CASE 
+			WHEN COALESCE(r.reputation, 0) > 25 THEN 2
+			WHEN COALESCE(r.reputation, 0) > 100 THEN 3
+			WHEN COALESCE(r.reputation, 0) > 250 THEN 4
+			WHEN COALESCE(r.reputation, 0) > 500 THEN 5
+			WHEN COALESCE(r.reputation, 0) > 1000 THEN 6
+			ELSE 1 END as user_reputation_category_id
 	        , Store_Feedback.store_feedback_id
 	    	FROM Store_Feedback 
 	    	INNER JOIN Store ON Store_Feedback.store_id = Store.store_id 
@@ -143,8 +170,23 @@ def pullFeedEntries(id_type, id):
 	        ON Store_Feedback.store_feedback_category_id = Store_Feedback_Category.store_feedback_category_id 
 	    	INNER JOIN User u
 	        ON u.user_id = Store_Feedback.user_id
-	        INNER JOIN User_Reputation ur
-	        ON ur.user_id = u.user_id
+	        INNER JOIN
+			(
+	        SELECT
+	        user_id
+	        , CAST(GREATEST(0, SUM(response_vote)) as UNSIGNED) as reputation
+	        FROM
+	        (
+	        SELECT sf.user_id, sr.store_response_vote as response_vote
+	        FROM Store_Response sr INNER JOIN Store_Feedback sf
+	        ON sr.store_feedback_id = sf.store_feedback_id
+	        UNION ALL
+	        SELECT pf.user_id, pr.price_response_vote as response_vote
+	        FROM Price_Response pr INNER JOIN Price_Feedback pf
+	        ON pr.price_feedback_id = pf.price_feedback_id
+	        ) x
+	        GROUP BY user_id
+	        ) r on u.user_id = r.user_id
 	        WHERE Store.store_id = {store}
 	        ORDER BY Store_Feedback.time_added DESC
 	        LIMIT 30;
@@ -162,7 +204,13 @@ def pullFeedEntries(id_type, id):
 	        , CAST(Store_Feedback.time_added as char) as time_added
 	        , Store_Feedback.store_feedback_text
 	        , u.user_id
-	        , ur.user_reputation_category_id
+	        , CASE 
+			WHEN COALESCE(r.reputation, 0) > 25 THEN 2
+			WHEN COALESCE(r.reputation, 0) > 100 THEN 3
+			WHEN COALESCE(r.reputation, 0) > 250 THEN 4
+			WHEN COALESCE(r.reputation, 0) > 500 THEN 5
+			WHEN COALESCE(r.reputation, 0) > 1000 THEN 6
+			ELSE 1 END as user_reputation_category_id
 	        , Store_Feedback.store_feedback_id
 	    	FROM Store_Feedback 
 	    	INNER JOIN Store ON Store_Feedback.store_id = Store.store_id 
@@ -170,8 +218,23 @@ def pullFeedEntries(id_type, id):
 	        ON Store_Feedback.store_feedback_category_id = Store_Feedback_Category.store_feedback_category_id 
 	    	INNER JOIN User u
 	        ON u.user_id = Store_Feedback.user_id
-	        INNER JOIN User_Reputation ur
-	        ON ur.user_id = u.user_id
+	        INNER JOIN
+			(
+	        SELECT
+	        user_id
+	        , CAST(GREATEST(0, SUM(response_vote)) as UNSIGNED) as reputation
+	        FROM
+	        (
+	        SELECT sf.user_id, sr.store_response_vote as response_vote
+	        FROM Store_Response sr INNER JOIN Store_Feedback sf
+	        ON sr.store_feedback_id = sf.store_feedback_id
+	        UNION ALL
+	        SELECT pf.user_id, pr.price_response_vote as response_vote
+	        FROM Price_Response pr INNER JOIN Price_Feedback pf
+	        ON pr.price_feedback_id = pf.price_feedback_id
+	        ) x
+	        GROUP BY user_id
+	        ) r on u.user_id = r.user_id
 	        WHERE u.user_id = {user}
 	        ORDER BY Store_Feedback.time_added DESC
 	        LIMIT 30;
@@ -196,17 +259,45 @@ def pullUserProfile(user_id):
 
 	# Get recent price feedback the user has not already responded to
 	query = '''
-			SELECT
-			ur.user_received_net
+			SELECT		       
+			r.reputation	
 			, u.first_name
 			, u.last_name
-			, ur.user_reputation_category_id
-			, urc.user_reputation_category_name
+			, CASE 
+			WHEN r.reputation > 25 THEN 2
+			WHEN r.reputation > 100 THEN 3
+			WHEN r.reputation > 250 THEN 4
+			WHEN r.reputation > 500 THEN 5
+			WHEN r.reputation > 1000 THEN 6
+			ELSE 1 END as user_reputation_category_id
+			, CASE 
+			WHEN r.reputation > 25 THEN 'Professional'
+			WHEN r.reputation > 100 THEN 'Master'
+			WHEN r.reputation > 250 THEN 'Elite'
+			WHEN r.reputation > 500 THEN 'Superstar'
+			WHEN r.reputation > 1000 THEN 'Deity'
+			ELSE 'Apprentice' END as user_reputation_category_name
 			, (SELECT COUNT(*) FROM Price_Feedback WHERE user_id = {user}) as price_feedback
 			, (SELECT COUNT(*) FROM Store_Feedback WHERE user_id = {user}) as store_feedback
 			FROM User u
-            INNER JOIN User_Reputation ur ON u.user_id = ur.user_id
-            INNER JOIN User_Reputation_Category urc on ur.user_reputation_category_id = urc.user_reputation_category_id
+			INNER JOIN
+			(
+	        SELECT
+	        {user} as user_id
+	        , CAST(GREATEST(0, SUM(response_vote)) as UNSIGNED) as reputation
+	        FROM
+	        (
+	        SELECT sf.user_id, sr.store_response_vote as response_vote
+	        FROM Store_Response sr INNER JOIN Store_Feedback sf
+	        ON sr.store_feedback_id = sf.store_feedback_id
+	        WHERE sf.user_id = {user}
+	        UNION ALL
+	        SELECT pf.user_id, pr.price_response_vote as response_vote
+	        FROM Price_Response pr INNER JOIN Price_Feedback pf
+	        ON pr.price_feedback_id = pf.price_feedback_id
+	        WHERE pf.user_id = {user}
+	        ) x
+	        ) r on u.user_id = r.user_id
             WHERE u.user_id = {user}
 	    	'''
 
@@ -246,7 +337,7 @@ def insertFeedResponse(store_feedback_id, vote_value, user, response_user):
 
 	if str(user) != str(response_user):
 		print("Adding feed response")
-		
+
 		add_store_response_query = '''
 		INSERT INTO Store_Response (store_feedback_id, response_user_id, time_added, store_response_text, store_response_vote)
 		SELECT 
@@ -301,6 +392,28 @@ def insertStoreFeedback(user_id, store_id, store_feedback_text, store_feedback_c
 		with db_connection.connect() as connection:
 			result = connection.execute(add_store_feedback_query_fmt)
 
+		# Give the user 10 points of received upvotes
+		print("Adding user reputation")		
+		add_store_response_query = '''
+		INSERT INTO Store_Response (store_feedback_id, response_user_id, time_added, store_response_text, store_response_vote)
+		SELECT 
+		(SELECT MAX(store_feedback_id) FROM Store_Feedback WHERE user_id = {user_id}) as store_feedback_id
+		, {user_id} as response_user_id
+		, NOW() as time_added
+		, 'Store Reward' as store_response_text
+		, 5 as store_response_vote
+		;
+		'''
+
+		add_store_response_query_fmt = add_store_response_query.format(
+			user_id = user_id)
+
+		print(add_store_response_query_fmt)
+
+		with db_connection.connect() as connection:
+			result = connection.execute(add_store_response_query_fmt)
+
+
 
 def insertPriceFeedback(user_id, item_name, barcodeData, price, sale, store_id):
 
@@ -331,6 +444,26 @@ def insertPriceFeedback(user_id, item_name, barcodeData, price, sale, store_id):
 
 		with db_connection.connect() as connection:
 			result = connection.execute(add_item_query_fmt)
+
+		print("Adding user reputation")		
+		add_price_response_query = '''
+		INSERT INTO Price_Response (price_feedback_id, response_user_id, time_added, price_response_text, price_response_vote)
+		SELECT 
+		(SELECT COALESCE(MAX(price_feedback_id),1) FROM Price_Feedback WHERE user_id = {user_id}) as price_feedback_id
+		, {user_id} as response_user_id
+		, NOW() as time_added
+		, 'Price Reward' as price_response_text
+		, 2 as price_response_vote
+		;
+		'''
+
+		add_price_response_query_fmt = add_price_response_query.format(
+			user_id = user_id)
+
+		print(add_price_response_query_fmt)
+
+		with db_connection.connect() as connection:
+			result = connection.execute(add_price_response_query_fmt)	
 
 
 	# GET ITEM_ID
@@ -382,6 +515,26 @@ def insertPriceFeedback(user_id, item_name, barcodeData, price, sale, store_id):
 
 			with db_connection.connect() as connection:
 				result = connection.execute(add_price_feedback_query_fmt)
+
+			print("Adding user reputation")		
+			add_price_response_query = '''
+			INSERT INTO Price_Response (price_feedback_id, response_user_id, time_added, price_response_text, price_response_vote)
+			SELECT 
+			(SELECT MAX(price_feedback_id) FROM Price_Feedback WHERE user_id = {user_id}) as price_feedback_id
+			, {user_id} as response_user_id
+			, NOW() as time_added
+			, 'Price Reward' as price_response_text
+			, 10 as price_response_vote
+			;
+			'''
+
+			add_price_response_query_fmt = add_price_response_query.format(
+				user_id = user_id)
+
+			print(add_price_response_query_fmt)
+
+			with db_connection.connect() as connection:
+				result = connection.execute(add_price_response_query_fmt)
 
 
 def pullBarcode(barcodeData):

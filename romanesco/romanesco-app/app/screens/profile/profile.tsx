@@ -155,7 +155,7 @@ export default class UserProfile extends React.Component {
                     color="#525F7F"
                     style={{ marginBottom: 4, marginLeft: 4, marginRight: 4 }}
                   >
-                    {data.user_received_net}
+                    {data.reputation}
                   </Text>
                   <Text size={12} color={argonTheme.COLORS.TEXT}>Reputation</Text>
                 </Block>

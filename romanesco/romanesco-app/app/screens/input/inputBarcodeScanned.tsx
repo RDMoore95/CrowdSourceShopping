@@ -11,18 +11,20 @@ import { View,
   TouchableHighlight,
   TouchableOpacity,
   TouchableWithoutFeedback,
+  AsyncStorage,
   Dimensions } from 'react-native';
 import { Avatar, List, ListItem } from "react-native-elements";
 import { useEffect, useState } from 'react';
 import { theme } from "galio-framework";
 import { withNavigation } from 'react-navigation';
 import { Switch } from 'react-native-switch';
+const USER_STORAGE_KEY = "@user_id";
 
 // To get feed entries to fill screen
 let deviceWidth = Dimensions.get('window').width
 
-// var url = "http://192.168.1.7:5000";
-var url = "http://flip1.engr.oregonstate.edu:5005";
+var url = "http://192.168.1.7:5000";
+// var url = "http://flip1.engr.oregonstate.edu:5005";
 
 export default class InputBarcodeScanned extends React.Component {  
 
@@ -39,9 +41,20 @@ export default class InputBarcodeScanned extends React.Component {
       price: '',
       sale: false,
       store_id: '67',
-      user_id: '9',
+      user_id: "",
     };
   }
+
+  getUserId = async () => {
+    try {
+      const value = await AsyncStorage.getItem(USER_STORAGE_KEY);
+      this.setState({['user_id']: value});
+      this.setState({['haveUserId']: true});
+    }
+    catch {
+      console.log("failed to get userId");
+    }
+  }  
 
   componentDidMount() {
     fetch(url + '/getBarcode/', {
@@ -65,7 +78,9 @@ export default class InputBarcodeScanned extends React.Component {
   // Adding item to database
   addPriceFeedback(){
 
-    fetch(url + '/addPriceFeedback/', {
+  this.getUserId()
+    .then(() => {
+      fetch(url + '/addPriceFeedback/', {
                    method: 'POST',
                    headers: {
                        Accept: 'application/json',
@@ -79,6 +94,7 @@ export default class InputBarcodeScanned extends React.Component {
                        sale: this.state.sale,
                        store_id: this.state.store_id,
                    })
+    })
     })
   }
 

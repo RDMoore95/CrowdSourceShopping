@@ -141,7 +141,7 @@ export default class FeedProfile extends React.Component {
                   {data.store_rating}
                 </Text>
               </Block>
-              
+
               <Block row space="between" alignSelf="center">
                 <Block middle style={{ paddingHorizontal: 16 }}>
                   <Text
@@ -150,7 +150,7 @@ export default class FeedProfile extends React.Component {
                     color="#525F7F"
                     style={{ marginBottom: 4, marginLeft: 4, marginRight: 4 }}
                   >
-                    {data.user_received_net}
+                    {data.reputation}
                   </Text>
                   <Text size={12} color={argonTheme.COLORS.TEXT}>Reputation</Text>
                 </Block>

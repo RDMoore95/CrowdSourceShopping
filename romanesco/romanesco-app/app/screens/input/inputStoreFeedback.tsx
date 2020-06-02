@@ -60,9 +60,6 @@ export default class InputStoreFeedback extends React.Component {
 
     this.getUserId()
       .then(() => {
-
-      console.log("user_id", this.state.user_id)
-
       const requestOptions = {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },

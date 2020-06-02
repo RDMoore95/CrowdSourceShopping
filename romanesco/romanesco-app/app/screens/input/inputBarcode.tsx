@@ -29,8 +29,6 @@ export default function InputBarcode() {
     let barcodeType = type;
     let barcodeData = data;
     navigation.navigate("InputBarcodeScanned", {barcodeData: barcodeData})
-    // navigation.navigate("InputBarcodeScanned", {barcodeData: '37000940203'})
-    // navigation.navigate("InputBarcodeScanned", {barcodeData: '1234'})
   }
 
   if (hasPermission === null) {
