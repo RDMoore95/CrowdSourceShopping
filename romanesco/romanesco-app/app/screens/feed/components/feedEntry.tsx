@@ -7,6 +7,7 @@ import { View,
   FlatList,
   TouchableHighlight,
   RefreshControl,
+  AsyncStorage,
   Dimensions } from 'react-native';
 import { Avatar, List, ListItem } from "react-native-elements";
 import { useEffect, useState } from 'react';
@@ -16,6 +17,7 @@ import ReadMore from 'react-native-read-more-text';
 import Icon from 'react-native-vector-icons/Ionicons';
 
 import Images from '../../../assets/imgs';
+const USER_STORAGE_KEY = "@user_id";
 
 // To get feed entries to fill screen
 
@@ -23,8 +25,8 @@ const { width, height } = Dimensions.get("screen");
 const thumbMeasure = (width - 48 - 32) / 3;
 let deviceWidth = Dimensions.get('window').width
 
-//var url = "localhost:5000";
-var url = "http://flip1.engr.oregonstate.edu:5005";
+var url = "http://192.168.1.7:5000";
+// var url = "http://flip1.engr.oregonstate.edu:5005";
 
 export class FeedEntry extends React.Component {
 
@@ -37,6 +39,7 @@ export class FeedEntry extends React.Component {
         isLoading: true,
         refresh: false,
         firstRender: true,
+        userId: "",
         // refreshing: false,
       };
     }
@@ -45,6 +48,17 @@ export class FeedEntry extends React.Component {
 
     onChangeText = (key, val) => {
       this.setState({ [key]: val })
+    }
+
+    getUserId = async () => {
+      try {
+        const value = await AsyncStorage.getItem(USER_STORAGE_KEY);
+        this.setState({['userId']: value});
+        this.setState({['haveUserId']: true});
+      }
+      catch {
+        console.log("failed to get userId");
+      }
     }
 
     // Go get data again when user tries to refresh
@@ -104,16 +118,46 @@ export class FeedEntry extends React.Component {
 
     // Get feed entries
     componentDidMount() {
-      this.getAPIData()
+      this.getUserId()
+      .then(() => {this.getAPIData()})
+    }
+
+    // Store upvotes and downvotes on backend
+    sendResponse(item, vote){
+        fetch(url + '/addFeedResponse/', {
+         method: 'POST',
+         headers: {
+             Accept: 'application/json',
+             'Content-Type': 'application/json',
+         },
+         body: JSON.stringify({
+             store_feedback_id: item.store_feedback_id,
+             vote_value: vote,
+             user: item.user_id,
+             response_user: this.state.userId,
+         }),
+       })
     }
 
     // Set right colors for icons
     upVote(item) {
 
+      // If already upvoted, send a downvote to cancel
+      if( item.upVote == 1){
+
+        this.sendResponse(item, -1)
+
+      } else {
+
+        this.sendResponse(item, 1)
+
+      }
+
       // Flip value of downvote
       item.upVote = !item.upVote;
       // Set downvote to zero
       item.downVote = 0;
+
       // Force a refresh
       this.setState({ refresh: !this.state.refresh})
       return item
@@ -121,6 +165,17 @@ export class FeedEntry extends React.Component {
     }
 
     downVote(item) {
+
+      // If already downvoted, send an upvote to cancel
+      if( item.downVote == 1){
+
+        this.sendResponse(item, 1)
+
+      } else {
+
+        this.sendResponse(item, -1)
+
+      }
 
       // Flip value of downvote
       item.downVote = !item.downVote;
@@ -157,9 +212,6 @@ export class FeedEntry extends React.Component {
       this.setState({ firstRender: !this.state.firstRender})
 
     }
-
-
-    // const { isLoading } = this.state;
 
     return (
 

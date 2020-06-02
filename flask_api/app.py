@@ -111,6 +111,7 @@ def pullFeedEntries(id_type, id):
 	        , Store_Feedback.store_feedback_text
 	        , u.user_id
 	        , ur.user_reputation_category_id
+	        , Store_Feedback.store_feedback_id
 	    	FROM Store_Feedback 
 	    	INNER JOIN Store ON Store_Feedback.store_id = Store.store_id 
 	    	INNER JOIN Store_Feedback_Category 
@@ -135,6 +136,7 @@ def pullFeedEntries(id_type, id):
 	        , Store_Feedback.store_feedback_text
 	        , u.user_id
 	        , ur.user_reputation_category_id
+	        , Store_Feedback.store_feedback_id
 	    	FROM Store_Feedback 
 	    	INNER JOIN Store ON Store_Feedback.store_id = Store.store_id 
 	    	INNER JOIN Store_Feedback_Category 
@@ -161,6 +163,7 @@ def pullFeedEntries(id_type, id):
 	        , Store_Feedback.store_feedback_text
 	        , u.user_id
 	        , ur.user_reputation_category_id
+	        , Store_Feedback.store_feedback_id
 	    	FROM Store_Feedback 
 	    	INNER JOIN Store ON Store_Feedback.store_id = Store.store_id 
 	    	INNER JOIN Store_Feedback_Category 
@@ -237,6 +240,36 @@ def pullStoreCategory():
 	result_json = result.to_json(orient = 'records')
 	# print(result_json)
 	return result_json
+
+
+def insertFeedResponse(store_feedback_id, vote_value, user, response_user):
+
+	if str(user) != str(response_user):
+		print("Adding feed response")
+		
+		add_store_response_query = '''
+		INSERT INTO Store_Response (store_feedback_id, response_user_id, time_added, store_response_text, store_response_vote)
+		SELECT 
+		{store_feedback_id} as store_feedback_id
+		, {response_user} as response_user_id
+		, NOW() as time_added
+		, 'None' as store_response_text
+		, {vote_value} as store_response_vote
+		;
+		'''
+
+		add_store_response_query_fmt = add_store_response_query.format(
+			store_feedback_id = store_feedback_id
+			, response_user = response_user
+			, vote_value = vote_value)
+
+		print(add_store_response_query_fmt)
+
+		with db_connection.connect() as connection:
+			result = connection.execute(add_store_response_query_fmt)
+
+	else:
+		print("Responding to own post: ignore")
 
 
 def insertStoreFeedback(user_id, store_id, store_feedback_text, store_feedback_category_id, store_feedback_positive):
@@ -430,6 +463,21 @@ def getStoreCategory():
 	print("GET STORE CATEGORY")
 	result_json = pullStoreCategory()
 	return result_json, 201 
+
+@app.route('/addFeedResponse/', methods=['POST'])
+def addFeedResponse():
+
+	print("Adding feed response")
+	print(request.json)
+	insertFeedResponse(
+		request.json['store_feedback_id']
+		, request.json['vote_value']		
+		, request.json['user']
+		, request.json['response_user']
+	)
+
+	return "good", 201
+
 
 @app.route('/addStoreFeedback/', methods=['POST'])
 def addStoreFeedback():
