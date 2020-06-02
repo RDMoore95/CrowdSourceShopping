@@ -61,11 +61,13 @@ export class FeedEntry extends React.Component {
       }
     }
 
-    // Go get data again when user tries to refresh
-    onRefresh() {
-      this.setState({isLoading: true,},() => {this.getAPIData();});
-    }
+    _onRefresh () {
+      this.setState({refreshing: true});
 
+      this.getAPIData().then(() => {
+        this.setState({refreshing: false});
+      });
+    }
     // Separate items in feed
     FlatListItemSeparator = () => {
         return (
@@ -223,11 +225,7 @@ export class FeedEntry extends React.Component {
           extraData={this.state.refresh} // Need this variable to change to force a refresh
           data={this.state.data}
           refreshControl={
-            <RefreshControl
-                refreshing={this.state.isLoading}
-                onRefresh={() => this.onRefresh()}
-                tintColor="clear"
-              />
+            <RefreshControl refreshing={this.state.refreshing} onRefresh={this._onRefresh.bind(this)}/>
           }
           ItemSeparatorComponent={this.renderSeparator}
           ListHeaderComponent = { this.renderSeparator }

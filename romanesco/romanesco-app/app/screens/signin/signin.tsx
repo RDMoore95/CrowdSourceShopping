@@ -52,20 +52,20 @@ export default class SignIn extends React.Component {
     signIn = async (email: any, password: any, lat: any, long: any) => {
       try {
 
-        var permissions = {
+        var options = {
           email: email,
           password: password
         }
 
         if (this.state.coordinates_received) {
-          permissions.lat = lat;
-          permissions.long = long;
+          options.lat = lat;
+          options.long = long;
         }
 
         const requestOptions = {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(permissions)
+          body: JSON.stringify(options)
           };
 
           fetch('http://flip1.engr.oregonstate.edu:4545/signIn', requestOptions)

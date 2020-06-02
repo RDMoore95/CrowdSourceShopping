@@ -4,6 +4,7 @@ const images = {
     traderjoes: require('./traderjoes.png'),
     safeway: require('./safeway.png'),
     wholefoodsmarket: require('./wholefoodsmarket.png'),
+    romanescostoredefault: require('./romanescostoredefault.jpg')
   }
   , reputation: {
   	1: require('./L1.png'),

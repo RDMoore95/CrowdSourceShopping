@@ -32,9 +32,16 @@ export function StoreProfile( { route }, {} ) {
     const { store_name_fmt } = route.params;
     const { store_street } = route.params;
     const { store_city } = route.params;
+    var image_src = Images.stores[store_name_fmt];
+    if (Images.stores[store_name_fmt]) {
+      image_src = Images.stores[store_name_fmt];
+    } else {
+      image_src = Images.stores['romanescostoredefault']
+    }
 
     const [isLoading, setLoading] = useState(true);
     const [data, setData] = useState([]);
+  
 
     useEffect(() => {
         // something like 4545/store/{data.store_id}?
@@ -71,8 +78,7 @@ export function StoreProfile( { route }, {} ) {
                 <Block middle style={styles.avatarContainer}>
                   <Image 
                     source = {Images.stores[store_name_fmt]}
-                    style={styles.avatar}
-                  
+                    style={styles.avatar} 
                   /> 
                 </Block>
                 <Block style={styles.info}>
