@@ -12,8 +12,8 @@ import pandas as pd
 app = Flask(__name__)
 
 # Get MySQL credentials
-exec(open("/Users/walkerag/Documents/osu/cs467/project_paths.py").read())
-# exec(open("./project_paths.py").read())
+# exec(open("/Users/walkerag/Documents/osu/cs467/project_paths.py").read())
+exec(open("./project_paths.py").read())
 
 # DB connection
 db_connection = create_engine(db_connection_str)

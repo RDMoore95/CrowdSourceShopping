@@ -14,7 +14,6 @@ export function NewButton(){
 
     clickHandler = () => {
         //function to handle click on floating Action Button
-        // Alert.alert('Floating Button Clicked');
         navigation.navigate('InputPromptStores', 
           {}
         );
