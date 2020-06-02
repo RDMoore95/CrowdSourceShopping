@@ -6,11 +6,11 @@ const { width, height } = Dimensions.get("screen");
 const thumbMeasure = (width - 48 - 32) / 3;
 const deviceWidth = Dimensions.get('window').width
 
-const darkGreen = ""
-const midGreen = ""
-const lightGreen = ""
-const darkBeige = ""
-const lightBeige = ""
+const darkGreen = "336600"
+const midGreen = "#ccff33"
+const lightGreen = "#ccffcc"
+const darkBeige = "#ffffcc"
+const lightBeige = "#fffffc"
 
 export const appstyles = StyleSheet.create({
         // container 
