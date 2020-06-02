@@ -123,14 +123,17 @@ export default class SignIn extends React.Component {
 
     render() {
       return (
+        <>
+
         <View style={this.styles.container}>
-            <Button
+          <Text size={26} color="#32325D">
+          Welcome to Romanesco! Please sign in below. Or tap the button to sign up.
+          </Text>
+          <Button
             title='Sign Up'
-            onPress={() => this.props.navigation.navigate('SignUp')}
-         
+            onPress={() => this.props.navigation.navigate('SignUp')}         
             color="#000"
           />
-          <Text>Welcome to Romanesco! Please sign in below. Or tap the button to sign up.</Text>
           <TextInput
             style={this.styles.input}
             placeholder='Email'
@@ -153,6 +156,9 @@ export default class SignIn extends React.Component {
             onPress = {() => this.signIn(this.state.email, this.state.password, this.state.lat, this.state.long)}
           />
         </View>
+        <View style={{backgroundColor:'#fff', padding: 100}}></View>
+        </>
+
       )
     }
   

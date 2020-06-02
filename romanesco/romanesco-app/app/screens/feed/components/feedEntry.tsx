@@ -6,8 +6,9 @@ import { View,
   ActivityIndicator, 
   FlatList,
   TouchableHighlight,
-  Dimensions,
-  RefreshControl } from 'react-native';
+  RefreshControl,
+  AsyncStorage,
+  Dimensions } from 'react-native';
 import { Avatar, List, ListItem } from "react-native-elements";
 import { useEffect, useState } from 'react';
 import { Block, Text, theme } from "galio-framework";
@@ -16,11 +17,15 @@ import ReadMore from 'react-native-read-more-text';
 import Icon from 'react-native-vector-icons/Ionicons';
 
 import Images from '../../../assets/imgs';
+const USER_STORAGE_KEY = "@user_id";
 
 // To get feed entries to fill screen
+
+const { width, height } = Dimensions.get("screen");
+const thumbMeasure = (width - 48 - 32) / 3;
 let deviceWidth = Dimensions.get('window').width
 
-//var url = "localhost:5000";
+// var url = "http://192.168.1.7:5000";
 var url = "http://flip1.engr.oregonstate.edu:5005";
 
 export class FeedEntry extends React.Component {
@@ -34,7 +39,9 @@ export class FeedEntry extends React.Component {
         isLoading: true,
         refresh: false,
         firstRender: true,
-        refreshing: false
+        userId: "",
+        refreshing: false,
+
       };
 
       this.getFeedEntries();
@@ -59,8 +66,7 @@ export class FeedEntry extends React.Component {
      }).finally(() => {
        this.setState({ isLoading: false });
      });
-
-    }
+   }
 
     state = {}
 
@@ -68,6 +74,18 @@ export class FeedEntry extends React.Component {
       this.setState({ [key]: val })
     }
 
+    getUserId = async () => {
+      try {
+        const value = await AsyncStorage.getItem(USER_STORAGE_KEY);
+        this.setState({['userId']: value});
+        this.setState({['haveUserId']: true});
+      }
+      catch {
+        console.log("failed to get userId");
+      }
+    }
+
+    // Separate items in feed
     FlatListItemSeparator = () => {
         return (
           <View
@@ -96,40 +114,78 @@ export class FeedEntry extends React.Component {
       );
     }
     _handleTextReady = () => {}
+ 
+    // Store upvotes and downvotes on backend
+    sendResponse(item, vote){
+        fetch(url + '/addFeedResponse/', {
+         method: 'POST',
+         headers: {
+             Accept: 'application/json',
+             'Content-Type': 'application/json',
+         },
+         body: JSON.stringify({
+             store_feedback_id: item.store_feedback_id,
+             vote_value: vote,
+             user: item.user_id,
+             response_user: this.state.userId,
+         }),
+       })
+    }
 
-  // Get feed entries
+    // Set right colors for icons
+    upVote(item) {
 
+      // If already upvoted, send a downvote to cancel
+      if( item.upVote == 1){
 
-  // Set right colors for icons
-  upVote(item) {
+        this.sendResponse(item, -1)
 
-    // Flip value of downvote
-    item.upVote = !item.upVote;
-    // Set downvote to zero
-    item.downVote = 0;
-    // Force a refresh
-    this.setState({ refresh: !this.state.refresh})
-    return item
-  
-  }
+      } else {
 
-  downVote(item) {
+        this.sendResponse(item, 1)
 
-    // Flip value of downvote
-    item.downVote = !item.downVote;
-    // Set upvote to zero
-    item.upVote = 0;
-    // Force a refresh
-    this.setState({ refresh: !this.state.refresh})
-    return item
+      }
 
-  }
+      // Flip value of downvote
+      item.upVote = !item.upVote;
+      // Set downvote to zero
+      item.downVote = 0;
 
- renderSeparator = () => {
-    return (
-      <View style={{backgroundColor:'#fff', flex:1 ,padding: 10}}></View>
-    );
-  };
+      // Force a refresh
+      this.setState({ refresh: !this.state.refresh})
+      return item
+    
+    }
+
+    downVote(item) {
+
+      // If already downvoted, send an upvote to cancel
+      if( item.downVote == 1){
+
+        this.sendResponse(item, 1)
+
+      } else {
+
+        this.sendResponse(item, -1)
+
+      }
+
+      // Flip value of downvote
+      item.downVote = !item.downVote;
+      // Set upvote to zero
+      item.upVote = 0;
+      // Force a refresh
+      this.setState({ refresh: !this.state.refresh})
+      return item
+
+    }
+
+   renderSeparator = () => {
+      return (
+        <View style={{backgroundColor:'#fff', flex:1 ,padding: 10}}></View>
+      );
+    };
+
 
   _onRefresh () {
     this.setState({refreshing: true});
@@ -143,7 +199,7 @@ export class FeedEntry extends React.Component {
    render() {
 
     // Assign upvotes and downvotes to 0
-    // Only want to do this oncee, so use firstRender 
+    // Only want to do this once, so use firstRender 
     if( this.state.firstRender ){
 
       // Add upvote and downvote flags 
@@ -158,20 +214,18 @@ export class FeedEntry extends React.Component {
 
     }
 
+    return (
 
-    const { isLoading } = this.state;
+    <View style={{ padding: 5, alignSelf: "center", backgroundColor: "#fff"}}>
 
-    return (  
-
-    <View style={{ flex: 1, padding: 5, alignSelf: "center", backgroundColor: "#fff"}}>
-      {isLoading ? <ActivityIndicator/> : (
+      {this.state.isLoading ? <ActivityIndicator/> : (
 
         <FlatList
+          extraData={this.state.refresh} // Need this variable to change to force a refresh
+          data={this.state.data}
           refreshControl={
             <RefreshControl refreshing={this.state.refreshing} onRefresh={this._onRefresh.bind(this)}/>
           }
-          extraData={this.state.refresh} // Need this variable to change to force a refresh
-          data={this.state.data}
           ItemSeparatorComponent={this.renderSeparator}
           ListHeaderComponent = { this.renderSeparator }
           renderItem={({ item }) => (
@@ -184,11 +238,11 @@ export class FeedEntry extends React.Component {
                     <Avatar
                     rounded
                     source = {Images.reputation[item.user_reputation_category_id]}
-                    // source={require('../../../assets/imgs/L2.jpg')}
                     onPress={() => {
-                        this.props.navigation.navigate("Profile"), {
-                        user_id: item.user_id,
-                      };}}
+                        this.props.navigation.navigate("FeedProfileModal"
+                          , {user_id: item.user_id}
+                          );
+                        }}
                      />  
                     <Text numberOfLines={1} style={styles.headline}> 
                     {item.first_name} shopped {item.store_name} on {item.time_added.slice(0,10)}

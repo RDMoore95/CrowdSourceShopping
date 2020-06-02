@@ -8,18 +8,20 @@ import 'react-native-gesture-handler';
 import React from 'react';
 import { StyleSheet, Alert, Text, ScrollView, Image, Button, View, TouchableOpacity } from 'react-native';
 import Feed from './app/screens/feed/feed';
+import FeedProfile from './app/screens/feed/feedProfile';
 import UserProfile from './app/screens/profile/profile';
-import  InputPrompt  from './app/screens/input/inputPrompt';
-import  InputBarcode  from './app/screens/input/inputBarcode';
-import  InputBarcodeScanned  from './app/screens/input/inputBarcodeScanned';
-import  InputStoreCategory  from './app/screens/input/inputStoreCategory';
-import  InputStoreFeedback  from './app/screens/input/inputStoreFeedback';
-import  Map  from './app/screens/map/map';
-import  Stores  from './app/screens/stores/stores';
-import  SignIn from './app/screens/signin/signin';
-import  SignUp from './app/screens/signin/signup';
-import  { StoreProfile } from './app/screens/stores/storeProfile';
-import  ReviewList from './app/screens/reviews/reviewList';
+import InputPrompt  from './app/screens/input/inputPrompt';
+import InputPromptStores  from './app/screens/input/inputPromptStores';
+import InputBarcode  from './app/screens/input/inputBarcode';
+import InputBarcodeScanned  from './app/screens/input/inputBarcodeScanned';
+import InputStoreCategory  from './app/screens/input/inputStoreCategory';
+import InputStoreFeedback  from './app/screens/input/inputStoreFeedback';
+import Map  from './app/screens/map/map';
+import Stores  from './app/screens/stores/stores';
+import SignIn from './app/screens/signin/signin';
+import SignUp from './app/screens/signin/signup';
+import { StoreProfile } from './app/screens/stores/storeProfile';
+import ReviewList from './app/screens/reviews/reviewList';
 // import { NewButton } from './app/components/newButton/newButton';
 import { HomeScreen } from './app/screens/home/home';
 import { ShoppingList } from './app/screens/shoppingList/shoppingListEdit';
@@ -147,7 +149,16 @@ function FeedTabNav() {
         <FeedStack.Screen 
           name="Feed"
           component={Feed}
-          options={{ headerShown: false }}
+          options={{ headerShown: false,}}
+        />
+        <FeedStack.Screen 
+          name="FeedProfileModal"
+          component={FeedProfile}
+          options={{ headerShown: false,
+            gestureDirection: 'vertical',
+            swipeVelocityImpact: 0,
+            springVelocityScale: 0.1,
+           }}
         />
       </FeedStack.Navigator>
     );
@@ -189,6 +200,15 @@ function StoreTabNav() {
             springVelocityScale: 4,
            }}
         />
+        <StoreStack.Screen 
+          name="FeedProfileModal"
+          component={FeedProfile}
+          options={{ headerShown: false,
+            gestureDirection: 'vertical',
+            swipeVelocityImpact: 0,
+            springVelocityScale: 0.1,
+           }}
+        />
       </StoreStack.Navigator>
     );
 }
@@ -209,6 +229,11 @@ function ProfileTabNav() {
             component={ReviewList}
             options={{ headerShown: false }}
           />
+        <ProfileStack.Screen 
+          name="InputPromptStores"
+          component={InputPromptStores}
+          options={{ headerShown: false }}
+        />                  
         <ProfileStack.Screen 
           name="InputPrompt"
           component={InputPrompt}
@@ -234,6 +259,15 @@ function ProfileTabNav() {
           component={InputStoreFeedback}
           options={{ headerShown: false }}
         />                           
+        <ProfileStack.Screen 
+          name="FeedProfileModal"
+          component={FeedProfile}
+          options={{ headerShown: false,
+            gestureDirection: 'vertical',
+            swipeVelocityImpact: 0,
+            springVelocityScale: 0.1,
+           }}
+        />
       </ProfileStack.Navigator>
     );
 }

@@ -10,9 +10,12 @@ import { theme } from "galio-framework";
 
 let deviceWidth = Dimensions.get('window').width
 
-export default function InputBarcode() {
+export default function InputBarcode( { route }, {} ) {  
 
   const navigation = useNavigation();
+
+  const { store_id } = route.params;
+  const { user_id } = route.params;  
   
   const [hasPermission, setHasPermission] = useState(null);
   const [scanned, setScanned] = useState(false);
@@ -28,9 +31,11 @@ export default function InputBarcode() {
   handleBarCodeScanned = ({ type, data }) => {
     let barcodeType = type;
     let barcodeData = data;
-    navigation.navigate("InputBarcodeScanned", {barcodeData: barcodeData})
-    // navigation.navigate("InputBarcodeScanned", {barcodeData: '37000940203'})
-    // navigation.navigate("InputBarcodeScanned", {barcodeData: '1234'})
+    navigation.navigate("InputBarcodeScanned", {
+      barcodeData: barcodeData,
+      store_id: store_id,
+      user_id: user_id,
+    })
   }
 
   if (hasPermission === null) {
@@ -42,7 +47,6 @@ export default function InputBarcode() {
 
   return(
       
-
     <View
       style={{
         flex: 1,

@@ -8,7 +8,7 @@ import {
   Dimensions,
   ImageBackground,
   RefreshControl,
-  AsyncStorage
+  TouchableOpacity,
   } from 'react-native';
 import { useEffect, useState } from 'react';
 import { NavigationContainer } from '@react-navigation/native';
@@ -24,9 +24,6 @@ import { FeedEntry } from '../feed/components/feedEntry';
 import Images from '../../assets/imgs';
 
 import {NewButton} from "../../components/newButton/newButton";
-const USER_STORAGE_KEY = "@user_id";
-
-
 
 const { width, height } = Dimensions.get("screen");
 const thumbMeasure = (width - 48 - 32) / 3;
@@ -35,41 +32,27 @@ let deviceWidth = Dimensions.get('window').width
 // var url = "http://192.168.1.7:5000";
 var url = "http://flip1.engr.oregonstate.edu:5005";
 
-export default class UserProfile extends React.Component {
+export default class FeedProfile extends React.Component {
 
   constructor(props) {
     super(props);
 
     this.state = {
       data: [],
-      userId: "",
       haveUserId: false,
-      isLoading: true
+      isLoading: true,
+      userId: this.props.route.params.user_id
     };
   }
 
-  getUserId = async () => {
-    try {
-      const value = await AsyncStorage.getItem(USER_STORAGE_KEY);
-      this.setState({['userId']: value});
-      this.setState({['haveUserId']: true});
-    }
-    catch {
-      console.log("failed to get userId");
-    }
-  }
-
  getAPIData(){
-  this.getUserId()
-    .then(() => {
 
-      console.log("user_id", this.state.userId)
-
-      const requestOptions = {
+    const requestOptions = {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ user_id: this.state.userId.toString() })
     };
+
     fetch(url + '/getUserProfile/', requestOptions)
         .then(response => response.json())
         .then((json) => {
@@ -79,7 +62,7 @@ export default class UserProfile extends React.Component {
         })
         .catch((error) => console.error(error))
         .finally(() => this.setState({isLoading: false}))
-    });
+
  } 
 
  componentDidMount() {
@@ -112,6 +95,18 @@ export default class UserProfile extends React.Component {
           />
         }
         >
+
+          <TouchableOpacity 
+          onPress={() => {
+            this.props.navigation.goBack()
+            // this.props.navigation.navigate("Feed"), {};
+          }}
+          style={styles.feedBox}
+          >
+          <Text bold size={20} color="#32325D">Dismiss</Text>
+          </TouchableOpacity>
+
+          <View style={{backgroundColor:'#fff', padding: 5}}></View>
 
           <Block flex style={styles.profileCard}> 
             <Block middle style={styles.avatarContainer}>
@@ -212,7 +207,7 @@ export default class UserProfile extends React.Component {
 
               </Block>
 
-              <FeedEntry navigation={this.props.navigation} id_type = 'user' id_value = {this.state.userId}> </FeedEntry>
+              <FeedEntry id_type = 'user' id_value = {this.state.userId}> </FeedEntry>
 
               <View style={{backgroundColor:'#fff', padding: 10}}></View>
           
@@ -288,5 +283,21 @@ thumb: {
   width: thumbMeasure,
   height: thumbMeasure,
   backgroundColor:'#fff'
-}
+},
+feedBox: {
+  backgroundColor:'#fcfcfc'
+  , paddingHorizontal: 6
+  , paddingVertical: 12
+  , marginHorizontal: theme.SIZES.BASE
+  , borderColor: '#d3d3d3'
+  , borderRadius: 10
+  , borderWidth: 1
+  , shadowColor: "black"
+  , shadowOffset: { width: 0, height: 0 }
+  , shadowRadius: 8
+  , shadowOpacity: 0.2
+  , zIndex: 2
+  , justifyContent: 'center'
+  , alignItems: 'center'
+},
 });

@@ -6,7 +6,8 @@ import {
   ScrollView,
   ActivityIndicator,
   Dimensions,
-  ImageBackground
+  ImageBackground,
+  TouchableOpacity
   } from 'react-native';
 import { useEffect, useState } from 'react';
 import { FeedEntry } from '../feed/components/feedEntry';
@@ -14,6 +15,7 @@ import { Block, Text, theme } from "galio-framework";
 import { Button } from "../../components";
 import { argonTheme } from "../../constants";
 import { HeaderHeight } from "../../constants/utils";
+import { useNavigation } from '@react-navigation/native';
 
 import Images from '../../assets/imgs';
 
@@ -21,7 +23,9 @@ const { width, height } = Dimensions.get("screen");
 const thumbMeasure = (width - 48 - 32) / 3;
 let deviceWidth = Dimensions.get('window').width
 
-export function StoreProfile( { route, navigation }, {} ) {
+export function StoreProfile( { route }, {} ) {
+
+    const navigation = useNavigation();
 
     // Get store_id
     const { store_id } = route.params;
@@ -38,9 +42,6 @@ export function StoreProfile( { route, navigation }, {} ) {
     const [isLoading, setLoading] = useState(true);
     const [data, setData] = useState([]);
   
-
-    // store_name, store_address, price_rating, crowd_rating, service_rating, store_rating are the data variables
-    // I mocked - but feel free to change!
 
     useEffect(() => {
         // something like 4545/store/{data.store_id}?
@@ -60,13 +61,24 @@ export function StoreProfile( { route, navigation }, {} ) {
               showsVerticalScrollIndicator={false}
               style={{ width, marginTop: '5%', backgroundColor:'#fff' }}
             > 
+
+            <TouchableOpacity 
+                onPress={() => {
+                  // this.props.navigation.goBack()
+                  navigation.navigate("Stores"), {};
+                }}
+                style={styles.feedBox}
+                >
+                <Text bold size={20} color="#32325D">Dismiss</Text>
+            </TouchableOpacity>
+
+            <View style={{backgroundColor:'#fff', padding: 3}}></View>
+
               <Block flex style={styles.profileCard}> 
                 <Block middle style={styles.avatarContainer}>
                   <Image 
-                    // source={require('../../assets/imgs/traderjoes.png')}
-                    source = {image_src}
-                    style={styles.avatar}
-                  
+                    source = {Images.stores[store_name_fmt]}
+                    style={styles.avatar} 
                   /> 
                 </Block>
                 <Block style={styles.info}>
@@ -146,7 +158,7 @@ export function StoreProfile( { route, navigation }, {} ) {
                   </Block>
                   </Block>
 
-                  <FeedEntry id_type = 'store' id_value = {store_id}> </FeedEntry>
+                  <FeedEntry navigation={navigation} id_type = 'store' id_value = {store_id}> </FeedEntry>
               
             </ScrollView>
  
@@ -155,6 +167,8 @@ export function StoreProfile( { route, navigation }, {} ) {
 
         )
 };
+
+
 
 const styles = StyleSheet.create({
   profile: {
@@ -217,5 +231,21 @@ const styles = StyleSheet.create({
     width: thumbMeasure,
     height: thumbMeasure,
     backgroundColor:'#fff'
-  }
+  },
+  feedBox: {
+    backgroundColor:'#fcfcfc'
+    , paddingHorizontal: 6
+    , paddingVertical: 12
+    , marginHorizontal: theme.SIZES.BASE
+    , borderColor: '#d3d3d3'
+    , borderRadius: 10
+    , borderWidth: 1
+    , shadowColor: "black"
+    , shadowOffset: { width: 0, height: 0 }
+    , shadowRadius: 8
+    , shadowOpacity: 0.2
+    , zIndex: 2
+    , justifyContent: 'center'
+    , alignItems: 'center'
+  },  
 });
