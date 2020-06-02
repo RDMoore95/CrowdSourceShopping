@@ -40,9 +40,33 @@ export class FeedEntry extends React.Component {
         refresh: false,
         firstRender: true,
         userId: "",
-        // refreshing: false,
+        refreshing: false,
+
       };
+
+      this.getFeedEntries();
+
     }
+
+    getFeedEntries = async () => {
+
+      fetch(url + '/getFeedEntries/', {
+        method: 'POST',
+        headers: {
+            Accept: 'application/json',
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            id_type: this.props.id_type,
+            id_value: this.props.id_value,
+        }),
+    }).then((response) => response.json())
+     .then((json) => {
+       this.setState({ data: json });
+     }).finally(() => {
+       this.setState({ isLoading: false });
+     });
+   }
 
     state = {}
 
@@ -61,13 +85,6 @@ export class FeedEntry extends React.Component {
       }
     }
 
-    _onRefresh () {
-      this.setState({refreshing: true});
-
-      this.getAPIData().then(() => {
-        this.setState({refreshing: false});
-      });
-    }
     // Separate items in feed
     FlatListItemSeparator = () => {
         return (
@@ -97,33 +114,7 @@ export class FeedEntry extends React.Component {
       );
     }
     _handleTextReady = () => {}
-
-    // Get feed elements
-    getAPIData(){
-        fetch(url + '/getFeedEntries/', {
-         method: 'POST',
-         headers: {
-             Accept: 'application/json',
-             'Content-Type': 'application/json',
-         },
-         body: JSON.stringify({
-             id_type: this.props.id_type,
-             id_value: this.props.id_value,
-         }),
-       }).then((response) => response.json())
-        .then((json) => {
-          this.setState({ data: json });
-        }).finally(() => {
-          this.setState({ isLoading: false });
-        });       
-    }  
-
-    // Get feed entries
-    componentDidMount() {
-      this.getUserId()
-      .then(() => {this.getAPIData()})
-    }
-
+ 
     // Store upvotes and downvotes on backend
     sendResponse(item, vote){
         fetch(url + '/addFeedResponse/', {
@@ -195,6 +186,14 @@ export class FeedEntry extends React.Component {
       );
     };
 
+
+  _onRefresh () {
+    this.setState({refreshing: true});
+
+    this.getFeedEntries().then(() => {
+      this.setState({refreshing: false});
+    });
+  }
 
    // Render each feed entry in a flatlist
    render() {
