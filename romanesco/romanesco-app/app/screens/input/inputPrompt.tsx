@@ -40,10 +40,6 @@ export default class InputPrompt extends React.Component {
 
   render() {
 
-    console.log(this.props)
-    console.log(this.state)
-    console.warn(this.state)
-
     if( this.state.submissionSuccess ){
 
     return (  

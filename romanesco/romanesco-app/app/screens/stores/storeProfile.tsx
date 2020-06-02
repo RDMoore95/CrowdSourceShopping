@@ -36,9 +36,6 @@ export function StoreProfile( { route }, {} ) {
     const [isLoading, setLoading] = useState(true);
     const [data, setData] = useState([]);
 
-    // store_name, store_address, price_rating, crowd_rating, service_rating, store_rating are the data variables
-    // I mocked - but feel free to change!
-
     useEffect(() => {
         // something like 4545/store/{data.store_id}?
       fetch('http://flip1.engr.oregonstate.edu:4545/profile')

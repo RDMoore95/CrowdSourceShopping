@@ -76,7 +76,6 @@ export default class InputStoreCategory extends React.Component {
    render() {
 
     const { isLoading } = this.state;
-    console.warn(this.props)
 
     return (  
 

@@ -81,8 +81,6 @@ export default class InputStoreFeedback extends React.Component {
   // Render each feed entry in a flatlist
   render() {
 
-          console.log(this.props)
-
             return(
 
           <>
