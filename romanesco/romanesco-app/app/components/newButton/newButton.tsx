@@ -4,6 +4,8 @@ import { StyleSheet, Alert, Text, ScrollView, Image, Button, View, TouchableOpac
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import { useNavigation } from '@react-navigation/native';
+import Icon from 'react-native-vector-icons/Ionicons';
+import { appstyles } from '../../styles/appStyle'
 
 //export function NewButton({ navigation: { navigate } }) {
 //export function NewButton( {navigation} ){
@@ -23,42 +25,11 @@ export function NewButton(){
         <TouchableOpacity
         activeOpacity={0.7}
         onPress={this.clickHandler}
-        style={styles.TouchableOpacityStyle}>
-        <Image
-           source={{
-            uri:'https://raw.githubusercontent.com/AboutReact/sampleresource/master/plus_icon.png',
-          }}
-          //source={require('./images/float-add-icon.png')}
-          style={styles.FloatingButtonStyle}
-        />
+        style={appstyles.TouchableOpacityStyle}>
+            <Icon
+                name="ios-add-circle" size={50}
+            />
         </TouchableOpacity>
     );
 }
 
-// export default withNavigation(NewButton);
-
-const styles = StyleSheet.create({
-    container: {
-      flex: 1,
-      backgroundColor: '#fff',
-      alignItems: 'center',
-      // justifyContent: 'center',
-    },
-
-    TouchableOpacityStyle: {
-      position: 'absolute',
-      width: 50,
-      height: 50,
-      alignItems: 'center',
-      justifyContent: 'center',
-      right: 30,
-      bottom: 30,
-    },
-  
-    FloatingButtonStyle: {
-      resizeMode: 'contain',
-      width: 50,
-      height: 50,
-      //backgroundColor:'black'
-    },
-  });
