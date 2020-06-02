@@ -176,12 +176,12 @@ def pullFeedEntries(id_type, id):
 	        , Store_Feedback.store_feedback_text
 	        , u.user_id
 	        , CASE 
-			WHEN COALESCE(r.reputation, 0) > 25 THEN 2
-			WHEN COALESCE(r.reputation, 0) > 100 THEN 3
-			WHEN COALESCE(r.reputation, 0) > 250 THEN 4
-			WHEN COALESCE(r.reputation, 0) > 500 THEN 5
-			WHEN COALESCE(r.reputation, 0) > 1000 THEN 6
-			ELSE 1 END as user_reputation_category_id
+			WHEN COALESCE(r.reputation, 0) < 25 THEN 1
+			WHEN COALESCE(r.reputation, 0) < 100 THEN 2
+			WHEN COALESCE(r.reputation, 0) < 250 THEN 3
+			WHEN COALESCE(r.reputation, 0) < 500 THEN 4
+			WHEN COALESCE(r.reputation, 0) < 1000 THEN 5
+			ELSE 6 END as user_reputation_category_id
 	        , Store_Feedback.store_feedback_id
 	    	FROM Store_Feedback 
 	    	INNER JOIN Store ON Store_Feedback.store_id = Store.store_id 
@@ -222,12 +222,12 @@ def pullFeedEntries(id_type, id):
 	        , Store_Feedback.store_feedback_text
 	        , u.user_id
 	        , CASE 
-			WHEN COALESCE(r.reputation, 0) > 25 THEN 2
-			WHEN COALESCE(r.reputation, 0) > 100 THEN 3
-			WHEN COALESCE(r.reputation, 0) > 250 THEN 4
-			WHEN COALESCE(r.reputation, 0) > 500 THEN 5
-			WHEN COALESCE(r.reputation, 0) > 1000 THEN 6
-			ELSE 1 END as user_reputation_category_id
+			WHEN COALESCE(r.reputation, 0) < 25 THEN 1
+			WHEN COALESCE(r.reputation, 0) < 100 THEN 2
+			WHEN COALESCE(r.reputation, 0) < 250 THEN 3
+			WHEN COALESCE(r.reputation, 0) < 500 THEN 4
+			WHEN COALESCE(r.reputation, 0) < 1000 THEN 5
+			ELSE 6 END as user_reputation_category_id
 	        , Store_Feedback.store_feedback_id
 	    	FROM Store_Feedback 
 	    	INNER JOIN Store ON Store_Feedback.store_id = Store.store_id 
@@ -270,12 +270,12 @@ def pullFeedEntries(id_type, id):
 	        , Store_Feedback.store_feedback_text
 	        , u.user_id
 	        , CASE 
-			WHEN COALESCE(r.reputation, 0) > 25 THEN 2
-			WHEN COALESCE(r.reputation, 0) > 100 THEN 3
-			WHEN COALESCE(r.reputation, 0) > 250 THEN 4
-			WHEN COALESCE(r.reputation, 0) > 500 THEN 5
-			WHEN COALESCE(r.reputation, 0) > 1000 THEN 6
-			ELSE 1 END as user_reputation_category_id
+			WHEN COALESCE(r.reputation, 0) < 25 THEN 1
+			WHEN COALESCE(r.reputation, 0) < 100 THEN 2
+			WHEN COALESCE(r.reputation, 0) < 250 THEN 3
+			WHEN COALESCE(r.reputation, 0) < 500 THEN 4
+			WHEN COALESCE(r.reputation, 0) < 1000 THEN 5
+			ELSE 6 END as user_reputation_category_id
 	        , Store_Feedback.store_feedback_id
 	    	FROM Store_Feedback 
 	    	INNER JOIN Store ON Store_Feedback.store_id = Store.store_id 
@@ -329,19 +329,19 @@ def pullUserProfile(user_id):
 			, u.first_name
 			, u.last_name
 			, CASE 
-			WHEN r.reputation > 25 THEN 2
-			WHEN r.reputation > 100 THEN 3
-			WHEN r.reputation > 250 THEN 4
-			WHEN r.reputation > 500 THEN 5
-			WHEN r.reputation > 1000 THEN 6
-			ELSE 1 END as user_reputation_category_id
+			WHEN COALESCE(r.reputation, 0) < 25 THEN 1
+			WHEN COALESCE(r.reputation, 0) < 100 THEN 2
+			WHEN COALESCE(r.reputation, 0) < 250 THEN 3
+			WHEN COALESCE(r.reputation, 0) < 500 THEN 4
+			WHEN COALESCE(r.reputation, 0) < 1000 THEN 5
+			ELSE 6 END as user_reputation_category_id
 			, CASE 
-			WHEN r.reputation > 25 THEN 'Professional'
-			WHEN r.reputation > 100 THEN 'Master'
-			WHEN r.reputation > 250 THEN 'Elite'
-			WHEN r.reputation > 500 THEN 'Superstar'
-			WHEN r.reputation > 1000 THEN 'Deity'
-			ELSE 'Apprentice' END as user_reputation_category_name
+			WHEN COALESCE(r.reputation, 0) < 25 THEN 'Apprentice'
+			WHEN COALESCE(r.reputation, 0) < 100 THEN 'Professional'
+			WHEN COALESCE(r.reputation, 0) < 250 THEN 'Master'
+			WHEN COALESCE(r.reputation, 0) < 500 THEN 'Elite'
+			WHEN COALESCE(r.reputation, 0) < 1000 THEN 'Superstar'
+			ELSE 'Deity' END as user_reputation_category_name
 			, (SELECT COUNT(*) FROM Price_Feedback WHERE user_id = {user}) as price_feedback
 			, (SELECT COUNT(*) FROM Store_Feedback WHERE user_id = {user}) as store_feedback
 			FROM User u
