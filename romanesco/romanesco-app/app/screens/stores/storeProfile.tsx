@@ -6,7 +6,8 @@ import {
   ScrollView,
   ActivityIndicator,
   Dimensions,
-  ImageBackground
+  ImageBackground,
+  TouchableOpacity
   } from 'react-native';
 import { useEffect, useState } from 'react';
 import { FeedEntry } from '../feed/components/feedEntry';
@@ -56,10 +57,22 @@ export function StoreProfile( { route }, {} ) {
               showsVerticalScrollIndicator={false}
               style={{ width, marginTop: '5%', backgroundColor:'#fff' }}
             > 
+
+            <TouchableOpacity 
+                onPress={() => {
+                  // this.props.navigation.goBack()
+                  navigation.navigate("Stores"), {};
+                }}
+                style={styles.feedBox}
+                >
+                <Text bold size={20} color="#32325D">Dismiss</Text>
+            </TouchableOpacity>
+
+            <View style={{backgroundColor:'#fff', padding: 3}}></View>
+
               <Block flex style={styles.profileCard}> 
                 <Block middle style={styles.avatarContainer}>
                   <Image 
-                    // source={require('../../assets/imgs/traderjoes.png')}
                     source = {Images.stores[store_name_fmt]}
                     style={styles.avatar}
                   
@@ -215,5 +228,21 @@ const styles = StyleSheet.create({
     width: thumbMeasure,
     height: thumbMeasure,
     backgroundColor:'#fff'
-  }
+  },
+  feedBox: {
+    backgroundColor:'#fcfcfc'
+    , paddingHorizontal: 6
+    , paddingVertical: 12
+    , marginHorizontal: theme.SIZES.BASE
+    , borderColor: '#d3d3d3'
+    , borderRadius: 10
+    , borderWidth: 1
+    , shadowColor: "black"
+    , shadowOffset: { width: 0, height: 0 }
+    , shadowRadius: 8
+    , shadowOpacity: 0.2
+    , zIndex: 2
+    , justifyContent: 'center'
+    , alignItems: 'center'
+  },  
 });

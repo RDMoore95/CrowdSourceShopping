@@ -6,6 +6,7 @@ import { View,
   ActivityIndicator, 
   FlatList,
   TouchableHighlight,
+  RefreshControl,
   Dimensions } from 'react-native';
 import { Avatar, List, ListItem } from "react-native-elements";
 import { useEffect, useState } from 'react';
@@ -17,6 +18,9 @@ import Icon from 'react-native-vector-icons/Ionicons';
 import Images from '../../../assets/imgs';
 
 // To get feed entries to fill screen
+
+const { width, height } = Dimensions.get("screen");
+const thumbMeasure = (width - 48 - 32) / 3;
 let deviceWidth = Dimensions.get('window').width
 
 //var url = "localhost:5000";
@@ -33,6 +37,7 @@ export class FeedEntry extends React.Component {
         isLoading: true,
         refresh: false,
         firstRender: true,
+        // refreshing: false,
       };
     }
 
@@ -42,6 +47,12 @@ export class FeedEntry extends React.Component {
       this.setState({ [key]: val })
     }
 
+    // Go get data again when user tries to refresh
+    onRefresh() {
+      this.setState({isLoading: true,},() => {this.getAPIData();});
+    }
+
+    // Separate items in feed
     FlatListItemSeparator = () => {
         return (
           <View
@@ -71,9 +82,9 @@ export class FeedEntry extends React.Component {
     }
     _handleTextReady = () => {}
 
-  // Get feed entries
-  componentDidMount() {
-    fetch(url + '/getFeedEntries/', {
+    // Get feed elements
+    getAPIData(){
+        fetch(url + '/getFeedEntries/', {
          method: 'POST',
          headers: {
              Accept: 'application/json',
@@ -83,51 +94,56 @@ export class FeedEntry extends React.Component {
              id_type: this.props.id_type,
              id_value: this.props.id_value,
          }),
-     }).then((response) => response.json())
-      .then((json) => {
-        this.setState({ data: json });
-      }).finally(() => {
-        this.setState({ isLoading: false });
-      });       
-  }
+       }).then((response) => response.json())
+        .then((json) => {
+          this.setState({ data: json });
+        }).finally(() => {
+          this.setState({ isLoading: false });
+        });       
+    }  
 
-  // Set right colors for icons
-  upVote(item) {
+    // Get feed entries
+    componentDidMount() {
+      this.getAPIData()
+    }
 
-    // Flip value of downvote
-    item.upVote = !item.upVote;
-    // Set downvote to zero
-    item.downVote = 0;
-    // Force a refresh
-    this.setState({ refresh: !this.state.refresh})
-    return item
-  
-  }
+    // Set right colors for icons
+    upVote(item) {
 
-  downVote(item) {
+      // Flip value of downvote
+      item.upVote = !item.upVote;
+      // Set downvote to zero
+      item.downVote = 0;
+      // Force a refresh
+      this.setState({ refresh: !this.state.refresh})
+      return item
+    
+    }
 
-    // Flip value of downvote
-    item.downVote = !item.downVote;
-    // Set upvote to zero
-    item.upVote = 0;
-    // Force a refresh
-    this.setState({ refresh: !this.state.refresh})
-    return item
+    downVote(item) {
 
-  }
+      // Flip value of downvote
+      item.downVote = !item.downVote;
+      // Set upvote to zero
+      item.upVote = 0;
+      // Force a refresh
+      this.setState({ refresh: !this.state.refresh})
+      return item
 
- renderSeparator = () => {
-    return (
-      <View style={{backgroundColor:'#fff', flex:1 ,padding: 10}}></View>
-    );
-  };
+    }
+
+   renderSeparator = () => {
+      return (
+        <View style={{backgroundColor:'#fff', flex:1 ,padding: 10}}></View>
+      );
+    };
 
 
    // Render each feed entry in a flatlist
    render() {
 
     // Assign upvotes and downvotes to 0
-    // Only want to do this oncee, so use firstRender 
+    // Only want to do this once, so use firstRender 
     if( this.state.firstRender ){
 
       // Add upvote and downvote flags 
@@ -143,16 +159,24 @@ export class FeedEntry extends React.Component {
     }
 
 
-    const { isLoading } = this.state;
+    // const { isLoading } = this.state;
 
-    return (  
+    return (
 
-    <View style={{ flex: 1, padding: 5, alignSelf: "center", backgroundColor: "#fff"}}>
-      {isLoading ? <ActivityIndicator/> : (
+    <View style={{ padding: 5, alignSelf: "center", backgroundColor: "#fff"}}>
+
+      {this.state.isLoading ? <ActivityIndicator/> : (
 
         <FlatList
           extraData={this.state.refresh} // Need this variable to change to force a refresh
           data={this.state.data}
+          refreshControl={
+            <RefreshControl
+                refreshing={this.state.isLoading}
+                onRefresh={() => this.onRefresh()}
+                tintColor="clear"
+              />
+          }
           ItemSeparatorComponent={this.renderSeparator}
           ListHeaderComponent = { this.renderSeparator }
           renderItem={({ item }) => (
@@ -165,11 +189,11 @@ export class FeedEntry extends React.Component {
                     <Avatar
                     rounded
                     source = {Images.reputation[item.user_reputation_category_id]}
-                    // source={require('../../../assets/imgs/L2.jpg')}
                     onPress={() => {
-                        this.props.navigation.navigate("Profile"), {
-                        user_id: item.user_id,
-                      };}}
+                        this.props.navigation.navigate("FeedProfileModal"
+                          , {user_id: item.user_id}
+                          );
+                        }}
                      />  
                     <Text numberOfLines={1} style={styles.headline}> 
                     {item.first_name} shopped {item.store_name} on {item.time_added.slice(0,10)}

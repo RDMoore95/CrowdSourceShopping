@@ -11,18 +11,20 @@ import { View,
   TouchableHighlight,
   TouchableOpacity,
   TouchableWithoutFeedback,
+  AsyncStorage,
   Dimensions } from 'react-native';
 import { Avatar, List, ListItem } from "react-native-elements";
 import { useEffect, useState } from 'react';
 import { theme } from "galio-framework";
 import { withNavigation } from 'react-navigation';
 import { Switch } from 'react-native-switch';
+const USER_STORAGE_KEY = "@user_id";
 
 // To get feed entries to fill screen
 let deviceWidth = Dimensions.get('window').width
 
-// var url = "http://192.168.1.7:5000";
-var url = "http://flip1.engr.oregonstate.edu:5005";
+var url = "http://192.168.1.7:5000";
+// var url = "http://flip1.engr.oregonstate.edu:5005";
 
 export default class InputStoreFeedback extends React.Component {  
 
@@ -33,7 +35,8 @@ export default class InputStoreFeedback extends React.Component {
     this.state = {
       isLoading: true,
       store_id: '67',
-      user_id: '9',      
+      haveUserId: false,
+      user_id: "",      
       store_feedback_category: this.props.route.params.store_feedback_category,
       store_feedback_text: '',
       store_feedback_category_id: this.props.route.params.store_feedback_category_id,      
@@ -41,23 +44,40 @@ export default class InputStoreFeedback extends React.Component {
     };
   }
 
+   getUserId = async () => {
+    try {
+      const value = await AsyncStorage.getItem(USER_STORAGE_KEY);
+      this.setState({['user_id']: value});
+      this.setState({['haveUserId']: true});
+    }
+    catch {
+      console.log("failed to get userId");
+    }
+  }
+
   // Adding item to database
   addStoreFeedback(){
 
-    fetch(url + '/addStoreFeedback/', {
-                   method: 'POST',
-                   headers: {
-                       Accept: 'application/json',
-                       'Content-Type': 'application/json',
-                   },
-                   body: JSON.stringify({
+    this.getUserId()
+      .then(() => {
+
+      console.log("user_id", this.state.user_id)
+
+      const requestOptions = {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
                        user_id: this.state.user_id,
                        store_id: this.state.store_id,
                        store_feedback_text: this.state.store_feedback_text,
                        store_feedback_category_id: this.state.store_feedback_category_id,
                        store_feedback_positive: this.state.store_feedback_positive,
                    })
-    })
+      };
+
+      fetch(url + '/addStoreFeedback/', requestOptions)
+
+    })    
 
   }
 

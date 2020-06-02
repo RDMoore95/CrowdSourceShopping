@@ -12,8 +12,8 @@ import pandas as pd
 app = Flask(__name__)
 
 # Get MySQL credentials
-# exec(open("/Users/walkerag/Documents/osu/cs467/project_paths.py").read())
-exec(open("./project_paths.py").read())
+exec(open("/Users/walkerag/Documents/osu/cs467/project_paths.py").read())
+# exec(open("./project_paths.py").read())
 
 # DB connection
 db_connection = create_engine(db_connection_str)
@@ -199,6 +199,8 @@ def pullUserProfile(user_id):
 			, u.last_name
 			, ur.user_reputation_category_id
 			, urc.user_reputation_category_name
+			, (SELECT COUNT(*) FROM Price_Feedback WHERE user_id = {user}) as price_feedback
+			, (SELECT COUNT(*) FROM Store_Feedback WHERE user_id = {user}) as store_feedback
 			FROM User u
             INNER JOIN User_Reputation ur ON u.user_id = ur.user_id
             INNER JOIN User_Reputation_Category urc on ur.user_reputation_category_id = urc.user_reputation_category_id
