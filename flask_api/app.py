@@ -18,10 +18,75 @@ exec(open("/Users/walkerag/Documents/osu/cs467/project_paths.py").read())
 # DB connection
 db_connection = create_engine(db_connection_str)
 
+
+# List of stores user can give feedback on
+# Combination of favorite and populat
+def pullFeedbackStores(user_id):
+
+	print("Running Pull Feedback Stores")
+	print(user_id)
+
+	# Get recent price feedback the user has not already responded to
+	query = '''
+		SELECT DISTINCT 
+	    store_id
+	    , store_name
+	    , store_street
+	    , store_city
+	    , store_zip
+	    FROM
+	    (
+	    (SELECT DISTINCT 
+	    s.store_id
+	    , s.store_name
+	    , s.store_street
+	    , s.store_city
+	    , s.store_zip
+	    , 1 as total_feedback
+	    FROM Store_Feedback sf
+	    INNER JOIN Store s
+	    ON sf.store_id = s.store_id
+	    WHERE sf.user_id = {user}
+	    GROUP BY 1, 2, 3, 4, 5
+	    ORDER BY sf.time_added DESC
+	    LIMIT 10)
+	    UNION ALL
+	    (SELECT
+	    s.store_id
+	    , s.store_name
+	    , s.store_street
+	    , s.store_city
+	    , s.store_zip
+	    , SUM(1) as total_feedback
+	    FROM Store_Feedback sf
+	    INNER JOIN Store s
+	    ON sf.store_id = s.store_id
+	    WHERE DATEDIFF(CURDATE(), sf.time_added) <= 90
+	    GROUP BY 1, 2, 3, 4, 5
+	    ORDER BY total_feedback DESC
+	    LIMIT 20)
+	    ) x
+	    '''
+	query_fmt = query.format(user = user_id)
+	print(query_fmt)
+	result = pd.read_sql(query_fmt, con=db_connection)
+	print(result)
+
+	# Add an ID
+	result['id'] = result.index.astype(str)
+
+	# Format store names
+	result['store_name_fmt'] = result['store_name'].str.replace('[^a-zA-Z]', '').str.lower()	
+
+	result_json = result.to_json(orient = 'records')
+	print(result_json)
+	return result_json
+
+
 # Get a user's favorite stores
 def pullFavoriteStores(user_id):
 
-	print("Running Pull Top Stores")
+	print("Running Pull Favorite Stores")
 	print(user_id)
 
 	# Get recent price feedback the user has not already responded to
@@ -75,7 +140,7 @@ def pullTopStores(userid):
 	    FROM Store_Feedback sf
 	    INNER JOIN Store s
 	    ON sf.store_id = s.store_id
-	    WHERE DATEDIFF(CURDATE(), sf.time_added) <= 30
+	    WHERE DATEDIFF(CURDATE(), sf.time_added) <= 90
 	    GROUP BY 1, 2, 3, 4, 5
 	    ORDER BY total_feedback DESC
 	    LIMIT 100
@@ -571,13 +636,19 @@ def pullBarcode(barcodeData):
 	return result_json
 
 
+@app.route('/getFeedbackStores/', methods=['POST', 'GET'])
+def getFeedbackStores():
+
+    print(request.json)
+    result_json = pullFeedbackStores(request.json['user_id'])
+    return result_json, 201
+
 @app.route('/getFavoriteStores/', methods=['POST', 'GET'])
 def getFavoriteStores():
 
     print(request.json)
     result_json = pullFavoriteStores(request.json['user_id'])
     return result_json, 201
-
 
 @app.route('/getTopStores/', methods=['POST', 'GET'])
 def getTopStores():

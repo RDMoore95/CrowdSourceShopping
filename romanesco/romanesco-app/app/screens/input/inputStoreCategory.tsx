@@ -23,7 +23,7 @@ let deviceWidth = Dimensions.get('window').width
 // var url = "http://192.168.1.7:5000";
 var url = "http://flip1.engr.oregonstate.edu:5005";
 
-export class InputStoreCategory extends React.Component {
+export default class InputStoreCategory extends React.Component {
 
     constructor(props) {
 
@@ -34,6 +34,8 @@ export class InputStoreCategory extends React.Component {
         isLoading: true,
         refresh: false,
         firstRender: true,
+        store_id: this.props.route.params.store_id,
+        user_id: this.props.route.params.user_id,        
       };
     }
 
@@ -74,6 +76,7 @@ export class InputStoreCategory extends React.Component {
    render() {
 
     const { isLoading } = this.state;
+    console.warn(this.props)
 
     return (  
 
@@ -95,6 +98,8 @@ export class InputStoreCategory extends React.Component {
                         this.props.navigation.navigate("InputStoreFeedback", {
                         store_feedback_category: item.store_feedback_category,
                         store_feedback_category_id: item.store_feedback_category_id,
+                        store_id: this.state.store_id,
+                        user_id: this.state.user_id,
                       });
                 }}
                 style={styles.TouchableOpacityStyle}>

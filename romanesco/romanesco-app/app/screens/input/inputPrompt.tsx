@@ -24,6 +24,8 @@ export default class InputPrompt extends React.Component {
 
   this.state = {
        submissionSuccess: this.props.route.params.submissionSuccess
+       , store_id: this.props.route.params.store_id
+       , user_id: this.props.route.params.user_id
     };
   }
 
@@ -40,6 +42,7 @@ export default class InputPrompt extends React.Component {
 
     console.log(this.props)
     console.log(this.state)
+    console.warn(this.state)
 
     if( this.state.submissionSuccess ){
 
@@ -65,8 +68,11 @@ export default class InputPrompt extends React.Component {
         <TouchableOpacity
         activeOpacity={0.7}
         onPress={() => {
-          this.props.navigation.navigate("InputBarcode"), {
-        };}}
+          this.props.navigation.navigate("InputBarcode", {
+            store_id: this.state.store_id,
+            user_id: this.state.user_id,}
+            )
+          }}
         style={styles.TouchableOpacityStyle}>
 
               <View style={{backgroundColor:'#fff', padding: 10}}></View>      
@@ -85,8 +91,11 @@ export default class InputPrompt extends React.Component {
         <TouchableOpacity
         activeOpacity={0.7}
         onPress={() => {
-          this.props.navigation.navigate("InputStoreCategory"), {
-        };}}
+          this.props.navigation.navigate("InputStoreCategory", {
+            store_id: this.state.store_id,
+            user_id: this.state.user_id,
+        })
+        }}
         style={styles.TouchableOpacityStyle}>
 
               <View style={{backgroundColor:'#fff', padding: 10}}></View>
@@ -123,8 +132,11 @@ export default class InputPrompt extends React.Component {
         <TouchableOpacity
         activeOpacity={0.7}
         onPress={() => {
-          this.props.navigation.navigate("InputBarcode"), {
-        };}}
+          this.props.navigation.navigate("InputBarcode", {
+            store_id: this.state.store_id,
+            user_id: this.state.user_id,}
+            )
+          }}
         style={styles.TouchableOpacityStyle}>
 
               <View style={{backgroundColor:'#fff', padding: 10}}></View>      
@@ -143,8 +155,11 @@ export default class InputPrompt extends React.Component {
         <TouchableOpacity
         activeOpacity={0.7}
         onPress={() => {
-          this.props.navigation.navigate("InputStoreCategory"), {
-        };}}
+          this.props.navigation.navigate("InputStoreCategory", {
+            store_id: this.state.store_id,
+            user_id: this.state.user_id,
+        })
+        }}
         style={styles.TouchableOpacityStyle}>
 
               <View style={{backgroundColor:'#fff', padding: 10}}></View>

@@ -11,6 +11,7 @@ import Feed from './app/screens/feed/feed';
 import FeedProfile from './app/screens/feed/feedProfile';
 import UserProfile from './app/screens/profile/profile';
 import InputPrompt  from './app/screens/input/inputPrompt';
+import InputPromptStores  from './app/screens/input/inputPromptStores';
 import InputBarcode  from './app/screens/input/inputBarcode';
 import InputBarcodeScanned  from './app/screens/input/inputBarcodeScanned';
 import InputStoreCategory  from './app/screens/input/inputStoreCategory';
@@ -228,6 +229,11 @@ function ProfileTabNav() {
             component={ReviewList}
             options={{ headerShown: false }}
           />
+        <ProfileStack.Screen 
+          name="InputPromptStores"
+          component={InputPromptStores}
+          options={{ headerShown: false }}
+        />                  
         <ProfileStack.Screen 
           name="InputPrompt"
           component={InputPrompt}

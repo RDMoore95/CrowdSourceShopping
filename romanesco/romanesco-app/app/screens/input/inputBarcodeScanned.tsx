@@ -40,7 +40,7 @@ export default class InputBarcodeScanned extends React.Component {
       item_name: 'Known',
       price: '',
       sale: false,
-      store_id: '67',
+      store_id: this.props.route.params.store_id,
       user_id: "",
     };
   }
