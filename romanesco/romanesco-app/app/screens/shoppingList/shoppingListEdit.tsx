@@ -123,9 +123,16 @@ export class ShoppingList extends React.Component {
 
     componentDidMount() {
         
-        this.setState({ loading: true });
-        this.getList()
+        //this.setState({ loading: true });
+        //this.getList()
       
+        this.setState({data: [ 
+          {"shopping_list_history_id":55928,"tag_name":"tissues","id":"0"},
+        {"shopping_list_history_id":55929,"tag_name":"fish","id":"1"},
+        {"shopping_list_history_id":55931,"tag_name":"trout","id":"2"},
+        {"shopping_list_history_id":55933,"tag_name":"corn","id":"3"},
+        {"shopping_list_history_id":55934,"tag_name":"corn","id":"4"} 
+      ] });  
   }
   
   _onRefresh () {
@@ -231,16 +238,13 @@ export class ShoppingList extends React.Component {
                               </View>
                             </Modal>
 
-                <Block>
-                    <View style={{ flex: 1, padding: 24 }}>
+               
+                    <View style={appstyles.container}>
                     {this.state.isLoading ? <ActivityIndicator/> : (
                             <FlatList
                                 data={this.state.data}
                                 ItemSeparatorComponent={this.renderSeparator}
-                                ListHeaderComponent = { this.renderSeparator }
-                                refreshControl={
-                                  <RefreshControl refreshing={this.state.refreshing} onRefresh={this._onRefresh.bind(this)}/>
-                                }
+                                ListHeaderComponent = { this.renderSeparator}
                                 renderItem={({ item, id }) => (
                                 <View>
                                     <View style={appstyles.listRow}>
@@ -255,7 +259,6 @@ export class ShoppingList extends React.Component {
                             />
                             )}                
                     </View>
-                </Block>
               </Block>
         </View>
       </ScrollView>

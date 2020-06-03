@@ -85,7 +85,7 @@ export const appstyles = StyleSheet.create({
      
   },
     listRow: {
-        width: width*.85,
+        width: width*.75,
         flexDirection: 'row',
         alignContent: 'stretch',
         justifyContent: 'space-between'
