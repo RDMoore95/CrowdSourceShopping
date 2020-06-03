@@ -1,5 +1,12 @@
 import React, {Component} from 'react';
-import { StyleSheet, Text, View, Button,  Dimensions, ActivityIndicator, FlatList} from 'react-native';
+import { StyleSheet, 
+  Text, 
+  View, 
+  Button, 
+  Dimensions, 
+  AsyncStorage,
+  ActivityIndicator, 
+  FlatList} from 'react-native';
 import MapView, { PROVIDER_GOOGLE, Callout, CalloutSubview } from 'react-native-maps';
 import { useEffect, useState } from 'react';
 import * as Location from 'expo-location';
@@ -12,17 +19,21 @@ import {NewButton} from "../../components/newButton/newButton";
 import { TouchableHighlight, TouchableOpacity } from 'react-native-gesture-handler';
 import { color } from 'react-native-reanimated';
 
+const USER_STORAGE_KEY = "@user_id";
+
 export default class Map extends Component {
-  //navigation = useNavigation();
 
   constructor(props) {
     super(props);
 
     this.state = {
       isLoading: true,
-      coordinates_received: false
+      coordinates_received: false,
+      user_id: ""
     };
 
+    this.getUserId()
+      .then(() => {
     fetch('http://flip1.engr.oregonstate.edu:4545/map')
       .then((response) => response.json())
       .then((json) => {
@@ -34,8 +45,20 @@ export default class Map extends Component {
       .finally(() => {
         this.setState({ isLoading: false });
       })
+    })
 
   }
+
+  getUserId = async () => {
+    try {
+      const value = await AsyncStorage.getItem(USER_STORAGE_KEY);
+      this.setState({['user_id']: value});
+      this.setState({['haveUserId']: true});
+    }
+    catch {
+      console.log("failed to get userId");
+    }
+  }  
 
   findCoordinates = async () => {
 
@@ -98,9 +121,9 @@ export default class Map extends Component {
                 onPress={() => this.props.navigation.navigate('StoreProfileModal', 
                 {
                   store_id: marker.store_id,
-                  store_name_fmt: marker.store_name,
                   store_street: marker.store_street,
                   store_city: marker.store_city,
+                  user_id: this.state.user_id,
                 }
               )
               }>
@@ -119,13 +142,8 @@ export default class Map extends Component {
         <NewButton />        
       </View>
       );
-  
-  
-  
-  // taaken from react-native-maps example snack
-  
-     
-          }
+   
+     }
   }
 
   const styles = StyleSheet.create({

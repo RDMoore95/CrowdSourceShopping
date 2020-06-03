@@ -148,9 +148,9 @@ export default class StoreFeed extends React.Component {
                     onPress={() => this.props.navigation.navigate('StoreProfileModal', 
                       {
                         store_id: item.store_id,
-                        store_name_fmt: item.store_name_fmt,
                         store_street: item.store_street,
                         store_city: item.store_city,
+                        user_id: this.state.user_id,
                       }
                     )
                     }
