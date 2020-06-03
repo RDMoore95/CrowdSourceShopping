@@ -46,7 +46,7 @@ export default function App() {
   return (
     
     <NavigationContainer>
-      <MainStack.Navigator initialRouteName="Romanesco">
+      <MainStack.Navigator initialRouteName="SignIn">
       <MainStack.Screen
           name="SignIn"
           component={SignIn}
