@@ -10,7 +10,8 @@ import {
   Alert, 
   Modal, 
   TextInput,
-  AsyncStorage
+  AsyncStorage,
+  RefreshControl
   } from 'react-native';
 import { useEffect, useState } from 'react';
 import { NavigationContainer } from '@react-navigation/native';
@@ -26,8 +27,12 @@ const { width, height } = Dimensions.get("screen");
 
 const thumbMeasure = (width - 48 - 32) / 3;
 
-//const url = "localhost:5000";
-const url = "http://flip1.engr.oregonstate.edu:5005";
+import { appstyles } from '../../styles/appStyle'
+
+const USER_STORAGE_KEY = "@user_id";
+
+const url = "http://10.0.0.159:5000";
+//const url = "http://flip1.engr.oregonstate.edu:5005";
 
 export class ShoppingList extends React.Component {
 
@@ -38,14 +43,14 @@ export class ShoppingList extends React.Component {
       this.state = {
         data: [],
         tags: [],
+        user_id: "",
+        haveUserId: true,
+        tag_name: "",
         isLoading: false,
         refresh: false,
         firstRender: true,
-        modalTag1Visible: false,
-        modalTag2Visible: false,
-        modalTag3Visible: false,
         modalAddVisible: false,
-        text_buffer: ""
+        refreshing: false
       };
     }
 
@@ -63,10 +68,39 @@ export class ShoppingList extends React.Component {
         );
       }
     
+      addList(){
+        fetch(url + '/addList/', {
+                       method: 'POST',
+                       headers: {
+                           Accept: 'application/json',
+                           'Content-Type': 'application/json',
+                       },
+                       body: JSON.stringify({
+                           user_id: this.state.user_id,
+                           tag_name: this.state.tag_name,
+                       })
+        })
+    
+      }
+
+      removeItem(shopping_list_history_id){
+        fetch(url + '/removeItem/', {
+                       method: 'POST',
+                       headers: {
+                           Accept: 'application/json',
+                           'Content-Type': 'application/json',
+                       },
+                       body: JSON.stringify({
+                           list_id: shopping_list_history_id
+                       })
+        })
+    
+      }
+
       getUserId = async () => {
         try {
           const value = await AsyncStorage.getItem(USER_STORAGE_KEY);
-          this.setState({['userId']: value});
+          this.setState({['user_id']: value});
           this.setState({['haveUserId']: true});
           return value;
         }
@@ -74,58 +108,56 @@ export class ShoppingList extends React.Component {
           console.log("failed to get userId");
         }
       }
+
+      onChangeText = (key, val) => {
+        this.setState({ [key]: val })
+      }
     
+      submitHandler(){
+        this.addList()
+        this.setModalAddVisible(!this.state.modalAddVisible)
+
+      }
+
     componentDidMount() {
         
         this.setState({ loading: true });
-        
-        this.getUserId().then((uid) => fetch(url + uid + '/shoppingList/' + this.props.list_id,  {
-         method: 'POST',
-         headers: {
-             Accept: 'application/json',
-             'Content-Type': 'application/json',
-         },
-         body: JSON.stringify({
-             id_type: this.props.id_type,
-             id_value: this.props.id_value,
-         }),
-     }).then((response) => response.json())
-      .then((json) => {
-        this.setState({ data: json });
-      }).finally(() => {
-        this.setState({ isLoading: false });
-      }));     
+        this.getList()
       
-     /* 
-     this.setState(
-         {
-             data:  [
-                {id: "1", name: "TP", price: "0.99", quantity: "1", units: "package"}, 
-                {id: "2", name: "Yeast", price: "1.00", quantity: "3", units: "package"}, 
-                {id: "3", name: "Potatoes", price: "5.00", quantity: "5", units: "LBs"}
-            ]
-            
-        });
-        */
   }
   
+  _onRefresh () {
+    this.setState({refreshing: true});
+
+    this.getList().then(() => {
+      this.setState({refreshing: false});
+    });
+  }
+
+  getList(){
+    this.getUserId().then(() => fetch(url + '/getShoppingList/', {
+      method: 'POST',
+      headers: {
+          Accept: 'application/json',
+          'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+          user_id: this.state.user_id
+      }),
+     }).then((response) => response.json())
+   .then((json) => {
+     this.setState({ data: json });
+   }).finally(() => {
+     this.setState({ isLoading: false });
+    })
+   ); 
+  }
+
   renderSeparator = () => {
     return (
       <View style={{backgroundColor:'#fff', flex:1 ,padding: 10}}></View>
     );
   };
-
-  setModalTag1Visible = (visible) => {
-    this.setState({ modalTag1Visible: visible });
-  }
-
-  setModalTag2Visible = (visible) => {
-    this.setState({ modalTag2Visible: visible });
-  }
-
-  setModalTag3Visible = (visible) => {
-    this.setState({ modalTag3Visible: visible });
-  }
 
   setModalAddVisible = (visible) => {
     this.setState({ modalAddVisible: visible });
@@ -179,19 +211,18 @@ export class ShoppingList extends React.Component {
                                     autoCapitalize="none"
                                     maxLength={50}
                                     placeholderTextColor='white'
-                                    onChangeText={val => this.onChangeText('text_buffer', val)}
+                                    onChangeText={val => this.onChangeText('tag_name', val)}
                                   />
                                   <Button
                                     style={styles.listButton}
-                                    onPress={() => 
-                                      this.setModalAddVisible(!this.state.modalAddVisible) }>
+                                    onPress={() => this.submitHandler() }>
                                     <Text>Submit</Text>
                                   </Button>  
                                   <Button
                                     style={styles.listButton}
                                     onPress={() => 
                                       this.setModalAddVisible(!this.state.modalAddVisible) }>
-                                    <Text>Cancel</Text>
+                                    <Text>Close</Text>
                                   </Button>
                                 </View>
                               </View>
@@ -204,13 +235,16 @@ export class ShoppingList extends React.Component {
                                 data={this.state.data}
                                 ItemSeparatorComponent={this.renderSeparator}
                                 ListHeaderComponent = { this.renderSeparator }
+                                refreshControl={
+                                  <RefreshControl refreshing={this.state.refreshing} onRefresh={this._onRefresh.bind(this)}/>
+                                }
                                 renderItem={({ item, id }) => (
                                 <View>
                                     <View style={styles.listRow}>
-                                        <Text>{item.name}</Text>
+                                        <Text>{item.tag_name}</Text>
                                         <Icon
                                           name="ios-close-circle-outline" size={25}
-                                          onPress={() => Alert.alert('Remove Item')}
+                                          onPress={() => this.removeItem(item.shopping_list_history_id)}
                                         />
                                     </View>
                                 </View>)}

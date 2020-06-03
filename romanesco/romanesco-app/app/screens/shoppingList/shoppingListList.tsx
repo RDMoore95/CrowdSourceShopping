@@ -30,6 +30,8 @@ const { width, height } = Dimensions.get("screen");
 
 const thumbMeasure = (width - 48 - 32) / 3;
 
+const USER_STORAGE_KEY = "@user_id";
+
 const url = "http://10.0.0.159:5000";
 //const url = "http://flip1.engr.oregonstate.edu:5005";
 

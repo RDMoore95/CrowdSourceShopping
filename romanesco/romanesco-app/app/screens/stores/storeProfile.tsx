@@ -19,6 +19,8 @@ import { useNavigation } from '@react-navigation/native';
 
 import Images from '../../assets/imgs';
 
+import { appstyles } from '../../styles/appStyle'
+
 const { width, height } = Dimensions.get("screen");
 const thumbMeasure = (width - 48 - 32) / 3;
 let deviceWidth = Dimensions.get('window').width
