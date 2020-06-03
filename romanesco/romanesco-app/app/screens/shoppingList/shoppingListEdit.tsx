@@ -11,14 +11,16 @@ import {
   Modal, 
   TextInput,
   AsyncStorage,
-  RefreshControl
+  Button,
+  RefreshControl,
+  TouchableHighlight
   } from 'react-native';
 import { useEffect, useState } from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import { withNavigation } from 'react-navigation';
 import { Block, Text, theme } from "galio-framework";
-import { Button } from "../../components";
+//import { Button } from "../../components";
 import { Images, argonTheme } from "../../constants";
 import { HeaderHeight } from "../../constants/utils";
 import Icon from 'react-native-vector-icons/Ionicons';
@@ -168,32 +170,31 @@ export class ShoppingList extends React.Component {
 
        return ( 
       <ScrollView >
-        <Block flex>
+        <View style={appstyles.container}>
 
 
-              <Block flex style={styles.profileCard}>
-                <Block middle style={styles.avatarContainer}>
-                <Text size={28} color="#32325D" style={{ marginTop: height * .15 }}>
+              <Block flex style={appstyles.profileContainer}>
+                  <View style = {appstyles.centeredView2}>
+                    <Text size={28} color="#32325D" style={{ marginTop: height * .05, textAlign: 'center' }}>
                       Shopping List
                     </Text>
                                                                                               
-
-                </Block>
-                    <Button 
-                        style = {styles.listButton}
+                    <TouchableHighlight
+                        title = "Recc"
+                        style = {appstyles.listButton1}
                         onPress={() => Alert.alert('Reccomend button pressed')}>
                         <Icon
                           name="md-pizza" size={25}
                         />
-                    </Button>
-                    <Button 
-                        style = {styles.listButton}
+                    </TouchableHighlight>
+                    <TouchableHighlight 
+                        
+                        style = {appstyles.listButton2}
                         onPress={() => this.setModalAddVisible()}>
-                        <Icon
-                          name="ios-add-circle-outline" size={25}
-                        />
-                    </Button>
-
+                        <Text>Add Item to List</Text>
+                         
+                    </TouchableHighlight>
+                    </View>
                     <Modal
                                 animationType="slide"
                                 transparent={false}
@@ -202,28 +203,30 @@ export class ShoppingList extends React.Component {
                                   Alert.alert("Modal has been closed.");
                                 }}
                             >
-                              <View style={styles.centeredView}>
-                                <View style={styles.modalView}>
-                                  <Text style={styles.modalText}>Add an item!</Text>
+                              <View style={appstyles.centeredView}>
+                                <View style={appstyles.modalView}>
+                                  <Text style={appstyles.modalText}>Add an item!</Text>
                                   <TextInput
-                                    style={styles.input}
+                                    style={appstyles.input}
                                     placeholder='What are you shopping for?'
                                     autoCapitalize="none"
                                     maxLength={50}
                                     placeholderTextColor='white'
                                     onChangeText={val => this.onChangeText('tag_name', val)}
                                   />
-                                  <Button
-                                    style={styles.listButton}
+                                  <TouchableHighlight
+                                    title = "Submit"
+                                    style={appstyles.listButton1}
                                     onPress={() => this.submitHandler() }>
                                     <Text>Submit</Text>
-                                  </Button>  
-                                  <Button
-                                    style={styles.listButton}
+                                  </TouchableHighlight>  
+                                  <TouchableHighlight
+                                    title = "Close"
+                                    style={appstyles.listButton2}
                                     onPress={() => 
                                       this.setModalAddVisible(!this.state.modalAddVisible) }>
                                     <Text>Close</Text>
-                                  </Button>
+                                  </TouchableHighlight>
                                 </View>
                               </View>
                             </Modal>
@@ -240,7 +243,7 @@ export class ShoppingList extends React.Component {
                                 }
                                 renderItem={({ item, id }) => (
                                 <View>
-                                    <View style={styles.listRow}>
+                                    <View style={appstyles.listRow}>
                                         <Text>{item.tag_name}</Text>
                                         <Icon
                                           name="ios-close-circle-outline" size={25}
@@ -254,7 +257,7 @@ export class ShoppingList extends React.Component {
                     </View>
                 </Block>
               </Block>
-        </Block>
+        </View>
       </ScrollView>
 
         )

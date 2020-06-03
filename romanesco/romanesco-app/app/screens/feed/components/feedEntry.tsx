@@ -217,7 +217,7 @@ export class FeedEntry extends React.Component {
 
     return (
 
-    <View style={{ padding: 5, alignSelf: "center", backgroundColor: "#fff"}}>
+    <View style={{ padding: 5, alignSelf: "center", backgroundColor: "#fffffc"}}>
 
       {this.state.isLoading ? <ActivityIndicator/> : (
 

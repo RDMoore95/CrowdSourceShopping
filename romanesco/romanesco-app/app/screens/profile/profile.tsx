@@ -103,7 +103,7 @@ export default class UserProfile extends React.Component {
                   
         <ScrollView
           showsVerticalScrollIndicator={false}
-          style={{ width, marginTop: '5%', backgroundColor:'#fff' }}
+          style={{ width, marginTop: '5%', backgroundColor:'#fffffc' }}
           refreshControl={
           <RefreshControl
             refreshing={this.state.isLoading}
@@ -214,7 +214,7 @@ export default class UserProfile extends React.Component {
 
               <FeedEntry navigation={this.props.navigation} id_type = 'user' id_value = {this.state.userId}> </FeedEntry>
 
-              <View style={{backgroundColor:'#fff', padding: 10}}></View>
+              <View style={{backgroundColor:'#ffffcc', padding: 10}}></View>
           
         </ScrollView>
 
@@ -229,7 +229,7 @@ export default class UserProfile extends React.Component {
 
 const styles = StyleSheet.create({
 profile: {
-  backgroundColor:'#fff',
+  backgroundColor:'#fffffc',
   flex: 1,
 },
 profileContainer: {
@@ -237,7 +237,7 @@ profileContainer: {
   padding: 0,
   zIndex: 1,
   width: deviceWidth * 0.8,
-  backgroundColor:'#fff',
+  backgroundColor:'#fffffc',
 },
 profileBackground: {
   width: deviceWidth * 0.8,
@@ -253,7 +253,7 @@ profileCard: {
   // borderTopLeftRadius: 6,
   // borderTopRightRadius: 6,
   borderColor: '#F7FAFC',
-  backgroundColor: '#fff',
+  backgroundColor: '#fffffc',
   shadowColor: "black",
   shadowOffset: { width: 0, height: 0 },
   shadowRadius: 8,
@@ -261,9 +261,11 @@ profileCard: {
   zIndex: 2,
 },
 info: {
+  backgroundColor: '#fffffc',
   paddingHorizontal: 40
 },
 avatarContainer: {
+
   position: "relative",
   marginTop: -80
 },
@@ -287,6 +289,6 @@ thumb: {
   alignSelf: "center",
   width: thumbMeasure,
   height: thumbMeasure,
-  backgroundColor:'#fff'
+  backgroundColor:'#ffffcc'
 }
 });

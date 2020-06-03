@@ -13,8 +13,8 @@ app = Flask(__name__)
 
 # Get MySQL credentials
 # exec(open("/Users/walkerag/Documents/osu/cs467/project_paths.py").read())
-exec(open("./project_paths.py").read())
-
+# exec(open("./project_paths.py").read())
+db_connection_str = 'mysql+pymysql://admin:RomanescoS2020@crowd-source-shopping.cyd6yg4g4qtf.us-east-2.rds.amazonaws.com/project'
 # DB connection
 db_connection = create_engine(db_connection_str)
 

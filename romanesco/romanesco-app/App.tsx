@@ -46,7 +46,7 @@ export default function App() {
   return (
     
     <NavigationContainer>
-      <MainStack.Navigator initialRouteName="SignIn">
+      <MainStack.Navigator initialRouteName="Romanesco">
       <MainStack.Screen
           name="SignIn"
           component={SignIn}
@@ -73,17 +73,14 @@ export default function App() {
 function Tabs() {
    
   return (
-        <Tab.Navigator initialRouteName="Home" 
+        <Tab.Navigator initialRouteName="Feed" 
           tabBarOptions={{
             // labelStyle: { fontSize: 11.5 },
             // tabStyle: { width: 100 },
             // style: { backgroundColor: 'powderblue' },
           }}
         >
-          <Tab.Screen
-            name="Home" 
-            component={HomeTabNav}
-          />
+          
 
           <Tab.Screen
             name="Feed"
@@ -106,6 +103,10 @@ function Tabs() {
             name="Profile" 
             component={ProfileTabNav} 
             //options={{title: 'Name'}}
+          />
+          <Tab.Screen
+            name="List" 
+            component={HomeTabNav}
           />
           
         </Tab.Navigator>

@@ -6,11 +6,13 @@ const { width, height } = Dimensions.get("screen");
 const thumbMeasure = (width - 48 - 32) / 3;
 const deviceWidth = Dimensions.get('window').width
 
-const darkGreen = "336600"
+const darkGreen = "#556b2f"
 const midGreen = "#ccff33"
 const lightGreen = "#ccffcc"
 const darkBeige = "#ffffcc"
 const lightBeige = "#fffffc"
+const white = "#ffffff"
+const black = "#000000"
 
 export const appstyles = StyleSheet.create({
         // container 
@@ -31,7 +33,7 @@ export const appstyles = StyleSheet.create({
     
     container: {
         flex: 1,
-        backgroundColor: '#5E72E4',
+        backgroundColor: lightBeige,
         alignItems: 'center',
         justifyContent: 'center',
         borderStyle: 'solid',
@@ -42,19 +44,46 @@ export const appstyles = StyleSheet.create({
         position: 'absolute',
         width: 50,
         height: 50,
+        borderRadius:25,
         alignItems: 'center',
         justifyContent: 'center',
         right: 30,
         bottom: 30,
-        //backgroundColor:'black'
+        backgroundColor: lightGreen
       },
       // shopping list button + row
-      listButton: {
-
+      listButton1: {
+        marginTop:10,
+        paddingTop:15,
+        paddingBottom:15,
+        marginLeft:30,
+        marginRight:30,
+        borderRadius:10,
+        borderWidth: 1,
+        borderColor: white,
+        alignItems: "center",
+        justifyContent: "center",
         width: width * .8,
         height: height * .1,
-        //color: 
+        backgroundColor: darkGreen, 
+        
     },
+    listButton2: {
+      marginTop:10,
+        paddingTop:15,
+        paddingBottom:15,
+        marginLeft:30,
+        marginRight:30,
+        borderRadius:10,
+        borderWidth: 1,
+        borderColor: white,
+        alignItems: "center",
+        justifyContent: "center",
+      width: width * .8,
+      height: height * .1,
+      backgroundColor: lightGreen,
+     
+  },
     listRow: {
         width: width*.85,
         flexDirection: 'row',
@@ -63,6 +92,7 @@ export const appstyles = StyleSheet.create({
       },
       // profile
     profile: {
+      backgroundColor: lightBeige,
     //marginTop: Platform.OS === "android" ? -HeaderHeight : 0,
     // marginBottom: -HeaderHeight * 2,
     flex: 1
@@ -84,8 +114,8 @@ export const appstyles = StyleSheet.create({
     marginTop: 65,
     borderTopLeftRadius: 6,
     borderTopRightRadius: 6,
-    //backgroundColor: theme.COLORS.WHITE,
-    shadowColor: "black",
+    backgroundColor: lightBeige,
+    shadowColor: black,
     shadowOffset: { width: 0, height: 0 },
     shadowRadius: 8,
     shadowOpacity: 0.2,
@@ -126,6 +156,11 @@ export const appstyles = StyleSheet.create({
     alignItems: "center",
     marginTop: 22
   },
+  centeredView2: {
+    //justifyContent: "center",
+    alignItems: "center",
+    marginTop: 22
+  },
   // modal start?
   modalView: {
     margin: 20,
@@ -133,7 +168,7 @@ export const appstyles = StyleSheet.create({
     borderRadius: 20,
     padding: 35,
     alignItems: "center",
-    shadowColor: "#000",
+    shadowColor: black,
     shadowOffset: {
       width: 0,
       height: 2
@@ -143,13 +178,13 @@ export const appstyles = StyleSheet.create({
     elevation: 5
   },
   openButton: {
-    //backgroundColor: "#F194FF",
+    backgroundColor: lightGreen,
     borderRadius: 20,
     padding: 10,
     elevation: 2
   },
   textStyle: {
-    //color: "white",
+    color: midGreen,
     fontWeight: "bold",
     textAlign: "center"
   },

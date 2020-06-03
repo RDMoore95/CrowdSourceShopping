@@ -12,6 +12,8 @@ import { useNavigation } from '@react-navigation/native';
 import feedStyles from '../components/feedStyles';
 import {NewButton} from "../../components/newButton/newButton";
 
+import { appstyles } from '../../styles/appStyle'
+
 export default class Feed extends React.Component {
 
   state = {
@@ -24,7 +26,7 @@ export default class Feed extends React.Component {
  render() {
   return (
 
-        <View style={this.styles.container}>
+        <View style={appstyles.container}>
             <FeedEntry navigation={this.props.navigation} id_type = 'all' id_value = '0'> </FeedEntry>
             <NewButton navigation={this.props.navigation}></NewButton>
         </View>
@@ -34,8 +36,8 @@ export default class Feed extends React.Component {
 
   styles = StyleSheet.create({
     container: {
-      flex: 1,
-      backgroundColor: '#fff',
+      //flex: 1,
+      backgroundColor: '#fffffc',
       alignItems: 'center',
       //justifyContent: 'center',
     },
