@@ -233,9 +233,9 @@ export class FeedEntry extends React.Component {
 
                 <>
 
-                <View style={appstyles.feedBox}>
+                <View style={styles.feedBox}>
 
-                  <View style={appstyles.feedBoxHeader}>
+                  <View style={styles.feedBoxHeader}>
                     <Avatar
                     rounded
                     source = {Images.reputation[item.user_reputation_category_id]}
@@ -245,16 +245,16 @@ export class FeedEntry extends React.Component {
                           );
                         }}
                      />  
-                    <Text numberOfLines={1} style={appstyles.headline}> 
+                    <Text numberOfLines={1} style={styles.headline}> 
                     {item.first_name} shopped {item.store_name} on {item.time_added.slice(0,10)}
                     </Text>
                   </View>  
                   
                   <View style={{backgroundColor:'#fff', padding: 3}}></View>
 
-                  <View style={appstyles.feedBoxReview}>
+                  <View style={styles.feedBoxReview}>
 
-                    <View style={appstyles.feedBoxReviewText}>
+                    <View style={styles.feedBoxReviewText}>
 
                     <Text size={16} color="#32325D">Feedback Type: {item.store_feedback_category}</Text>
                     <View style={{backgroundColor:'#fff', flex:1 ,padding: 1.5}}></View>
@@ -270,7 +270,7 @@ export class FeedEntry extends React.Component {
 
                    </View>
 
-                   <View style={appstyles.feedBoxReviewVote}>
+                   <View style={styles.feedBoxReviewVote}>
 
                     <Icon name="ios-thumbs-up" size={25} color={(item.upVote > 0) ? '#FFD500' : '#5E72E4'}
                       onPress={()=>{ item = this.upVote(item)}}
@@ -307,3 +307,72 @@ export class FeedEntry extends React.Component {
 // navigation prop
 export default withNavigation(FeedEntry);
 
+const styles = StyleSheet.create({  
+    container: {  
+      flex: 1,  
+      backgroundColor: '#5E72E4',  
+      alignItems: 'center',  
+      justifyContent: 'center',  
+      borderStyle: 'solid',  
+      flexDirection: 'column',  
+    },  
+    col:{  
+      //flex: 1,  
+      backgroundColor: '#5E72E4',  
+      alignItems: 'center',  
+      justifyContent: 'center',  
+      borderStyle: 'solid',  
+      flexDirection: 'row'  
+    },  
+    row:{  
+      //flex: 1,  
+      backgroundColor: '#5E72E4',  
+      alignItems: 'center',  
+      justifyContent: 'center',  
+      borderStyle: 'solid',  
+      flexDirection: 'column'  
+    },  
+    feedBox: {  
+      backgroundColor:'#fff'  
+      , paddingHorizontal: 6  
+      , paddingVertical: 12  
+      , marginHorizontal: theme.SIZES.BASE  
+      , borderColor: '#fff'  
+      , borderRadius: 10  
+      , borderWidth: 1  
+      , shadowColor: "black"  
+      , shadowOffset: { width: 0, height: 0 }  
+      , shadowRadius: 8  
+      , shadowOpacity: 0.2  
+      , zIndex: 2  
+    },  
+    feedBoxHeader: {  
+      backgroundColor:'#fff'  
+      , padding: 3  
+      , flexDirection: 'row'  
+      , alignItems: 'center'  
+    },      
+    feedBoxReview: {  
+      backgroundColor:'#fff'  
+      , padding: 3  
+      , flexDirection: 'row'  
+      , alignItems: 'center'  
+    },      
+    feedBoxReviewText: {  
+      backgroundColor:'#fff'  
+      , padding: 3  
+      , flex: 0.9  
+    },  
+    feedBoxReviewVote: {  
+      backgroundColor:'#fff'  
+      , flex: 0.1  
+    },                      
+    headline: {  
+       fontSize: 14,  
+       color:'#32325D',  
+       textAlign: 'left',  
+       textAlignVertical: "center",  
+       paddingLeft: 10,  
+       width: deviceWidth * 0.75  
+    }  
+  });
