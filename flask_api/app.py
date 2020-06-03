@@ -13,9 +13,7 @@ app = Flask(__name__)
 
 # Get MySQL credentials
 # exec(open("/Users/walkerag/Documents/osu/cs467/project_paths.py").read())
- # exec(open("./project_paths.py").read())
-
-db_connection_str = 'mysql+pymysql://admin:RomanescoS2020@crowd-source-shopping.cyd6yg4g4qtf.us-east-2.rds.amazonaws.com/project'
+exec(open("./project_paths.py").read())
 
 # DB connection
 db_connection = create_engine(db_connection_str)
@@ -637,6 +635,35 @@ def pullBarcode(barcodeData):
 	print(result_json)
 	return result_json
 
+def pullStore(store_id):
+
+	print("Pulling store info")
+
+	# Determine if item is already in database
+	query = '''
+        SELECT 
+        store_id
+        , store_name
+        , COALESCE((SELECT COUNT(*) FROM Price_Feedback WHERE store_id = {store_id}), 0) as prices_tracked
+        , COALESCE((SELECT COUNT(*) FROM Store_Feedback WHERE store_id = {store_id}), 0) as reviews_tracked
+        , COALESCE((SELECT COUNT(DISTINCT user_id) FROM Store_Feedback WHERE store_id = {store_id}), 0) as reviewers
+        FROM Store
+        WHERE store_id = {store_id}
+        LIMIT 1
+        '''
+
+	query = query.format(store_id = store_id)
+	result = pd.read_sql(query, con=db_connection)
+	print(result)
+
+	result['store_name_fmt'] = result['store_name'].str.replace('[^a-zA-Z]', '').str.lower()
+	
+        # Add an ID
+	result['id'] = result.index.astype(str)
+
+	result_json = result.to_json(orient = 'records')
+	print(result_json)
+	return result_json
 
 
 def pullShoppingList(list_ID):
@@ -685,8 +712,8 @@ def pullListList(user_id):
 	result['id'] = result.index.astype(str)
 
 	result_json = result.to_json(orient = 'records')
-	print(result_json)
 	return result_json
+
 
 def insertShoppingList(user_id, list_id, tag_name):
 	query = '''
@@ -776,6 +803,13 @@ def getTopStores():
 
     print(request.json)
     result_json = pullTopStores(request.json['user_id'])
+    return result_json, 201
+
+@app.route('/getStore/', methods=['POST', 'GET'])
+def getStore():
+
+    print(request.json)
+    result_json = pullStore(request.json['store_id'])
     return result_json, 201
 
 @app.route('/getFeedEntries/', methods=['POST', 'GET'])

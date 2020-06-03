@@ -23,30 +23,34 @@ const { width, height } = Dimensions.get("screen");
 const thumbMeasure = (width - 48 - 32) / 3;
 let deviceWidth = Dimensions.get('window').width
 
+// var url = "http://192.168.1.7:5000";
+var url = "http://flip1.engr.oregonstate.edu:5005";
+
 export function StoreProfile( { route }, {} ) {
 
     const navigation = useNavigation();
 
     // Get store_id
     const { store_id } = route.params;
-    const { store_name_fmt } = route.params;
     const { store_street } = route.params;
     const { store_city } = route.params;
-    var image_src = Images.stores[store_name_fmt];
-    if (Images.stores[store_name_fmt]) {
-      image_src = Images.stores[store_name_fmt];
-    } else {
-      image_src = Images.stores['romanescostoredefault']
-    }
+    const { user_id } = route.params;
 
     const [isLoading, setLoading] = useState(true);
     const [data, setData] = useState([]);
-  
+    const [valid, setValid] = useState(true)
 
     useEffect(() => {
-        // something like 4545/store/{data.store_id}?
-      fetch('http://flip1.engr.oregonstate.edu:4545/profile')
-        .then((response) => response.json())
+      fetch(url + '/getStore/', {
+           method: 'POST',
+           headers: {
+               Accept: 'application/json',
+               'Content-Type': 'application/json',
+           },
+           body: JSON.stringify({
+               store_id: store_id,
+           }),
+       }).then((response) => response.json())
         .then((json) => setData(json[0]))
         .catch((error) => console.error(error))
         .finally(() => setLoading(false))
@@ -64,7 +68,6 @@ export function StoreProfile( { route }, {} ) {
 
             <TouchableOpacity 
                 onPress={() => {
-                  // this.props.navigation.goBack()
                   navigation.navigate("Stores"), {};
                 }}
                 style={styles.feedBox}
@@ -76,9 +79,13 @@ export function StoreProfile( { route }, {} ) {
 
               <Block flex style={styles.profileCard}> 
                 <Block middle style={styles.avatarContainer}>
+                
                   <Image 
-                    source = {Images.stores[store_name_fmt]}
+                    source = {Images.stores[data.store_name_fmt]}
+                    onError={() => setValid(false)}
+                    defaultSource = {Images.stores["romanescostoredefault"]}
                     style={styles.avatar} 
+                    backgroundColor = "#fcfcfc"
                   /> 
                 </Block>
                 <Block style={styles.info}>
@@ -96,7 +103,7 @@ export function StoreProfile( { route }, {} ) {
                         size={18}
                         color="white"
                       >
-                      RECOMMENDED STORE
+                      {data.store_name}
                      </Text>                      
                     </Button>
                   </Block> 
@@ -107,39 +114,39 @@ export function StoreProfile( { route }, {} ) {
                     </Text>
                   </Block>
 
-                  <Block row space="between">
-                    <Block middle>
+                  <Block row space="between" alignSelf="center">
+                    <Block middle style={{ paddingHorizontal: 16 }}>
                       <Text
                         bold
                         size={18}
                         color="#525F7F"
                         style={{ marginBottom: 4 }}
                       >
-                         {data.price_rating}
+                         {data.reviewers}
                       </Text>
-                      <Text size={12} color={argonTheme.COLORS.TEXT}>Price</Text>
+                      <Text size={12} color={argonTheme.COLORS.TEXT}>Romanescos</Text>
                     </Block>
-                    <Block middle>
+                    <Block middle style={{ paddingHorizontal: 16 }}>
                       <Text
                         bold
                         color="#525F7F"
                         size={18}
                         style={{ marginBottom: 4 }}
                       >
-                        {data.crowd_rating}
+                        {data.prices_tracked}
                       </Text>
-                      <Text size={12} color={argonTheme.COLORS.TEXT}>Traffic</Text>
+                      <Text size={12} color={argonTheme.COLORS.TEXT}>Prices Tracked</Text>
                     </Block>
-                    <Block middle>
+                    <Block middle style={{ paddingHorizontal: 16 }}>
                       <Text
                         bold
                         color="#525F7F"
                         size={18}
                         style={{ marginBottom: 4 }}
                       >
-                        {data.service_rating}
+                        {data.reviews_tracked}
                       </Text>
-                      <Text size={12} color={argonTheme.COLORS.TEXT}>Service</Text>
+                      <Text size={12} color={argonTheme.COLORS.TEXT}>Store Reviews</Text>
                     </Block>
                     
                   </Block>
@@ -157,6 +164,23 @@ export function StoreProfile( { route }, {} ) {
                             
                   </Block>
                   </Block>
+
+                  <View style={{backgroundColor:'#fff', padding: 10}}></View>
+
+                  <TouchableOpacity 
+                    onPress={() => navigation.navigate('InputPrompt', 
+                      {
+                        store_id: data.store_id,
+                        user_id: user_id
+                      }
+                    )
+                    }
+                    style={styles.feedBox}
+                  >
+                    <Text style={styles.headline}> 
+                    Review Store
+                    </Text>
+                  </TouchableOpacity>
 
                   <FeedEntry navigation={navigation} id_type = 'store' id_value = {store_id}> </FeedEntry>
               
@@ -233,7 +257,7 @@ const styles = StyleSheet.create({
     backgroundColor:'#fff'
   },
   feedBox: {
-    backgroundColor:'#fcfcfc'
+    backgroundColor: '#fff'
     , paddingHorizontal: 6
     , paddingVertical: 12
     , marginHorizontal: theme.SIZES.BASE
@@ -247,5 +271,14 @@ const styles = StyleSheet.create({
     , zIndex: 2
     , justifyContent: 'center'
     , alignItems: 'center'
-  },  
+  },
+  headline: {
+     fontSize: 16,
+     fontWeight: 'bold',
+     color:'#32325D',
+     textAlign: 'center',
+     textAlignVertical: "center",
+     paddingLeft: 10,
+     width: deviceWidth * 0.75
+  },
 });
