@@ -9,7 +9,8 @@ import {
   FlatList, 
   Alert,
   Modal, 
-  TextInput
+  TextInput,
+  AsyncStorage
   } from 'react-native';
 import { useEffect, useState } from 'react';
 import { NavigationContainer } from '@react-navigation/native';
@@ -23,12 +24,14 @@ import Icon from 'react-native-vector-icons/Ionicons';
 
 import { NewButton } from "../../components/newButton/newButton";
 
+import { appstyles } from '../../styles/appStyle'
+
 const { width, height } = Dimensions.get("screen");
 
 const thumbMeasure = (width - 48 - 32) / 3;
 
-//const url = "localhost:5000";
-const url = "http://flip1.engr.oregonstate.edu:5005";
+const url = "http://10.0.0.159:5000";
+//const url = "http://flip1.engr.oregonstate.edu:5005";
 
 export class ShoppingListList extends React.Component {
 
@@ -42,7 +45,9 @@ export class ShoppingListList extends React.Component {
         refresh: false,
         firstRender: true,
         modalVisible: false,
-        new_list: ""
+        new_list: "",
+        user_id: "7",
+        haveUserId: false
       };
     }
 
@@ -64,26 +69,58 @@ export class ShoppingListList extends React.Component {
     
     */
    
+   getUserId = async () => {
+    try {
+      const value = await AsyncStorage.getItem(USER_STORAGE_KEY);
+      this.setState({['user_id']: value});
+      this.setState({['haveUserId']: true});
+    }
+    catch {
+      console.log("failed to get userId");
+    }
+  }
+
+  addList(){
+    var currentdate = new Date();
+    this.state.list_id = this.state.user_id + currentdate.getHours() + currentdate.getMinutes() + currentdate.getSeconds() + currentdate.getDate()
+    fetch(url + '/addList/', {
+                   method: 'POST',
+                   headers: {
+                       Accept: 'application/json',
+                       'Content-Type': 'application/json',
+                   },
+                   body: JSON.stringify({
+                       user_id: this.state.user_id,
+                       list_id: this.state.list_id,
+                       tag_name: this.state.tag_name,
+                   })
+    })
+
+  }
+
+  onChangeText = (key, val) => {
+    this.setState({ [key]: val })
+  }
+
    componentDidMount() {
-       /*
+      
     this.setState({ loading: true });
-    fetch(url + '/listShoppingLists/', {
+    this.getUserId().then((uid) => fetch(url + '/getListList/', {
          method: 'POST',
          headers: {
              Accept: 'application/json',
              'Content-Type': 'application/json',
          },
          body: JSON.stringify({
-             id_type: this.props.id_type,
-             id_value: this.props.id_value,
+             user_id: this.state.userId
          }),
      }).then((response) => response.json())
       .then((json) => {
         this.setState({ data: json });
       }).finally(() => {
         this.setState({ isLoading: false });
-      });    
-      */  
+      }));    
+      /*
      this.setState(
          {
              data:  [
@@ -92,14 +129,15 @@ export class ShoppingListList extends React.Component {
                 {id: "3", name: "List 3", tag: "Restock", quantity: "5", units: "LBs"}
             ]
      }
-     )   
+     */
+        
   }
 
   
 
   renderSeparator = () => {
     return (
-      <View style={{backgroundColor:'#fff', flex:1 ,padding: 10}}></View>
+      <View style={appstyles.seperator}></View>
     );
   };
 
@@ -113,15 +151,15 @@ export class ShoppingListList extends React.Component {
        return (    
       <ScrollView >
         <Block flex>
-              <Block flex style={styles.profileCard}>
-                <Block middle style={styles.avatarContainer}>
+              <Block flex style={appstyles.profileCard}>
+                <Block middle style={appstyles.avatarContainer}>
                     <Text size={28} color="#32325D" style={{ marginTop: height * .15}}>Your Shopping Lists</Text>
                 </Block>
                      
                 <Block>
                     <View style={{ flex: 1, padding: 12, alignItems: 'center' }}>
                         <Block>
-                            <Button style={styles.listButton} title ={"Add List"} onPress={() => this.setModalVisible()}>
+                            <Button style={appstyles.listButton} title ={"Add List"} onPress={() => this.setModalVisible()}>
                                 <Icon name = "ios-create" size = {25}/>
                             </Button>
 
@@ -135,26 +173,28 @@ export class ShoppingListList extends React.Component {
                                   Alert.alert("Modal has been closed.");
                                 }}
                             >
-                              <View style={styles.centeredView}>
-                                <View style={styles.modalView}>
-                                  <Text style={styles.modalText}>Add List!</Text>
+                              <View style={appstyles.centeredView}>
+                                <View style={appstyles.modalView}>
+                                  <Text style={appstyles.modalText}>Add List!</Text>
                                   <TextInput
-                                    style={styles.input}
+                                    style={appstyles.input}
                                     placeholder='List Name'
                                     autoCapitalize="none"
                                     maxLength={50}
                                     placeholderTextColor='white'
-                                    onChangeText={val => this.onChangeText('new_list', val)}
+                                    onChangeText={val => this.onChangeText('tag_name', val)}
                                   />
                                   <Button
-                                    style={styles.listButton}
-                                    onPress={() => 
-                                      this.setModalVisible(!this.state.modalVisible) }>
+                                    style={appstyles.listButton}
+                                    onPress={() => {
+                                      this.addList()
+                                      this.setModalVisible(!this.state.modalVisible) }}>
                                     <Text>Submit</Text>
                                   </Button>  
                                   <Button
-                                    style={styles.listButton}
+                                    style={appstyles.listButton}
                                     onPress={() => 
+                                      
                                       this.setModalVisible(!this.state.modalVisible) }>
                                     <Text>Cancel</Text>
                                   </Button>
@@ -172,13 +212,13 @@ export class ShoppingListList extends React.Component {
                                 ListHeaderComponent = { this.renderSeparator }
                                 renderItem={({ item, id }) => (
                                 <View>
-                                    <View style={styles.listRow}>
+                                    <View style={appstyles.listRow}>
                                         <View style={{flex: 4}}>
                                             <Text>{item.name}</Text>
                                         </View>
                                         <View style= {{flex: 1}}>
                                         <Icon
-                                            name="ios-checkbox-outline" size={25}
+                                            name="ios-arrow-forward" size={25}
                                             onPress={() => this.props.navigation.navigate("ShoppingList")}
                                           />
                                         </View>
@@ -206,121 +246,3 @@ export class ShoppingListList extends React.Component {
 
 
 
-const styles = StyleSheet.create({
-    listButton: {
-
-        width: width * .8,
-        height: height * .1,
-        color: theme.COLORS.GREEN
-    },
-    listRow: {
-        width: width*.85,
-        flexDirection: 'row',
-        alignContent: 'stretch',
-        justifyContent: 'space-between'
-      },
-    profile: {
-    marginTop: Platform.OS === "android" ? -HeaderHeight : 0,
-    // marginBottom: -HeaderHeight * 2,
-    flex: 1
-  },
-  profileContainer: {
-    width: width,
-    height: height,
-    padding: 0,
-    zIndex: 1
-  },
-  profileBackground: {
-    width: width,
-    height: height / 2
-  },
-  profileCard: {
-    // position: "relative",
-    padding: theme.SIZES.BASE,
-    marginHorizontal: theme.SIZES.BASE,
-    marginTop: 65,
-    borderTopLeftRadius: 6,
-    borderTopRightRadius: 6,
-    backgroundColor: theme.COLORS.WHITE,
-    shadowColor: "black",
-    shadowOffset: { width: 0, height: 0 },
-    shadowRadius: 8,
-    shadowOpacity: 0.2,
-    zIndex: 2
-  },
-  info: {
-    paddingHorizontal: 40
-  },
-  avatarContainer: {
-    position: "relative",
-    marginTop: -80
-  },
-  avatar: {
-    width: 124,
-    height: 124,
-    borderRadius: 62,
-    borderWidth: 0
-  },
-  nameInfo: {
-    marginTop: 35
-  },
-  divider: {
-    width: "90%",
-    borderWidth: 1,
-    borderColor: "#E9ECEF"
-  },
-  thumb: {
-    borderRadius: 4,
-    marginVertical: 4,
-    alignSelf: "center",
-    width: thumbMeasure,
-    height: thumbMeasure
-  },
-  centeredView: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    marginTop: 22
-  },
-  modalView: {
-    margin: 20,
-    backgroundColor: "white",
-    borderRadius: 20,
-    padding: 35,
-    alignItems: "center",
-    shadowColor: "#000",
-    shadowOffset: {
-      width: 0,
-      height: 2
-    },
-    shadowOpacity: 0.25,
-    shadowRadius: 3.84,
-    elevation: 5
-  },
-  openButton: {
-    backgroundColor: "#F194FF",
-    borderRadius: 20,
-    padding: 10,
-    elevation: 2
-  },
-  textStyle: {
-    color: "white",
-    fontWeight: "bold",
-    textAlign: "center"
-  },
-  modalText: {
-    marginBottom: 15,
-    textAlign: "center"
-  }, 
-  input: {
-    width: 350,
-    height: 55,
-    backgroundColor: '#42A5F5',
-    margin: 10,
-    padding: 8,
-    color: 'white',
-    borderRadius: 14,
-    fontSize: 18,
-    fontWeight: '500',
-  },
-});

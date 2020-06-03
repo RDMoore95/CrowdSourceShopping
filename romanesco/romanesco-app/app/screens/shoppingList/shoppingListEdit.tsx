@@ -9,7 +9,8 @@ import {
   FlatList,
   Alert, 
   Modal, 
-  TextInput
+  TextInput,
+  AsyncStorage
   } from 'react-native';
 import { useEffect, useState } from 'react';
 import { NavigationContainer } from '@react-navigation/native';
@@ -62,13 +63,23 @@ export class ShoppingList extends React.Component {
         );
       }
     
-    /*
+      getUserId = async () => {
+        try {
+          const value = await AsyncStorage.getItem(USER_STORAGE_KEY);
+          this.setState({['userId']: value});
+          this.setState({['haveUserId']: true});
+          return value;
+        }
+        catch {
+          console.log("failed to get userId");
+        }
+      }
     
-    */
-   componentDidMount() {
-    /*
-    this.setState({ loading: true });
-    fetch(url + '/shoppingList/' + this.props.user_id + this.props.list_id,  {
+    componentDidMount() {
+        
+        this.setState({ loading: true });
+        
+        this.getUserId().then((uid) => fetch(url + uid + '/shoppingList/' + this.props.list_id,  {
          method: 'POST',
          headers: {
              Accept: 'application/json',
@@ -83,8 +94,9 @@ export class ShoppingList extends React.Component {
         this.setState({ data: json });
       }).finally(() => {
         this.setState({ isLoading: false });
-      });     
-      */  
+      }));     
+      
+     /* 
      this.setState(
          {
              data:  [
@@ -93,16 +105,8 @@ export class ShoppingList extends React.Component {
                 {id: "3", name: "Potatoes", price: "5.00", quantity: "5", units: "LBs"}
             ]
             
-        })
-        this.setState(
-        {
-            tags: [
-               {id: "1", name: 'Baking'},
-               {id: "2", name: 'Cooking'},
-               {id: "3", name: 'Frozen'},
-           ]
-        }
-     )
+        });
+        */
   }
   
   renderSeparator = () => {
