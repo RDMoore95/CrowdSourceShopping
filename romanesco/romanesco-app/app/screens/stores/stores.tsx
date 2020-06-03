@@ -127,7 +127,7 @@ export default class StoreFeed extends React.Component {
           >
 
           <View style={{backgroundColor:'#fff', flex:1 ,padding: 6}}></View>
-          <Text style={appstyles.storeHeadline}>
+          <Text style={styles.storeHeadline}>
           Your Favorite Stores
           </Text>
           <View style={{backgroundColor:'#fff', flex:1 ,padding: 6}}></View>
@@ -141,7 +141,7 @@ export default class StoreFeed extends React.Component {
                 ListEmptyComponent={this.renderEmptyContainer()}
                 renderItem={({ item }) => (
                   <>
-                  <View style={appstyles.feedBox}>
+                  <View style={styles.feedBox}>
                   <TouchableOpacity 
                     onPress={() => this.props.navigation.navigate('StoreProfileModal', 
                       {
@@ -154,12 +154,12 @@ export default class StoreFeed extends React.Component {
                     }
                   >
 
-                  <View style={appstyles.feedBoxHeader}>
+                  <View style={styles.feedBoxHeader}>
                     <Avatar
                     rounded
                     source = {Images.stores[item.store_name_fmt]}
                      />  
-                    <Text numberOfLines={1} style={appstyles.headline}> 
+                    <Text numberOfLines={1} style={styles.headline}> 
                     {item.store_name} at {item.store_street}
                     </Text>
                   </View> 
@@ -183,7 +183,7 @@ export default class StoreFeed extends React.Component {
           </View>  
 
           <View style={{backgroundColor:'#fff', padding: 6}}></View>
-          <Text style={appstyles.storeHeadline}>
+          <Text style={styles.storeHeadline}>
           Popular Stores Near You
           </Text>
           <View style={{backgroundColor:'#fff', flex:1 ,padding: 6}}></View>
@@ -197,7 +197,7 @@ export default class StoreFeed extends React.Component {
                 keyExtractor={item => item.id}
                 renderItem={({ item }) => (
                   <>
-                  <View style={appstyles.feedBox}>
+                  <View style={styles.feedBox}>
                   <TouchableOpacity 
                     onPress={() => this.props.navigation.navigate('StoreProfileModal', 
                       {
@@ -209,12 +209,12 @@ export default class StoreFeed extends React.Component {
                     )
                     }
                   >
-                  <View style={appstyles.feedBoxHeader}>
+                  <View style={styles.feedBoxHeader}>
                     <Avatar
                     rounded
                     source = {Images.stores[item.store_name_fmt]}
                      />  
-                    <Text numberOfLines={1} style={appstyles.headline}> 
+                    <Text numberOfLines={1} style={styles.headline}> 
                     {item.store_name} at {item.store_street}                    
                     </Text>
                   </View> 
@@ -247,5 +247,89 @@ export default class StoreFeed extends React.Component {
 }
 
 export default withNavigation(StoreFeed);
+
+
+const styles = StyleSheet.create({  
+    container: {  
+      flex: 1,  
+      backgroundColor: '#5E72E4',  
+      alignItems: 'center',  
+      justifyContent: 'center',  
+      borderStyle: 'solid',  
+      flexDirection: 'column',  
+    },  
+    col:{  
+      //flex: 1,  
+      backgroundColor: '#5E72E4',  
+      alignItems: 'center',  
+      justifyContent: 'center',  
+      borderStyle: 'solid',  
+      flexDirection: 'row'  
+    },  
+    row:{  
+      //flex: 1,  
+      backgroundColor: '#5E72E4',  
+      alignItems: 'center',  
+      justifyContent: 'center',  
+      borderStyle: 'solid',  
+      flexDirection: 'column'  
+    },  
+    feedBox: {  
+      backgroundColor:'#F7FAFC'  
+      , padding: 3  
+      , borderColor: '#F7FAFC'  
+      , borderRadius: 25  
+      , borderWidth: 1  
+    },  
+    feedBoxHeader: {  
+      backgroundColor:'#F7FAFC'  
+      , padding: 3  
+      , borderColor: '#F7FAFC'  
+      , borderRadius: 25  
+      , borderWidth: 1  
+      , flexDirection: 'row'  
+      , alignItems: 'center'  
+    },      
+    feedBoxReview: {  
+      backgroundColor:'#F7FAFC'  
+      , padding: 3  
+      , borderColor: '#F7FAFC'  
+      , borderRadius: 25  
+      , borderWidth: 1  
+      , flexDirection: 'row'  
+      , alignItems: 'center'  
+    },      
+    feedBoxReviewText: {  
+      backgroundColor:'#F7FAFC'  
+      , padding: 3  
+      , borderColor: '#F7FAFC'  
+      , borderRadius: 25  
+      , borderWidth: 1  
+      , flex: 0.9  
+    },  
+    feedBoxReviewVote: {  
+      backgroundColor:'#F7FAFC'  
+      , borderColor: '#F7FAFC'  
+      , borderRadius: 25  
+      , borderWidth: 1  
+      , flex: 0.1  
+    },                      
+    headline: {  
+       fontSize: 14,  
+       color:'#32325D',  
+       textAlign: 'left',  
+       textAlignVertical: "center",  
+       paddingLeft: 10,  
+       width: deviceWidth * 0.75  
+    },  
+    storeHeadline: {  
+       fontSize: 20,  
+       color:'#32325D',  
+       textAlign: 'left',  
+       textAlignVertical: "center",  
+       paddingLeft: 10,  
+       width: deviceWidth * 0.75  
+    }  
+  });
 
 
