@@ -639,21 +639,20 @@ def pullBarcode(barcodeData):
 
 
 
-def pullShoppingList(list_ID):
+def pullShoppingList(user_id):
 
 	print("Pulling shopping list")
 
 	# All the items in the shopping list per the id
 	query = '''
 			SELECT
-			l.time_added
-			, l.shopping_list_id
-			, l.tags
-			FROM Shopping_List l
-            WHERE l.shopping_list_id = {listID}
+			shopping_list_history_id
+			, tag_name
+			FROM Shopping_List_History 
+            WHERE user_id = {userID} AND time_removed IS NULL
 	    	'''
 
-	query = query.format(listID = list_ID)
+	query = query.format(userID = user_id)
 	result = pd.read_sql(query, con=db_connection)
 	print(result)
 
@@ -671,10 +670,10 @@ def pullListList(user_id):
 	# Just unique shopping list IDs to link to them
 	query = '''
 			SELECT DISTINCT 
-			l.shopping_list_id
-			, l.user_id
-			FROM Shopping_List l
-            WHERE l.user_id = {user}
+			shopping_list_id
+			, user_id
+			FROM Shopping_List 
+            WHERE user_id = {user}
 	    	'''
 
 	query = query.format(user = user_id)
@@ -710,21 +709,20 @@ def insertShoppingList(user_id, list_id, tag_name):
 	with db_connection.connect() as connection:
 		result = connection.execute(shopping_insert)
 
-def insertShoppingListHist(user_id, list_id, tag_name):
+def insertShoppingListHist(user_id, tag_name):
 	query = '''
-		INSERT INTO Shopping_List_History (shopping_list_history_id, user_id, item_id, tag_name, time_added, time_removed)
+		INSERT INTO Shopping_List_History (user_id, item_id, tag_name, time_added, time_removed)
 			VALUES 
-			({list}
-			, {user} 
+			({user} 
 			, NULL
-			, {tag} 
+			, '{tag}' 
 			, NOW() 
 			, NULL);
 
 			
 			'''
 
-	shopping_insert = query.format(user = user_id, list = list_id, tag = tag_name)
+	shopping_insert = query.format(user = user_id, tag = tag_name)
 	
 	print(shopping_insert)
 
@@ -744,13 +742,15 @@ def removeList(list_id):
 	with db_connection.connect() as connection:
 		result = connection.execute(shopping_insert)
 
-def removeTag(list_id, tag_name):
+def removeTag(list_id):
 
 	query = '''
-		DELETE FROM Shopping_List WHERE {list} = shopping_list_id AND {tag} = tag_name
+			UPDATE Shopping_List_History	
+			SET time_removed = NOW()
+			WHERE {list} = shopping_list_history_id; 
 			'''
 
-	shopping_insert = query.format(list = list_id, tag = tag_name)
+	shopping_insert = query.format(list = list_id, )
 	
 	print(shopping_insert)
 
@@ -866,21 +866,15 @@ def getLists():
 def getShoppingList():
 
     print(request.json)
-    result_json = pullShoppingList(request.json['user_id'], request.json['list_id'])
+    result_json = pullShoppingList(request.json['user_id'])
     return result_json, 201
 
 @app.route('/addList/', methods=['POST'])
 def addList():
 
 	print("Adding tag to list")
-	insertShoppingList(
-		request.json['user_id']
-		, request.json['list_id']
-		, request.json['tag_name']
-	)
 	insertShoppingListHist(
 		request.json['user_id']
-		, request.json['list_id']
 		, request.json['tag_name']
 	)
 	return "good", 201
@@ -889,7 +883,7 @@ def addList():
 def removeItem():
 
     print(request.json)
-    result_json = removeTag(request.json['list_id'], request.json['tag_name'])
+    result_json = removeTag(request.json['list_id'])
     return "good", 201	
 
 @app.route('/removeList/', methods=['POST', 'GET'])

@@ -46,7 +46,7 @@ export default function App() {
   return (
     
     <NavigationContainer>
-      <MainStack.Navigator>
+      <MainStack.Navigator initialRouteName="Romanesco">
       <MainStack.Screen
           name="SignIn"
           component={SignIn}
@@ -121,11 +121,6 @@ function HomeTabNav() {
   return (
       <HomeStack.Navigator>
         <HomeStack.Screen 
-          name="ShoppingListList" 
-          component={ShoppingListList}
-          options={{ headerShown: false }}
-        />
-        <HomeStack.Screen 
           name="ShoppingList" 
           component={ShoppingList}
           options={{ headerShown: false }}
@@ -134,6 +129,11 @@ function HomeTabNav() {
         <HomeStack.Screen 
           name="Home" 
           component={HomeScreen}
+          options={{ headerShown: false }}
+        />
+        <HomeStack.Screen 
+          name="ShoppingListList" 
+          component={ShoppingListList}
           options={{ headerShown: false }}
         />
       </HomeStack.Navigator>
