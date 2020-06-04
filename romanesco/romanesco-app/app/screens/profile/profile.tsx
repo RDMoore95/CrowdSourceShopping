@@ -13,6 +13,7 @@ import {
 import { useEffect, useState } from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
+import * as Location from 'expo-location';
 
 import { Block, Text, theme } from "galio-framework";
 import { Button } from "../../components";
@@ -22,7 +23,6 @@ import { HeaderHeight } from "../../constants/utils";
 
 import { FeedEntry } from '../feed/components/feedEntry';
 import Images from '../../assets/imgs';
-import { appstyles } from '../../styles/appStyle'
 
 import {NewButton} from "../../components/newButton/newButton";
 const USER_STORAGE_KEY = "@user_id";
@@ -45,9 +45,52 @@ export default class UserProfile extends React.Component {
       data: [],
       userId: "",
       haveUserId: false,
-      isLoading: true
+      isLoading: true,
+      user_city: null,
+      user_state: null
     };
+
+    this.getUserLocation();
   }
+
+  getUserLocation = async () => {
+
+    let { status } = await Location.requestPermissionsAsync();
+
+    if (status !== 'granted') {
+      console.log("location permission denied");
+    }
+
+    else {
+      let location = await Location.getCurrentPositionAsync({});
+      var options = {
+        lat: location.coords.latitude,
+        long: location.coords.longitude
+      }
+      const requestOptions = {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(options)
+        };
+        fetch('http://flip1.engr.oregonstate.edu:4545/userProfileLocation', requestOptions)
+        .then(response => response.json())
+        .then((json) => {
+          //console.log(json[0].user_id);
+          if (json[0].error) {
+            alert(json[0].error);
+          }
+
+          else {
+            //console.log(this.state.userId.toString());
+            this.setState( {['user_city']: json[0].user_city});
+            this.setState( {['user_state']: json[0].user_state});
+          }
+        })
+        .catch(error => console.log(error));
+      //console.log(this.state.lat, this.state.long);
+    }
+    
+  };
 
   removeUserId = async () => {
 
@@ -106,7 +149,7 @@ export default class UserProfile extends React.Component {
 
   render() {
 
-    const { data, isLoading } = this.state;
+    const { data, isLoading, user_city, user_state } = this.state;
 
     return (
       <View style={styles.profile}>
@@ -203,12 +246,19 @@ export default class UserProfile extends React.Component {
                 <Text bold size={28} color="#32325D">
                   {data.first_name + " " + data.last_name}
                 </Text>
-                <Text size={16} color="#32325D" style={{ marginTop: 10, marginBottom: 10 }}>
-                  San Francisco, USA
-                </Text>
+
+                {user_city == null && user_state == null ? 
+
+                <Text size={16} color="#32325D" style={{ marginTop: 10 }}>
+                  Current Location Unknown
+                </Text> : (
+                <Text size={16} color="#32325D" style={{ marginTop: 10 }}>
+                  {user_city + ", " + user_state}
+                </Text> )}
+
+
                 <Button
                 onPress={() => this.removeUserId()}
-                style = {appstyles.listButton2}
                 >
                   <Text
                     bold

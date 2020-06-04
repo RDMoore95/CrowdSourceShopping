@@ -102,6 +102,28 @@ app.get('/map', function(req, res) {
 
 })
 
+app.post('/userProfileLocation',(async (function(req, res) {
+
+    const request1 = 'https://maps.googleapis.com/maps/api/geocode/json?latlng='
+    const request2 = '&key=AIzaSyDQCwj-QWjaCb0oicA6xml3rnkw8o_O_X4'
+
+    const full_request = request1 + req.body.lat + "," + req.body.long + request2;
+
+    const response = await (fetch(full_request));
+    const json = await (response.json());
+    console.log(json);
+
+    const obj = {
+        user_city: json.results[0].formatted_address.split(",")[1].replace(/ /g, ""),
+        user_state: json.results[0].formatted_address.split(",")[2].split(" ")[1]
+    }
+
+    console.log(obj);
+
+    res.send([obj]);
+
+})));
+
 app.get('/mapLatLongUpdate', function(req, res) {
 
     var q = `SELECT store_name, store_street, store_city, state_name, store_zip 
