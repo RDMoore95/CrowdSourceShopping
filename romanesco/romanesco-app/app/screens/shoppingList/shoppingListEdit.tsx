@@ -81,7 +81,12 @@ export class ShoppingList extends React.Component {
                            user_id: this.state.user_id,
                            tag_name: this.state.tag_name,
                        })
-        })
+                      }).then((response) => response.json())
+                      .then((json) => {
+                        this.setState({ data: json });
+                      }).finally(() => {
+         this.setState({ refresh: !this.state.refresh });
+         })
     
       }
 
@@ -93,12 +98,19 @@ export class ShoppingList extends React.Component {
                            'Content-Type': 'application/json',
                        },
                        body: JSON.stringify({
-                           list_id: shopping_list_history_id
+                        user_id: this.state.user_id,
+                           list_id: shopping_list_history_id,
                        })
-        })
+        }).then((response) => response.json())
+       .then((json) => {
+         this.setState({ data: json });
+       }).finally(() => {
+         this.setState({ refresh: !this.state.refresh });
+         })
     
       }
 
+    
       getUserId = async () => {
         try {
           const value = await AsyncStorage.getItem(USER_STORAGE_KEY);
@@ -189,7 +201,9 @@ export class ShoppingList extends React.Component {
                         
                         style = {appstyles.listButton2}
                         onPress={() => this.setModalAddVisible()}>
-                        <Text size="20">Add Item to List</Text>
+                        <Text bold
+                    size={20}
+                    color="white">Add Item to List</Text>
                          
                     </TouchableHighlight>
                     </View>
@@ -235,6 +249,7 @@ export class ShoppingList extends React.Component {
                     {this.state.isLoading ? <ActivityIndicator/> : (
                             <FlatList
                                 data={this.state.data}
+                                extraData={this.state.refresh}
                                 ItemSeparatorComponent={this.renderSeparator}
                                 ListHeaderComponent = { this.renderSeparator}
                                 renderItem={({ item, id }) => (
@@ -254,7 +269,9 @@ export class ShoppingList extends React.Component {
                             <TouchableHighlight
                               style = {appstyles.listButton1}
                               onPress={() => Alert.alert('Reccomend button pressed')}>
-                              <Text size="20">Get Reccomendations</Text>  
+                              <Text bold
+                    size={20}
+                    color="white">Get Reccomendations</Text>  
                             </TouchableHighlight>           
                     </View>
               </Block>
