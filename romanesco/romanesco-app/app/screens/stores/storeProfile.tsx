@@ -31,6 +31,7 @@ var url = "http://flip1.engr.oregonstate.edu:5005";
 export function StoreProfile( { route }, {} ) {
 
     const navigation = useNavigation();
+    //console.log(route.params);
 
     // Get store_id
     const { store_id } = route.params;
@@ -53,7 +54,10 @@ export function StoreProfile( { route }, {} ) {
                store_id: store_id,
            }),
        }).then((response) => response.json())
-        .then((json) => setData(json[0]))
+        .then((json) => {
+          setData(json[0])
+          console.log(data);
+        })
         .catch((error) => console.error(error))
         .finally(() => setLoading(false))
     }, []);
