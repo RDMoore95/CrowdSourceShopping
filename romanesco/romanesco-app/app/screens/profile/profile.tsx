@@ -22,6 +22,7 @@ import { HeaderHeight } from "../../constants/utils";
 
 import { FeedEntry } from '../feed/components/feedEntry';
 import Images from '../../assets/imgs';
+import { appstyles } from '../../styles/appStyle'
 
 import {NewButton} from "../../components/newButton/newButton";
 const USER_STORAGE_KEY = "@user_id";
@@ -202,11 +203,12 @@ export default class UserProfile extends React.Component {
                 <Text bold size={28} color="#32325D">
                   {data.first_name + " " + data.last_name}
                 </Text>
-                <Text size={16} color="#32325D" style={{ marginTop: 10 }}>
+                <Text size={16} color="#32325D" style={{ marginTop: 10, marginBottom: 10 }}>
                   San Francisco, USA
                 </Text>
                 <Button
                 onPress={() => this.removeUserId()}
+                style = {appstyles.listButton2}
                 >
                   <Text
                     bold
