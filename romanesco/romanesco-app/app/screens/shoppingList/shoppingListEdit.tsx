@@ -38,7 +38,7 @@ import Images from '../../assets/imgs';
 const USER_STORAGE_KEY = "@user_id";
 
 //const url = "http://10.0.0.159:5000";
-//var url = "http://192.168.1.7:5000";
+// var url = "http://192.168.1.7:5000";
 const url = "http://flip1.engr.oregonstate.edu:5005";
 
 export class ShoppingList extends React.Component {
@@ -107,7 +107,7 @@ export class ShoppingList extends React.Component {
                        },
                        body: JSON.stringify({
                         user_id: this.state.user_id,
-                           list_id: shopping_list_history_id,
+                        list_id: shopping_list_history_id,
                        })
         }).then((response) => response.json())
        .then((json) => {
@@ -311,7 +311,7 @@ export class ShoppingList extends React.Component {
                     <View style={appstyles.container}>
                     {this.state.isLoading ? <ActivityIndicator/> : (
                             <FlatList
-                                extraData={this.state.refresh}
+                                // extraData={this.state.refresh}
                                 data={this.state.data}
                                 extraData={this.state.refresh}
                                 ItemSeparatorComponent={this.renderSeparator}
