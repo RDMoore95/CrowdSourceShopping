@@ -168,16 +168,12 @@ def pullTopStores(userid):
 def getRecoShoppingList(user_id):
     
     query = """
-    SELECT DISTINCT a.tag_name
-    FROM Shopping_List_History a
-    LEFT JOIN Shopping_List_History b
-    ON a.tag_name = b.tag_name
-    AND b.time_removed IS NOT NULL
-    AND b.user_id = {user_id}
-    WHERE a.tag_name != 'None'
-    AND a.user_id = {user_id}
-    AND a.time_added > COALESCE(b.time_removed, '2001-01-01')
-    ORDER BY a.time_added DESC
+    SELECT DISTINCT tag_name
+    FROM Shopping_List_History
+    WHERE tag_name != 'None'
+    AND user_id = {user_id}
+    AND time_removed IS NULL
+    ORDER BY time_added DESC
     LIMIT 100
     """
     
@@ -838,18 +834,14 @@ def pullShoppingList(user_id):
 
 	# All the items in the shopping list per the id
 	query = '''
-		    SELECT a.tag_name, MAX(a.shopping_list_history_id) as shopping_list_history_id
-		    FROM Shopping_List_History a
-		    LEFT JOIN Shopping_List_History b
-		    ON a.tag_name = b.tag_name
-		    AND b.time_removed IS NOT NULL
-		    AND b.user_id = {userID}
-		    WHERE a.tag_name != 'None'
-		    AND a.user_id = {userID}
-		    AND a.time_added > COALESCE(b.time_removed, '2001-01-01')
-		    GROUP BY a.tag_name
-		    ORDER BY a.tag_name
-	    	'''
+    SELECT tag_name, MAX(shopping_list_history_id) as shopping_list_history_id
+    FROM Shopping_List_History
+    WHERE tag_name != 'None'
+    AND user_id = {userID}
+    AND time_removed IS NULL
+    GROUP BY tag_name
+    ORDER BY tag_name	
+	'''
 
 	query = query.format(userID = user_id)
 	result = pd.read_sql(query, con=db_connection)
