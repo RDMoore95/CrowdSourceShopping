@@ -292,7 +292,7 @@ export class ShoppingList extends React.Component {
                                   />
                                   <TouchableHighlight
                                     title = "Submit"
-                                    style={appstyles.listButton1}
+                                    style={appstyles.listButton2}
                                     onPress={() => this.submitHandler() }>
                                     <Text size="20">Submit</Text>
                                   </TouchableHighlight>  
@@ -344,7 +344,7 @@ export class ShoppingList extends React.Component {
                     </View>
             <View style={{padding: 3}}></View>
 
-            <View style={{ padding: 5, width: deviceWidth * 0.98, alignItems: "center"}}>
+            <View style={{ padding: 5, width: deviceWidth * 0.99, alignItems: "center"}}>
             {isLoading ? <ActivityIndicator/> : (
               <FlatList
                 data={this.state.recoData}
@@ -511,7 +511,7 @@ const styles = StyleSheet.create({
   }, 
   feedBox: {  
     backgroundColor:'#F7FAFC'  
-    , padding: 3  
+    , padding: 4  
     , borderColor: '#F7FAFC'  
     , borderRadius: 25  
     , borderWidth: 1  
