@@ -199,7 +199,7 @@ def pullRecoStores(user_id, userLat, userLong):
 	# userLong = -122.4142765721646
 	# user_id = 331
 	distance_limit = 5
-	string_match_threshold = 0.5
+	string_match_threshold = 0.45
 
 	print("Running Recommended Stores")
 
@@ -306,7 +306,7 @@ def pullRecoStores(user_id, userLat, userLong):
 	prices = prices.sort_values(['store_matched_items', 'store_avg'], ascending=[False, False])
 
 	# Take first row by store
-	prices.groupby('store_id').first().reset_index()
+	prices = prices.groupby('store_id').first().reset_index()
 
 	# Join on store information
 	result = pd.merge(prices, stores, on='store_id')
