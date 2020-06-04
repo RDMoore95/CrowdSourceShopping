@@ -58,137 +58,143 @@ export function StoreProfile( { route }, {} ) {
         .finally(() => setLoading(false))
     }, []);
 
-    return (    
+    return (
 
       <View style={styles.profile}>
-        <Block flex>
-          
-            <ScrollView
-              showsVerticalScrollIndicator={false}
-              style={{ width, marginTop: '5%', backgroundColor:'#fff' }}
-            > 
 
-            <TouchableOpacity 
-                onPress={() => {
-                  navigation.navigate("Stores"), {};
-                }}
-                style={styles.feedBox}
-                >
-                <Text bold size={20} color="#32325D">Dismiss</Text>
-            </TouchableOpacity>
+        { isLoading ? <ActivityIndicator/> : (
 
-            <View style={{backgroundColor:'#fff', padding: 3}}></View>
-
-              <Block flex style={styles.profileCard}> 
-                <Block middle style={styles.avatarContainer}>
-                
-                  <Image 
-                    source = {Images.stores[data.store_name_fmt]}
-                    onError={() => setValid(false)}
-                    defaultSource = {Images.stores["romanescostoredefault"]}
-                    style={styles.avatar} 
-                    backgroundColor = "#fcfcfc"
-                  /> 
-                </Block>
-                <Block style={styles.info}>
-                  <Block
-                    middle
-                    row
-                    space="evenly"
-                    style={{ marginTop: 20, paddingBottom: 24 }}
-                    >
-                    <Button
-                      style={{ backgroundColor: argonTheme.COLORS.INFO }}
-                    >
-                     <Text
-                        bold
-                        size={18}
-                        color="white"
-                      >
-                      {data.store_name}
-                     </Text>                      
-                    </Button>
-                  </Block> 
-
-                  <Block row space="between">
-                  <Text bold size={28} color="#32325D">
-                      {data.store_rating}
-                    </Text>
-                  </Block>
-
-                  <Block row space="between" alignSelf="center">
-                    <Block middle style={{ paddingHorizontal: 16 }}>
-                      <Text
-                        bold
-                        size={18}
-                        color="#525F7F"
-                        style={{ marginBottom: 4 }}
-                      >
-                         {data.reviewers}
-                      </Text>
-                      <Text size={12} color={argonTheme.COLORS.TEXT}>Romanescos</Text>
-                    </Block>
-                    <Block middle style={{ paddingHorizontal: 16 }}>
-                      <Text
-                        bold
-                        color="#525F7F"
-                        size={18}
-                        style={{ marginBottom: 4 }}
-                      >
-                        {data.prices_tracked}
-                      </Text>
-                      <Text size={12} color={argonTheme.COLORS.TEXT}>Prices Tracked</Text>
-                    </Block>
-                    <Block middle style={{ paddingHorizontal: 16 }}>
-                      <Text
-                        bold
-                        color="#525F7F"
-                        size={18}
-                        style={{ marginBottom: 4 }}
-                      >
-                        {data.reviews_tracked}
-                      </Text>
-                      <Text size={12} color={argonTheme.COLORS.TEXT}>Store Reviews</Text>
-                    </Block>
+          <Block flex>
                     
-                  </Block>
+          <ScrollView
+            showsVerticalScrollIndicator={false}
+            style={{ width, marginTop: '5%', backgroundColor:'#fff' }}
+          > 
 
-                </Block>
-                <Block flex>
-                  <Block middle style={styles.nameInfo}>
-                    <Text bold size={28} color="#32325D">
-                      {store_street}
-                    </Text>
-                    <Text size={16} color="#32325D" style={{ marginTop: 10 }}>
-                      {store_city}
-                    </Text>
-                  </Block>
-                            
-                  </Block>
-                  </Block>
+          <TouchableOpacity 
+              onPress={() => {
+                navigation.navigate("Stores"), {};
+              }}
+              style={styles.feedBox}
+              >
+              <Text bold size={20} color="#32325D">Dismiss</Text>
+          </TouchableOpacity>
 
-                  <View style={{backgroundColor:'#fff', padding: 10}}></View>
+          <View style={{backgroundColor:'#fff', padding: 3}}></View>
 
-                  <TouchableOpacity 
-                    onPress={() => navigation.navigate('InputStoreCategory', 
-                      {
-                        store_id: data.store_id,
-                        user_id: user_id
-                      }
-                    )
-                    }
-                    style={styles.feedBox}
-                  >
-                    <Text style={styles.headline}> 
-                    Review Store
-                    </Text>
-                  </TouchableOpacity>
-
-                  <FeedEntry navigation={navigation} id_type = 'store' id_value = {store_id}> </FeedEntry>
+            <Block flex style={styles.profileCard}> 
+              <Block middle style={styles.avatarContainer}>
               
-            </ScrollView>
- 
-        </Block>
+                <Image 
+                  source = {Images.stores[data.store_name_fmt]}
+                  onError={() => setValid(false)}
+                  defaultSource = {Images.stores["romanescostoredefault"]}
+                  style={styles.avatar} 
+                  backgroundColor = "#fcfcfc"
+                /> 
+              </Block>
+              <Block style={styles.info}>
+                <Block
+                  middle
+                  row
+                  space="evenly"
+                  style={{ marginTop: 20, paddingBottom: 24 }}
+                  >
+                  <Button
+                    style={{ backgroundColor: argonTheme.COLORS.INFO }}
+                  >
+                  <Text
+                      bold
+                      size={18}
+                      color="white"
+                    >
+                    {data.store_name}
+                  </Text>                      
+                  </Button>
+                </Block> 
+
+                <Block row space="between">
+                <Text bold size={28} color="#32325D">
+                    {data.store_rating}
+                  </Text>
+                </Block>
+
+                <Block row space="between" alignSelf="center">
+                  <Block middle style={{ paddingHorizontal: 16 }}>
+                    <Text
+                      bold
+                      size={18}
+                      color="#525F7F"
+                      style={{ marginBottom: 4 }}
+                    >
+                      {data.reviewers}
+                    </Text>
+                    <Text size={12} color={argonTheme.COLORS.TEXT}>Romanescos</Text>
+                  </Block>
+                  <Block middle style={{ paddingHorizontal: 16 }}>
+                    <Text
+                      bold
+                      color="#525F7F"
+                      size={18}
+                      style={{ marginBottom: 4 }}
+                    >
+                      {data.prices_tracked}
+                    </Text>
+                    <Text size={12} color={argonTheme.COLORS.TEXT}>Prices Tracked</Text>
+                  </Block>
+                  <Block middle style={{ paddingHorizontal: 16 }}>
+                    <Text
+                      bold
+                      color="#525F7F"
+                      size={18}
+                      style={{ marginBottom: 4 }}
+                    >
+                      {data.reviews_tracked}
+                    </Text>
+                    <Text size={12} color={argonTheme.COLORS.TEXT}>Store Reviews</Text>
+                  </Block>
+                  
+                </Block>
+
+              </Block>
+              <Block flex>
+                <Block middle style={styles.nameInfo}>
+                  <Text bold size={28} color="#32325D">
+                    {store_street}
+                  </Text>
+                  <Text size={16} color="#32325D" style={{ marginTop: 10 }}>
+                    {store_city}
+                  </Text>
+                </Block>
+                          
+                </Block>
+                </Block>
+
+                <View style={{backgroundColor:'#fff', padding: 10}}></View>
+
+                <TouchableOpacity 
+                  onPress={() => navigation.navigate('InputStoreCategory', 
+                    {
+                      store_id: data.store_id,
+                      user_id: user_id
+                    }
+                  )
+                  }
+                  style={styles.feedBox}
+                >
+                  <Text style={styles.headline}> 
+                  Review Store
+                  </Text>
+                </TouchableOpacity>
+
+                <FeedEntry navigation={navigation} id_type = 'store' id_value = {store_id}> </FeedEntry>
+            
+          </ScrollView>
+
+          </Block>
+        )}
+
+        
       </View>
 
         )
