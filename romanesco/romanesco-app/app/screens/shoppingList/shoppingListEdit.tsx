@@ -13,27 +13,32 @@ import {
   AsyncStorage,
   Button,
   RefreshControl,
+  TouchableOpacity,
   TouchableHighlight
   } from 'react-native';
+import { Avatar } from "react-native-elements";
 import { useEffect, useState } from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import { withNavigation } from 'react-navigation';
 import { Block, Text, theme } from "galio-framework";
 //import { Button } from "../../components";
-import { Images, argonTheme } from "../../constants";
+import { argonTheme } from "../../constants";
 import { HeaderHeight } from "../../constants/utils";
 import Icon from 'react-native-vector-icons/Ionicons';
+import * as Location from 'expo-location';
 
 const { width, height } = Dimensions.get("screen");
-
 const thumbMeasure = (width - 48 - 32) / 3;
+let deviceWidth = Dimensions.get('window').width
 
 import { appstyles } from '../../styles/appStyle'
+import Images from '../../assets/imgs';
 
 const USER_STORAGE_KEY = "@user_id";
 
 //const url = "http://10.0.0.159:5000";
+//var url = "http://192.168.1.7:5000";
 const url = "http://flip1.engr.oregonstate.edu:5005";
 
 export class ShoppingList extends React.Component {
@@ -44,6 +49,7 @@ export class ShoppingList extends React.Component {
 
       this.state = {
         data: [],
+        recoData: [],
         tags: [],
         user_id: "",
         haveUserId: true,
@@ -52,7 +58,8 @@ export class ShoppingList extends React.Component {
         refresh: false,
         firstRender: true,
         modalAddVisible: false,
-        refreshing: false
+        refreshing: false,
+        pulledReco: false,
       };
     }
 
@@ -86,6 +93,7 @@ export class ShoppingList extends React.Component {
       }
 
       removeItem(shopping_list_history_id){
+
         fetch(url + '/removeItem/', {
                        method: 'POST',
                        headers: {
@@ -95,8 +103,13 @@ export class ShoppingList extends React.Component {
                        body: JSON.stringify({
                            list_id: shopping_list_history_id
                        })
+        }).then(() => {
+         this.setState({ data: [] });
+         })
+         .finally(() => {
+        this.setState({ refresh: !this.state.refresh });
         })
-    
+
       }
 
       getUserId = async () => {
@@ -123,16 +136,16 @@ export class ShoppingList extends React.Component {
 
     componentDidMount() {
         
-        //this.setState({ loading: true });
-        //this.getList()
+      this.setState({ loading: true });
+      this.getList()
       
-        this.setState({data: [ 
-          {"shopping_list_history_id":55928,"tag_name":"tissues","id":"0"},
-        {"shopping_list_history_id":55929,"tag_name":"fish","id":"1"},
-        {"shopping_list_history_id":55931,"tag_name":"trout","id":"2"},
-        {"shopping_list_history_id":55933,"tag_name":"corn","id":"3"},
-        {"shopping_list_history_id":55934,"tag_name":"corn","id":"4"} 
-      ] });  
+      //   this.setState({data: [ 
+      //     {"shopping_list_history_id":55928,"tag_name":"tissues","id":"0"},
+      //   {"shopping_list_history_id":55929,"tag_name":"fish","id":"1"},
+      //   {"shopping_list_history_id":55931,"tag_name":"trout","id":"2"},
+      //   {"shopping_list_history_id":55933,"tag_name":"corn","id":"3"},
+      //   {"shopping_list_history_id":55934,"tag_name":"corn","id":"4"} 
+      // ] });  
   }
   
   _onRefresh () {
@@ -154,12 +167,12 @@ export class ShoppingList extends React.Component {
           user_id: this.state.user_id
       }),
      }).then((response) => response.json())
-   .then((json) => {
-     this.setState({ data: json });
-   }).finally(() => {
-     this.setState({ isLoading: false });
-    })
-   ); 
+       .then((json) => {
+         this.setState({ data: json });
+       }).finally(() => {
+         this.setState({ isLoading: false });
+        })
+       ); 
   }
 
   renderSeparator = () => {
@@ -172,8 +185,84 @@ export class ShoppingList extends React.Component {
     this.setState({ modalAddVisible: visible });
   }
 
+  findCoordinates = async () => {
+
+    let { status } = await Location.requestPermissionsAsync();
+
+    if (status !== 'granted') {
+      console.log("location permission denied");
+    }
+
+    else {
+      let location = await Location.getCurrentPositionAsync({});
+      this.setState({lat: location.coords.latitude});
+      this.setState({long: location.coords.longitude});
+      this.setState({coordinates_received: true});
+      console.log(this.state.lat, this.state.long);
+    }
+  
+  };
+
+  /*****************************
+  * RECOMMENDATIONS
+  *****************************/
+
+  getRecos = () => {
+
+    this.setState({ showRecos: !this.state.showRecos });
+
+    this.findCoordinates()
+      .then(() => {
+      fetch(url + '/getRecoStores/', {
+           method: 'POST',
+           headers: {
+               Accept: 'application/json',
+               'Content-Type': 'application/json',
+           },
+           body: JSON.stringify({
+               user_id: this.state.user_id,
+               // user_id: '10',
+               lat: this.state.lat,
+               long: this.state.long,
+           }),
+       })
+        .then(response => response.json())
+        .then((json) => {
+            this.setState({ recoData: json });
+          })
+        .catch(error => {
+        })                     
+        .finally(() => {
+            this.setState({ isLoading: false });
+            this.setState({ pulledReco: true });
+        })
+
+      })
+  }
+
+  renderEmptyContainer = () => {
+
+    const pulledReco = this.state.pulledReco;
+    if (pulledReco) {
+      return(
+        <View>
+        <Text style={{paddingLeft:10}}>Uh-oh! No recommended stores found near you</Text>
+        <Text style={{paddingLeft:10, marginTop:5}}>Testing the app? Add item prices to stores nearby, then add similar tags to your shopping list for the recommender to match them</Text>
+        </View>
+      )
+    } else {
+      return(
+        <View><Text style={{paddingLeft:10}}></Text></View>
+      )
+    }
+
+  }
+
+
    // Render each feed entry in a flatlist
    render() {  
+
+      const { isLoading } = this.state;
 
        return ( 
       <ScrollView >
@@ -182,66 +271,53 @@ export class ShoppingList extends React.Component {
 
               <Block flex style={appstyles.profileContainer}>
                   <View style = {appstyles.centeredView2}>
-                    <Text size={28} color="#32325D" style={{ marginTop: height * .05, textAlign: 'center' }}>
-                      Shopping List
-                    </Text>
-                                                                                              
-                    <TouchableHighlight
-                        title = "Recc"
-                        style = {appstyles.listButton1}
-                        onPress={() => Alert.alert('Reccomend button pressed')}>
-                        <Icon
-                          name="md-pizza" size={25}
-                        />
-                    </TouchableHighlight>
+
                     <TouchableHighlight 
-                        
                         style = {appstyles.listButton2}
                         onPress={() => this.setModalAddVisible()}>
-                        <Text>Add Item to List</Text>
-                         
+                        <Text>Add Item</Text>
                     </TouchableHighlight>
                     </View>
                     <Modal
-                                animationType="slide"
-                                transparent={false}
-                                visible={this.state.modalAddVisible}
-                                onRequestClose={() => {
-                                  Alert.alert("Modal has been closed.");
-                                }}
-                            >
-                              <View style={appstyles.centeredView}>
-                                <View style={appstyles.modalView}>
-                                  <Text style={appstyles.modalText}>Add an item!</Text>
-                                  <TextInput
-                                    style={appstyles.input}
-                                    placeholder='What are you shopping for?'
-                                    autoCapitalize="none"
-                                    maxLength={50}
-                                    placeholderTextColor='white'
-                                    onChangeText={val => this.onChangeText('tag_name', val)}
-                                  />
-                                  <TouchableHighlight
-                                    title = "Submit"
-                                    style={appstyles.listButton1}
-                                    onPress={() => this.submitHandler() }>
-                                    <Text>Submit</Text>
-                                  </TouchableHighlight>  
-                                  <TouchableHighlight
-                                    title = "Close"
-                                    style={appstyles.listButton2}
-                                    onPress={() => 
-                                      this.setModalAddVisible(!this.state.modalAddVisible) }>
-                                    <Text>Close</Text>
-                                  </TouchableHighlight>
-                                </View>
-                              </View>
-                            </Modal>
-
+                        animationType="slide"
+                        transparent={false}
+                        visible={this.state.modalAddVisible}
+                        onRequestClose={() => {
+                          Alert.alert("Modal has been closed.");
+                        }}
+                    >
+                      <View style={appstyles.centeredView}>
+                        <View style={appstyles.modalView}>
+                          <Text style={appstyles.modalText}>Add an item!</Text>
+                          <TextInput
+                            style={appstyles.input}
+                            placeholder='What are you shopping for?'
+                            autoCapitalize="none"
+                            maxLength={50}
+                            placeholderTextColor='white'
+                            onChangeText={val => this.onChangeText('tag_name', val)}
+                          />
+                          <TouchableHighlight
+                            title = "Submit"
+                            style={appstyles.listButton1}
+                            onPress={() => this.submitHandler() }>
+                            <Text>Submit</Text>
+                          </TouchableHighlight>  
+                          <TouchableHighlight
+                            title = "Close"
+                            style={appstyles.listButton2}
+                            onPress={() => 
+                              this.setModalAddVisible(!this.state.modalAddVisible) }>
+                            <Text>Close</Text>
+                          </TouchableHighlight>
+                        </View>
+                      </View>
+                    </Modal>
                
                     <View style={appstyles.container}>
                     {this.state.isLoading ? <ActivityIndicator/> : (
                             <FlatList
+                                extraData={this.state.refresh}
                                 data={this.state.data}
                                 ItemSeparatorComponent={this.renderSeparator}
                                 ListHeaderComponent = { this.renderSeparator}
@@ -259,6 +335,64 @@ export class ShoppingList extends React.Component {
                             />
                             )}                
                     </View>
+
+              <TouchableHighlight
+                        title = "Recc"
+                        style = {appstyles.listButton2}
+                        onPress={() => { this.getRecos()} }>
+                        <Text>Click to get our store picks for you!</Text>
+              </TouchableHighlight>
+
+            <View style={{ padding: 5, width: deviceWidth * 0.98, alignItems: "center"}}>
+            {isLoading ? <ActivityIndicator/> : (
+              <FlatList
+                data={this.state.recoData}
+                extraData={this.state.refresh}
+                ListEmptyComponent={this.renderEmptyContainer()}
+                keyExtractor={item => item.id}
+                renderItem={({ item }) => (
+                  <>
+                  <View style={styles.feedBox}>
+                  <TouchableOpacity 
+                    onPress={() => this.props.navigation.navigate('StoreProfileModal', 
+                      {
+                        store_id: item.store_id,
+                        store_name_fmt: item.store_name_fmt,
+                        store_street: item.store_street,
+                        store_city: item.store_city,
+                      }
+                    )
+                    }
+                  >
+                  <View style={styles.feedBoxHeader}>
+                    <Avatar
+                    rounded
+                    source = {Images.stores[item.store_name_fmt]}
+                    defaultSource = {Images.stores["romanescostoredefault"]}
+                     />  
+                    <Text numberOfLines={1} style={styles.headline}> 
+                    {item.store_name} at {item.store_street}                    
+                    </Text>
+                  </View> 
+                    <Text size={14} color="#32325D" style={{ marginTop: 10 }}>
+                       {item.distance} miles away
+                    </Text>                  
+                    <Text size={14} color="#32325D" style={{ marginTop: 10 }}>
+                       {item.formatted_desc}
+                    </Text>
+
+                  </TouchableOpacity>
+
+                  </View>
+
+                  <View style={{backgroundColor:'#fff', flex:1 ,padding: 3}}></View>
+
+                  </>
+                )}
+              />
+            )}
+            </View>
+
               </Block>
         </View>
       </ScrollView>
@@ -373,6 +507,39 @@ const styles = StyleSheet.create({
   modalText: {
     marginBottom: 15,
     textAlign: "center"
+  }, 
+  feedBox: {  
+    backgroundColor:'#F7FAFC'  
+    , padding: 3  
+    , borderColor: '#F7FAFC'  
+    , borderRadius: 25  
+    , borderWidth: 1  
+  },  
+  feedBoxHeader: {  
+    backgroundColor:'#F7FAFC'  
+    , padding: 3  
+    , borderColor: '#F7FAFC'  
+    , borderRadius: 25  
+    , borderWidth: 1  
+    , flexDirection: 'row'  
+    , alignItems: 'center'  
+  }, 
+  feedBoxHeader: {  
+    backgroundColor:'#F7FAFC'  
+    , padding: 3  
+    , borderColor: '#F7FAFC'  
+    , borderRadius: 25  
+    , borderWidth: 1  
+    , flexDirection: 'row'  
+    , alignItems: 'center'  
+  },
+  headline: {  
+     fontSize: 14,  
+     color:'#32325D',  
+     textAlign: 'left',  
+     textAlignVertical: "center",  
+     paddingLeft: 10,  
+     width: deviceWidth * 0.75  
   }, 
   input: {
     width: 350,

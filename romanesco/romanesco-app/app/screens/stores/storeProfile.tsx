@@ -170,7 +170,7 @@ export function StoreProfile( { route }, {} ) {
                   <View style={{backgroundColor:'#fff', padding: 10}}></View>
 
                   <TouchableOpacity 
-                    onPress={() => navigation.navigate('InputPrompt', 
+                    onPress={() => navigation.navigate('InputStoreCategory', 
                       {
                         store_id: data.store_id,
                         user_id: user_id

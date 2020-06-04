@@ -8,6 +8,9 @@ import sys
 from sqlalchemy import create_engine
 import pymysql
 import pandas as pd
+import geopy.distance
+import textdistance
+import numpy as np
 
 app = Flask(__name__)
 
@@ -148,6 +151,169 @@ def pullTopStores(userid):
 
 	result = pd.read_sql(query, con=db_connection)
 	print(result)
+
+	# Add an ID
+	result['id'] = result.index.astype(str)
+
+	# Format store names
+	result['store_name_fmt'] = result['store_name'].str.replace('[^a-zA-Z]', '').str.lower()
+
+	result_json = result.to_json(orient = 'records')
+	print(result_json)
+	return result_json
+
+
+# Pull a user's current shopping list
+# Check item has not been removed
+def getRecoShoppingList(user_id):
+    
+    query = """
+    SELECT DISTINCT a.tag_name
+    FROM Shopping_List_History a
+    LEFT JOIN Shopping_List_History b
+    ON a.tag_name = b.tag_name
+    AND b.time_removed IS NOT NULL
+    AND b.user_id = {user_id}
+    WHERE a.tag_name != 'None'
+    AND a.user_id = {user_id}
+    AND a.time_added > COALESCE(b.time_removed, '2001-01-01')
+    ORDER BY a.time_added DESC
+    LIMIT 100
+    """
+    
+    query = query.format(user_id = user_id)
+    
+    shopping_list = pd.read_sql(query, con=db_connection)
+    return shopping_list
+
+
+# Distance from user to store
+def storeUserDistance(userLat, userLong, storeLat, storeLong):
+    
+    coords_1 = (userLat, userLong)
+    coords_2 = (storeLat, storeLong)
+    
+    return round(geopy.distance.geodesic(coords_1, coords_2).miles, 1)
+
+
+# Pull top stores
+def pullRecoStores(user_id, userLat, userLong):
+
+	# userLat = 37.788565246142305
+	# userLong = -122.4142765721646
+	# user_id = 331
+	distance_limit = 5
+	string_match_threshold = 0.5
+
+	print("Running Recommended Stores")
+
+	# Get stores list
+	pull_stores = """
+	    SELECT DISTINCT 
+	    store_id
+	    , store_name
+	    , store_street
+	    , store_lat
+	    , store_long
+	    , store_zip
+	    FROM Store
+	    """
+	stores = pd.read_sql(pull_stores, con=db_connection)
+
+	# Calculate distance from user
+	stores['distance'] = stores.apply(lambda store : storeUserDistance(
+	    userLat
+	    , userLong
+	    , store['store_lat']
+	    , store['store_long']), axis = 1)
+
+	# Limit to stores within threshold
+	stores = stores[stores['distance'] <= distance_limit]
+	print(stores.head(3))
+
+	# Return if no stores found
+	if stores.shape[0] == 0:    
+	    print("No stores")
+	    return 0
+    
+	# Get min price for store-item combination
+	price_query = """
+	    SELECT 
+	    i.item_name
+	    , i.item_id
+	    , pf.store_id
+	    , MIN(pf.price) as store_avg
+	    FROM Item i
+	    INNER JOIN Price_Feedback pf
+	    ON i.item_id = pf.item_id
+	    WHERE pf.price > 1 AND pf.price < 100
+	    GROUP BY
+	    1, 2, 3
+	    """
+
+	prices = pd.read_sql(price_query, con=db_connection)
+	print(prices.head(3))
+
+	# Limit to stores close by
+	prices = prices[prices['store_id'].isin(stores['store_id'])]
+	print(prices.shape)
+
+	# Return if no prices found
+	if prices.shape[0] == 0:    
+	    print("No prices")
+	    return 0
+
+    # Get user's shopping list
+	shopping_list = getRecoShoppingList(user_id)
+	print(shopping_list.head(3))
+
+	# Return if no prices found
+	if shopping_list.shape[0] == 0:    
+	    print("No shopping list")
+	    return 0
+
+	# Match tags against items list
+	item_names = prices['item_name'].unique()
+	found_items_all = []
+	for t in shopping_list['tag_name']:
+	    print(t)
+	    results = [textdistance.ratcliff_obershelp.distance(t.lower(), item.lower()) for item in item_names]
+	    
+	    # Get matched items match
+	    # Get closest item
+	    if min(results) <= string_match_threshold:
+	        print(item_names[min(np.array(results)) == np.array(results)])
+	        found_item = item_names[min(np.array(results)) == np.array(results)]
+	        found_items_all.append(str(found_item[0]))
+
+	# Limit to found items
+	prices['matched_item'] = prices['item_name'].map(lambda x: 1 if x in found_items_all else 0) 
+	prices = prices[prices["matched_item"] == 1]
+
+	# Return if no prices found
+	if prices.shape[0] == 0:    
+	    print("No matched items")
+	    return 0
+
+	# Format item message
+	prices['formatted_desc'] = "Get"
+	item_name = prices['item_name'].copy()
+	prices['formatted_desc'] = prices["formatted_desc"].str.cat(item_name, sep =" ") 
+	prices['formatted_desc'] = prices["formatted_desc"] + " for as low as $"
+	item_price = prices[['store_avg']].applymap(lambda x: '{0:.2f}'.format(x)).copy()
+	prices['formatted_desc'] = prices["formatted_desc"].str.cat(item_price, sep ="") 
+
+	# Number of results per store
+	prices['store_matched_items'] = prices.groupby('store_id')['store_id'].transform('count')
+
+	# Sort by number of items, lowest price
+	prices = prices.sort_values(['store_matched_items', 'store_avg'], ascending=[False, False])
+
+	# Take first row by store
+	prices.groupby('store_id').first().reset_index()
+
+	# Join on store information
+	result = pd.merge(prices, stores, on='store_id')
 
 	# Add an ID
 	result['id'] = result.index.astype(str)
@@ -672,11 +838,17 @@ def pullShoppingList(user_id):
 
 	# All the items in the shopping list per the id
 	query = '''
-			SELECT
-			shopping_list_history_id
-			, tag_name
-			FROM Shopping_List_History 
-            WHERE user_id = {userID} AND time_removed IS NULL
+		    SELECT a.tag_name, MAX(a.shopping_list_history_id) as shopping_list_history_id
+		    FROM Shopping_List_History a
+		    LEFT JOIN Shopping_List_History b
+		    ON a.tag_name = b.tag_name
+		    AND b.time_removed IS NOT NULL
+		    AND b.user_id = {userID}
+		    WHERE a.tag_name != 'None'
+		    AND a.user_id = {userID}
+		    AND a.time_added > COALESCE(b.time_removed, '2001-01-01')
+		    GROUP BY a.tag_name
+		    ORDER BY a.tag_name
 	    	'''
 
 	query = query.format(userID = user_id)
@@ -803,6 +975,19 @@ def getTopStores():
 
     print(request.json)
     result_json = pullTopStores(request.json['user_id'])
+    return result_json, 201
+
+@app.route('/getRecoStores/', methods=['POST', 'GET'])
+def getRecoStores():
+
+    print(request.json)
+    result_json = pullRecoStores(request.json['user_id']
+    	, request.json['lat']
+		, request.json['long'])
+    print(result_json)
+    if result_json == 0:
+    	print("Here")
+    	return "No results", 401
     return result_json, 201
 
 @app.route('/getStore/', methods=['POST', 'GET'])
