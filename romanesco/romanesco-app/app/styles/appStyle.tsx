@@ -32,7 +32,6 @@ export const appstyles = StyleSheet.create({
     },
     
     container: {
-        //flex: 1,
         backgroundColor: lightBeige,
         alignItems: 'center',
         justifyContent: 'center',

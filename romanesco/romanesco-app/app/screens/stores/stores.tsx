@@ -158,6 +158,7 @@ export default class StoreFeed extends React.Component {
                     <Avatar
                     rounded
                     source = {Images.stores[item.store_name_fmt]}
+                    defaultSource = {Images.stores["romanescostoredefault"]}
                      />  
                     <Text numberOfLines={1} style={styles.headline}> 
                     {item.store_name} at {item.store_street}
@@ -213,6 +214,7 @@ export default class StoreFeed extends React.Component {
                     <Avatar
                     rounded
                     source = {Images.stores[item.store_name_fmt]}
+                    defaultSource = {Images.stores["romanescostoredefault"]}
                      />  
                     <Text numberOfLines={1} style={styles.headline}> 
                     {item.store_name} at {item.store_street}                    

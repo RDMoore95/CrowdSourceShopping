@@ -75,7 +75,7 @@ function Tabs() {
   return (
         <Tab.Navigator initialRouteName="Feed" 
           tabBarOptions={{
-            // labelStyle: { fontSize: 11.5 },
+            labelStyle: { fontSize: 11.5 },
             // tabStyle: { width: 100 },
             // style: { backgroundColor: 'powderblue' },
           }}
@@ -210,6 +210,36 @@ function StoreTabNav() {
             springVelocityScale: 0.1,
            }}
         />
+        <StoreStack.Screen 
+          name="InputPromptStores"
+          component={InputPromptStores}
+          options={{ headerShown: false }}
+        />                  
+        <StoreStack.Screen 
+          name="InputPrompt"
+          component={InputPrompt}
+          options={{ headerShown: false }}
+        />        
+        <StoreStack.Screen 
+          name="InputBarcode"
+          component={InputBarcode}
+          options={{ headerShown: false }}
+        />                
+        <StoreStack.Screen 
+          name="InputBarcodeScanned"
+          component={InputBarcodeScanned}
+          options={{ headerShown: false }}
+        />     
+        <StoreStack.Screen 
+          name="InputStoreCategory"
+          component={InputStoreCategory}
+          options={{ headerShown: false }}
+        />
+        <StoreStack.Screen 
+          name="InputStoreFeedback"
+          component={InputStoreFeedback}
+          options={{ headerShown: false }}
+        />                                   
       </StoreStack.Navigator>
     );
 }
@@ -230,36 +260,6 @@ function ProfileTabNav() {
             component={ReviewList}
             options={{ headerShown: false }}
           />
-        <ProfileStack.Screen 
-          name="InputPromptStores"
-          component={InputPromptStores}
-          options={{ headerShown: false }}
-        />                  
-        <ProfileStack.Screen 
-          name="InputPrompt"
-          component={InputPrompt}
-          options={{ headerShown: false }}
-        />        
-        <ProfileStack.Screen 
-          name="InputBarcode"
-          component={InputBarcode}
-          options={{ headerShown: false }}
-        />                
-        <ProfileStack.Screen 
-          name="InputBarcodeScanned"
-          component={InputBarcodeScanned}
-          options={{ headerShown: false }}
-        />     
-        <ProfileStack.Screen 
-          name="InputStoreCategory"
-          component={InputStoreCategory}
-          options={{ headerShown: false }}
-        />
-        <ProfileStack.Screen 
-          name="InputStoreFeedback"
-          component={InputStoreFeedback}
-          options={{ headerShown: false }}
-        />                           
         <ProfileStack.Screen 
           name="FeedProfileModal"
           component={FeedProfile}
