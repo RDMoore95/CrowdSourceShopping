@@ -32,7 +32,6 @@ export const appstyles = StyleSheet.create({
     },
     
     container: {
-        // flex: 1,
         backgroundColor: lightBeige,
         alignItems: 'center',
         justifyContent: 'center',
@@ -49,7 +48,12 @@ export const appstyles = StyleSheet.create({
         justifyContent: 'center',
         right: 30,
         bottom: 30,
-        backgroundColor: lightGreen
+        backgroundColor: lightGreen,
+        shadowColor: 'rgba(0,0,0, .4)', 
+        shadowOffset: { height: 1, width: 1 }, 
+        shadowOpacity: 1,
+        shadowRadius: 1, 
+        elevation: 2, 
       },
       // shopping list button + row
       listButton1: {
@@ -64,9 +68,13 @@ export const appstyles = StyleSheet.create({
         alignItems: "center",
         justifyContent: "center",
         width: width * .8,
-        height: height * .1,
-        backgroundColor: darkGreen, 
-        
+        height: height * .07,
+        backgroundColor: "#11CDEF", 
+        shadowColor: "black",
+  shadowOffset: { width: 0, height: 0 },
+  shadowRadius: 8,
+  shadowOpacity: 0.2,
+  zIndex: 2,
     },
     listButton2: {
       marginTop:10,
@@ -80,9 +88,13 @@ export const appstyles = StyleSheet.create({
         alignItems: "center",
         justifyContent: "center",
       width: width * .8,
-      height: height * .1,
-      backgroundColor: lightGreen,
-     
+      height: height * .07,
+      backgroundColor: "#11CDEF",
+      shadowColor: "black",
+  shadowOffset: { width: 0, height: 0 },
+  shadowRadius: 8,
+  shadowOpacity: 0.2,
+  zIndex: 2,
   },
     listRow: {
         width: width*.75,
@@ -195,7 +207,7 @@ export const appstyles = StyleSheet.create({
   input: {
     width: 350,
     height: 55,
-    //backgroundColor: '#42A5F5',
+    backgroundColor: darkGreen,
     margin: 10,
     padding: 8,
     color: 'white',

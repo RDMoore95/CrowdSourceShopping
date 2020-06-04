@@ -1094,16 +1094,17 @@ def addList():
 	print("Adding tag to list")
 	insertShoppingListHist(
 		request.json['user_id']
-		, request.json['tag_name']
-	)
-	return "good", 201
+		, request.json['tag_name']	)
+	result_json = pullShoppingList(request.json['user_id'])
+	return result_json, 201
 
 @app.route('/removeItem/', methods=['POST', 'GET'])
 def removeItem():
 
     print(request.json)
-    result_json = removeTag(request.json['list_id'])
-    return "good", 201	
+    removeTag(request.json['list_id'])
+    result_json = pullShoppingList(request.json['user_id'])
+    return result_json, 201	
 
 @app.route('/removeList/', methods=['POST', 'GET'])
 def removeList():

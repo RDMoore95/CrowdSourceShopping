@@ -88,7 +88,12 @@ export class ShoppingList extends React.Component {
                            user_id: this.state.user_id,
                            tag_name: this.state.tag_name,
                        })
-        })
+                      }).then((response) => response.json())
+                      .then((json) => {
+                        this.setState({ data: json });
+                      }).finally(() => {
+         this.setState({ refresh: !this.state.refresh });
+         })
     
       }
 
@@ -101,17 +106,18 @@ export class ShoppingList extends React.Component {
                            'Content-Type': 'application/json',
                        },
                        body: JSON.stringify({
-                           list_id: shopping_list_history_id
+                        user_id: this.state.user_id,
+                           list_id: shopping_list_history_id,
                        })
-        }).then(() => {
-         this.setState({ data: [] });
+        }).then((response) => response.json())
+       .then((json) => {
+         this.setState({ data: json });
+       }).finally(() => {
+         this.setState({ refresh: !this.state.refresh });
          })
-         .finally(() => {
-        this.setState({ refresh: !this.state.refresh });
-        })
-
       }
 
+    
       getUserId = async () => {
         try {
           const value = await AsyncStorage.getItem(USER_STORAGE_KEY);
@@ -136,45 +142,26 @@ export class ShoppingList extends React.Component {
 
     componentDidMount() {
         
-      this.setState({ loading: true });
-      this.getList()
-      
-      //   this.setState({data: [ 
-      //     {"shopping_list_history_id":55928,"tag_name":"tissues","id":"0"},
-      //   {"shopping_list_history_id":55929,"tag_name":"fish","id":"1"},
-      //   {"shopping_list_history_id":55931,"tag_name":"trout","id":"2"},
-      //   {"shopping_list_history_id":55933,"tag_name":"corn","id":"3"},
-      //   {"shopping_list_history_id":55934,"tag_name":"corn","id":"4"} 
-      // ] });  
-  }
-  
-  _onRefresh () {
-    this.setState({refreshing: true});
-
-    this.getList().then(() => {
-      this.setState({refreshing: false});
-    });
-  }
-
-  getList(){
-    this.getUserId().then(() => fetch(url + '/getShoppingList/', {
-      method: 'POST',
-      headers: {
-          Accept: 'application/json',
-          'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-          user_id: this.state.user_id
-      }),
-     }).then((response) => response.json())
+        this.setState({ loading: true });
+        this.getUserId().then(() => fetch(url + '/getShoppingList/', {
+          method: 'POST',
+          headers: {
+              Accept: 'application/json',
+              'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+              user_id: this.state.user_id
+          }),
+         }).then((response) => response.json())
        .then((json) => {
          this.setState({ data: json });
        }).finally(() => {
          this.setState({ isLoading: false });
         })
-       ); 
-  }
+       );
 
+      }
+  
   renderSeparator = () => {
     return (
       <View style={{backgroundColor:'#fff', flex:1 ,padding: 10}}></View>
@@ -184,6 +171,10 @@ export class ShoppingList extends React.Component {
   setModalAddVisible = (visible) => {
     this.setState({ modalAddVisible: visible });
   }
+
+  /*****************************
+  * RECOMMENDATIONS
+  *****************************/
 
   findCoordinates = async () => {
 
@@ -202,10 +193,6 @@ export class ShoppingList extends React.Component {
     }
   
   };
-
-  /*****************************
-  * RECOMMENDATIONS
-  *****************************/
 
   getRecos = () => {
 
@@ -265,83 +252,97 @@ export class ShoppingList extends React.Component {
       const { isLoading } = this.state;
 
        return ( 
-      <ScrollView >
+    <ScrollView >
         <View style={appstyles.container}>
 
 
               <Block flex style={appstyles.profileContainer}>
                   <View style = {appstyles.centeredView2}>
-
+                                                                               
+                    
+                    
                     <TouchableHighlight 
+                        
                         style = {appstyles.listButton2}
                         onPress={() => this.setModalAddVisible()}>
-                        <Text>Add Item</Text>
+                        <Text bold
+                    size={16}
+                    color="white">Add Item to List</Text>
+                         
                     </TouchableHighlight>
                     </View>
                     <Modal
-                        animationType="slide"
-                        transparent={false}
-                        visible={this.state.modalAddVisible}
-                        onRequestClose={() => {
-                          Alert.alert("Modal has been closed.");
-                        }}
-                    >
-                      <View style={appstyles.centeredView}>
-                        <View style={appstyles.modalView}>
-                          <Text style={appstyles.modalText}>Add an item!</Text>
-                          <TextInput
-                            style={appstyles.input}
-                            placeholder='What are you shopping for?'
-                            autoCapitalize="none"
-                            maxLength={50}
-                            placeholderTextColor='white'
-                            onChangeText={val => this.onChangeText('tag_name', val)}
-                          />
-                          <TouchableHighlight
-                            title = "Submit"
-                            style={appstyles.listButton1}
-                            onPress={() => this.submitHandler() }>
-                            <Text>Submit</Text>
-                          </TouchableHighlight>  
-                          <TouchableHighlight
-                            title = "Close"
-                            style={appstyles.listButton2}
-                            onPress={() => 
-                              this.setModalAddVisible(!this.state.modalAddVisible) }>
-                            <Text>Close</Text>
-                          </TouchableHighlight>
-                        </View>
-                      </View>
-                    </Modal>
-               
+                                animationType="slide"
+                                transparent={false}
+                                visible={this.state.modalAddVisible}
+                                onRequestClose={() => {
+                                  Alert.alert("Modal has been closed.");
+                                }}
+                            >
+                              <View style={appstyles.centeredView}>
+                                <View style={appstyles.modalView}>
+                                  <Text style={appstyles.modalText}>Add an item!</Text>
+                                  <TextInput
+                                    style={appstyles.input}
+                                    placeholder='What are you shopping for?'
+                                    autoCapitalize="none"
+                                    maxLength={50}
+                                    placeholderTextColor='white'
+                                    onChangeText={val => this.onChangeText('tag_name', val)}
+                                  />
+                                  <TouchableHighlight
+                                    title = "Submit"
+                                    style={appstyles.listButton1}
+                                    onPress={() => this.submitHandler() }>
+                                    <Text size="20">Submit</Text>
+                                  </TouchableHighlight>  
+                                  <TouchableHighlight
+                                    title = "Close"
+                                    style={appstyles.listButton2}
+                                    onPress={() => {
+                                      this.setModalAddVisible(!this.state.modalAddVisible) 
+                                      this.props.navigation.navigate("ShoppingList")}}>
+                                    <Text size="20">Close</Text>
+                                  </TouchableHighlight>
+                                </View>
+                              </View>
+                            </Modal>
+
                     <View style={appstyles.container}>
                     {this.state.isLoading ? <ActivityIndicator/> : (
                             <FlatList
                                 extraData={this.state.refresh}
                                 data={this.state.data}
+                                extraData={this.state.refresh}
                                 ItemSeparatorComponent={this.renderSeparator}
                                 ListHeaderComponent = { this.renderSeparator}
                                 renderItem={({ item, id }) => (
                                 <View>
                                     <View style={appstyles.listRow}>
-                                        <Text>{item.tag_name}</Text>
+                                        <Text size="20">{item.tag_name}</Text>
                                         <Icon
-                                          name="ios-close-circle-outline" size={25}
-                                          onPress={() => this.removeItem(item.shopping_list_history_id)}
+                                          name="ios-close-circle-outline" size={20}
+                                          onPress={() => {this.removeItem(item.shopping_list_history_id)
+                                            this.props.navigation.navigate("ShoppingList")}}
                                         />
                                     </View>
                                 </View>)}
                                 keyExtractor={(item, id) => id.toString()}
                             />
-                            )}                
-                    </View>
-
-              <TouchableHighlight
-                        title = "Recc"
+                            )} 
+             <View style={{padding: 3}}></View>
+             <TouchableHighlight
                         style = {appstyles.listButton2}
                         onPress={() => { this.getRecos()} }>
-                        <Text>Click to get our store picks for you!</Text>
+                        <Text
+                    bold
+                    size={16}
+                    color="white"
+                        >Click to get our store picks for you!</Text>
               </TouchableHighlight>
+
+                    </View>
+            <View style={{padding: 3}}></View>
 
             <View style={{ padding: 5, width: deviceWidth * 0.98, alignItems: "center"}}>
             {isLoading ? <ActivityIndicator/> : (
