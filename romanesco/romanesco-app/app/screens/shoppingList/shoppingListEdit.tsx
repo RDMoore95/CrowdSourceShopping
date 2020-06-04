@@ -123,9 +123,24 @@ export class ShoppingList extends React.Component {
 
     componentDidMount() {
         
-        //this.setState({ loading: true });
-        //this.getList()
-      
+        this.setState({ loading: true });
+        this.getUserId().then(() => fetch(url + '/getShoppingList/', {
+          method: 'POST',
+          headers: {
+              Accept: 'application/json',
+              'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+              user_id: this.state.user_id
+          }),
+         }).then((response) => response.json())
+       .then((json) => {
+         this.setState({ data: json });
+       }).finally(() => {
+         this.setState({ isLoading: false });
+        })
+       );
+        /*
         this.setState({data: [ 
           {"shopping_list_history_id":55928,"tag_name":"tissues","id":"0"},
         {"shopping_list_history_id":55929,"tag_name":"fish","id":"1"},
@@ -133,8 +148,10 @@ export class ShoppingList extends React.Component {
         {"shopping_list_history_id":55933,"tag_name":"corn","id":"3"},
         {"shopping_list_history_id":55934,"tag_name":"corn","id":"4"} 
       ] });  
+      */
   }
   
+  /*
   _onRefresh () {
     this.setState({refreshing: true});
 
@@ -142,25 +159,8 @@ export class ShoppingList extends React.Component {
       this.setState({refreshing: false});
     });
   }
+*/
 
-  getList(){
-    this.getUserId().then(() => fetch(url + '/getShoppingList/', {
-      method: 'POST',
-      headers: {
-          Accept: 'application/json',
-          'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-          user_id: this.state.user_id
-      }),
-     }).then((response) => response.json())
-   .then((json) => {
-     this.setState({ data: json });
-   }).finally(() => {
-     this.setState({ isLoading: false });
-    })
-   ); 
-  }
 
   renderSeparator = () => {
     return (
@@ -182,23 +182,14 @@ export class ShoppingList extends React.Component {
 
               <Block flex style={appstyles.profileContainer}>
                   <View style = {appstyles.centeredView2}>
-                    <Text size={28} color="#32325D" style={{ marginTop: height * .05, textAlign: 'center' }}>
-                      Shopping List
-                    </Text>
-                                                                                              
-                    <TouchableHighlight
-                        title = "Recc"
-                        style = {appstyles.listButton1}
-                        onPress={() => Alert.alert('Reccomend button pressed')}>
-                        <Icon
-                          name="md-pizza" size={25}
-                        />
-                    </TouchableHighlight>
+                                                                               
+                    
+                    
                     <TouchableHighlight 
                         
                         style = {appstyles.listButton2}
                         onPress={() => this.setModalAddVisible()}>
-                        <Text>Add Item to List</Text>
+                        <Text size="20">Add Item to List</Text>
                          
                     </TouchableHighlight>
                     </View>
@@ -225,14 +216,15 @@ export class ShoppingList extends React.Component {
                                     title = "Submit"
                                     style={appstyles.listButton1}
                                     onPress={() => this.submitHandler() }>
-                                    <Text>Submit</Text>
+                                    <Text size="20">Submit</Text>
                                   </TouchableHighlight>  
                                   <TouchableHighlight
                                     title = "Close"
                                     style={appstyles.listButton2}
-                                    onPress={() => 
-                                      this.setModalAddVisible(!this.state.modalAddVisible) }>
-                                    <Text>Close</Text>
+                                    onPress={() => {
+                                      this.setModalAddVisible(!this.state.modalAddVisible) 
+                                      this.props.navigation.navigate("ShoppingList")}}>
+                                    <Text size="20">Close</Text>
                                   </TouchableHighlight>
                                 </View>
                               </View>
@@ -248,16 +240,22 @@ export class ShoppingList extends React.Component {
                                 renderItem={({ item, id }) => (
                                 <View>
                                     <View style={appstyles.listRow}>
-                                        <Text>{item.tag_name}</Text>
+                                        <Text size="30">{item.tag_name}</Text>
                                         <Icon
-                                          name="ios-close-circle-outline" size={25}
-                                          onPress={() => this.removeItem(item.shopping_list_history_id)}
+                                          name="ios-close-circle-outline" size={40}
+                                          onPress={() => {this.removeItem(item.shopping_list_history_id)
+                                            this.props.navigation.navigate("ShoppingList")}}
                                         />
                                     </View>
                                 </View>)}
                                 keyExtractor={(item, id) => id.toString()}
                             />
-                            )}                
+                            )}  
+                            <TouchableHighlight
+                              style = {appstyles.listButton1}
+                              onPress={() => Alert.alert('Reccomend button pressed')}>
+                              <Text size="20">Get Reccomendations</Text>  
+                            </TouchableHighlight>           
                     </View>
               </Block>
         </View>
