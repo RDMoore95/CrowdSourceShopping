@@ -26,7 +26,7 @@ import Images from '../../assets/imgs';
 
 import {NewButton} from "../../components/newButton/newButton";
 const USER_STORAGE_KEY = "@user_id";
-
+import { appstyles } from '../../styles/appStyle'
 
 
 const { width, height } = Dimensions.get("screen");
@@ -252,13 +252,14 @@ export default class UserProfile extends React.Component {
                 <Text size={16} color="#32325D" style={{ marginTop: 10 }}>
                   Current Location Unknown
                 </Text> : (
-                <Text size={16} color="#32325D" style={{ marginTop: 10 }}>
+                <Text size={16} color="#32325D" style={{ marginTop: 10, marginBottom: 10 }}>
                   {user_city + ", " + user_state}
                 </Text> )}
 
 
                 <Button
                 onPress={() => this.removeUserId()}
+                style = {appstyles.listButton2}
                 >
                   <Text
                     bold

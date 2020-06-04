@@ -169,7 +169,7 @@ export default class SignIn extends React.Component {
           <Button
             title='Sign Up'
             onPress={() => this.props.navigation.navigate('SignUp')}         
-            color="#000"
+            color="#fff"
           />
           <TextInput
             style={this.styles.input}
@@ -191,6 +191,7 @@ export default class SignIn extends React.Component {
             title='Sign In'
             // onPress = {() => this.login(this.state.email, this.state.password)}
             onPress = {() => this.signIn(this.state.email, this.state.password, this.state.lat, this.state.long)}
+            color="#fff"
           />
 
           </ImageBackground>
