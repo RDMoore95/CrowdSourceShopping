@@ -15,7 +15,7 @@ import { Block, Text, theme } from "galio-framework";
 import { Button } from "../../components";
 import { argonTheme } from "../../constants";
 import { HeaderHeight } from "../../constants/utils";
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation, useIsFocused } from '@react-navigation/native';
 
 import Images from '../../assets/imgs';
 
@@ -42,6 +42,8 @@ export function StoreProfile( { route }, {} ) {
     const [data, setData] = useState([]);
     const [valid, setValid] = useState(true)
 
+    const isFocused = useIsFocused()
+
     useEffect(() => {
       fetch(url + '/getStore/', {
            method: 'POST',
@@ -56,7 +58,7 @@ export function StoreProfile( { route }, {} ) {
         .then((json) => setData(json[0]))
         .catch((error) => console.error(error))
         .finally(() => setLoading(false))
-    }, []);
+    }, [isFocused]);
 
     return (
 
