@@ -48,6 +48,18 @@ export default class UserProfile extends React.Component {
     };
   }
 
+  removeUserId = async () => {
+
+    try {
+      AsyncStorage.removeItem(USER_STORAGE_KEY)
+        .then(() => this.props.navigation.navigate("SignIn"))
+        .catch((err) => console.log(err))
+      }
+    catch (error) {
+      console.log(error)
+    }
+  }
+
   getUserId = async () => {
     try {
       const value = await AsyncStorage.getItem(USER_STORAGE_KEY);
@@ -121,6 +133,7 @@ export default class UserProfile extends React.Component {
               
               /> 
             </Block>
+
             <Block style={styles.info}>
               <Block
                 middle
@@ -192,7 +205,16 @@ export default class UserProfile extends React.Component {
                 <Text size={16} color="#32325D" style={{ marginTop: 10 }}>
                   San Francisco, USA
                 </Text>
-              </Block>    
+                <Button
+                onPress={() => this.removeUserId()}
+                >
+                  <Text
+                    bold
+                    size={16}
+                    color="white"
+                  >Logout</Text>
+                </Button>
+              </Block>
 
               <Block middle style={{ marginTop: 30, marginBottom: 16 }}>
                 <Block style={styles.divider} />
@@ -290,5 +312,5 @@ thumb: {
   width: thumbMeasure,
   height: thumbMeasure,
   backgroundColor:'#ffffcc'
-}
+},
 });

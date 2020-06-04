@@ -1,16 +1,46 @@
 import React from 'react';
-import { StyleSheet, Text, TextInput, Image, View, Button,  ListView } from 'react-native';
+import { StyleSheet, Text, TextInput, Image, View, Button,  ListView, ImageBackground, ActivityIndicator } from 'react-native';
 import { AsyncStorage } from 'react-native';
 import * as Location from 'expo-location';
 import { useNavigation } from '@react-navigation/native';
+import { NavigationEvents } from 'react-navigation';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 const USER_STORAGE_KEY = "@user_id";
+const image = require("../../assets/imgs/bg.png");
+
 
 
 // based on signin code taken from https://gist.github.com/dabit3/1c6b1808c9bdf10138f51dae46418d8c & tweaked 
 
 export default class SignIn extends React.Component {
+
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      email: '', password: '', userId: '', lat: '', long: '', coordinates_received: false
+    }
+
+    this.findCoordinates();
+    this.getUserId();
+
+  }
+
+  getUserId = async () => {
+
+    try {
+      const userId = await AsyncStorage.getItem(USER_STORAGE_KEY)
+      if (userId !== null) {
+        this.props.navigation.navigate('Romanesco');
+        return true;
+      } else {
+        return false;
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  }
   //navigation = useNavigation();
 
   setUserId = async (userId) => {
@@ -35,15 +65,10 @@ export default class SignIn extends React.Component {
       this.setState({lat: location.coords.latitude});
       this.setState({long: location.coords.longitude});
       this.setState({coordinates_received: true});
-      console.log(this.state.lat, this.state.long);
+      //console.log(this.state.lat, this.state.long);
     }
     
-  };
-
-
-  state = {
-      email: '', password: '', userId: '', lat: ',', long: '', coordinates_received: false
-    }
+  };  
 
     onChangeText = (key, val) => {
       this.setState({ [key]: val })
@@ -115,18 +140,30 @@ export default class SignIn extends React.Component {
         alignItems: 'center',
         justifyContent: 'center',
       },
+      backgroudImage: {
+        flex: 1,
+        resizeMode: 'cover',
+        justifyContent: "center",
+      },
+      welcomeMessage: {
+        fontSize: 18,
+        padding: 18,
+        color: "white",
+        fontWeight: "bold"
+      }
     });
-
-    componentDidMount() {
-      this.findCoordinates();
-    }
 
     render() {
       return (
         <>
 
-        <View style={this.styles.container}>
-          <Text size={26} color="#32325D">
+          <View style={this.styles.container}>
+          <ImageBackground
+          source={image}
+          style={this.styles.backgroudImage}
+          >
+
+          <Text style={this.styles.welcomeMessage} color="#32325D">
           Welcome to Romanesco! Please sign in below. Or tap the button to sign up.
           </Text>
           <Button
@@ -149,14 +186,15 @@ export default class SignIn extends React.Component {
             placeholderTextColor='white'
             onChangeText={val => this.onChangeText('password', val)}
           />
-          
+
           <Button
             title='Sign In'
             // onPress = {() => this.login(this.state.email, this.state.password)}
             onPress = {() => this.signIn(this.state.email, this.state.password, this.state.lat, this.state.long)}
           />
-        </View>
-        <View style={{backgroundColor:'#fff', padding: 100}}></View>
+
+          </ImageBackground>
+          </View>
         </>
 
       )

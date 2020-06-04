@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, TextInput, View, Button,  ListView, AppRegistry,AsyncStorage,Text,TouchableHighlight,PermissionsAndroid} from 'react-native';
+import { StyleSheet, TextInput, View, ScrollView, Button,  ListView, AppRegistry,AsyncStorage,Text,TouchableHighlight,PermissionsAndroid, Image, ImageBackground} from 'react-native';
 import { Formik } from 'formik';
 import * as Location from 'expo-location';
 // import { FormLabel, FormInput, FormValidationMessage } from 'react-native-elements'
@@ -9,7 +9,7 @@ import { createStackNavigator } from '@react-navigation/stack';
 import Geolocation from 'react-native-geolocation-service';
 
 // signup code taken from https://gist.github.com/dabit3/1c6b1808c9bdf10138f51dae46418d8c & slightly tweaked 
-
+const image = require("../../assets/imgs/bg.png");
 
 
 export default class SignUp extends React.Component {
@@ -145,9 +145,12 @@ export default class SignUp extends React.Component {
       container: {
         flex: 1,
         backgroundColor: '#fff',
-        alignItems: 'center',
-        justifyContent: 'center',
       },
+      backgroudImage: {
+        flex: 1,
+        resizeMode: 'cover',
+        justifyContent: "center",
+      }
     });
 
   componentDidMount() {
@@ -156,9 +159,17 @@ export default class SignUp extends React.Component {
 
 
   render() {
-    return (
+    return (       
+
       <View style={this.styles.container}>
-        <TextInput
+        <ImageBackground
+      source={image}
+      style={this.styles.backgroudImage}
+      >
+
+      <ScrollView>
+
+      <TextInput
           style={this.styles.input}
           placeholder='Email'
           autoCapitalize="none"
@@ -199,6 +210,7 @@ export default class SignUp extends React.Component {
           placeholderTextColor='white'
           onChangeText={val => this.validateZipCode(val)}
         />
+
         {(this.state.correct_email != true || this.state.correct_zipcode != true) ? 
 
         <Button
@@ -215,7 +227,15 @@ export default class SignUp extends React.Component {
           />
           
         )}
+
+      </ScrollView>
+         
+
+        </ImageBackground>
+
+
       </View>
+      
       )
     }
   };

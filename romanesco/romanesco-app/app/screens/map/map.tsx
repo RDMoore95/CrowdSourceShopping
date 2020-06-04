@@ -130,7 +130,7 @@ export default class Map extends Component {
                 <Text> {marker.store_name} </Text>
                 <Text> {marker.store_street} </Text>
                 <TouchableOpacity>
-                  <Text style={styles.viewStoreText}>Touch View Store Details</Text>
+                  <Text style={styles.viewStoreText}>View Store Details</Text>
                 </TouchableOpacity>
               </Callout>
 
