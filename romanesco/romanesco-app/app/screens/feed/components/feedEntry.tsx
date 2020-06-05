@@ -51,6 +51,8 @@ export class FeedEntry extends React.Component {
 
     getFeedEntries = async () => {
 
+    this.getUserId()
+      .then(() => { 
       fetch(url + '/getFeedEntries/', {
         method: 'POST',
         headers: {
@@ -67,6 +69,8 @@ export class FeedEntry extends React.Component {
      }).finally(() => {
        this.setState({ isLoading: false });
      });
+   });
+
    }
 
     state = {}
