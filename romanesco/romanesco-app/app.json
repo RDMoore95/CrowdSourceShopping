@@ -11,7 +11,10 @@
     },
     "android": {
       "package": "edu.oregonstate.romanesco",
-      "versionCode": 2
+      "versionCode": 2,
+      "permissions": [
+        "ACCESS_FINE_LOCATION"
+      ]
     },
     "version": "1.0.1"
   }
