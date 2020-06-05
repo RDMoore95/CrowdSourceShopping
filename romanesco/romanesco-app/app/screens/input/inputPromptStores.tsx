@@ -13,6 +13,7 @@ import { Avatar, List, ListItem } from "react-native-elements";
 import { useEffect, useState } from 'react';
 import { Block, Text, theme } from "galio-framework";
 import { withNavigation } from 'react-navigation';
+import * as Location from 'expo-location';
 
 import Images from '../../assets/imgs';
 
@@ -51,9 +52,30 @@ export default class InputPromptStores extends React.Component {
     }
   }  
 
+  findCoordinates = async () => {
+
+    let { status } = await Location.requestPermissionsAsync();
+
+    if (status !== 'granted') {
+      console.log("location permission denied");
+    }
+
+    else {
+      let location = await Location.getCurrentPositionAsync({});
+      this.setState({lat: location.coords.latitude});
+      this.setState({long: location.coords.longitude});
+      this.setState({coordinates_received: true});
+      console.log(this.state.lat, this.state.long);
+    }
+  
+  };  
+
   componentDidMount() {
     this.getUserId()
       .then(() => {
+        this.findCoordinates()
+          .then(() => {
+
       fetch(url + '/getFeedbackStores/', {
            method: 'POST',
            headers: {
@@ -62,6 +84,8 @@ export default class InputPromptStores extends React.Component {
            },
            body: JSON.stringify({
                user_id: this.state.user_id,
+               lat: this.state.lat,
+               long: this.state.long
            }),
        }).then((response) => response.json())
         .then((json) => {
@@ -70,6 +94,8 @@ export default class InputPromptStores extends React.Component {
         .finally(() => {
           this.setState({ isLoading: false });
         });
+
+          })
       })
   }
 

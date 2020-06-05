@@ -15,6 +15,7 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import { withNavigation } from 'react-navigation';
 import Modal from 'react-native-modal';
+import * as Location from 'expo-location';
 
 import Images from '../../assets/imgs';
 
@@ -64,6 +65,7 @@ export default class StoreFeed extends React.Component {
     }
 
   componentDidMount() {
+
     this.getUserId()
       .then(() => {
       fetch(url + '/getFavoriteStores/', {
@@ -79,6 +81,8 @@ export default class StoreFeed extends React.Component {
         .then((json) => {
           this.setState({ data: json });
         }).then(
+            this.findCoordinates()
+            .then(() => {
             fetch(url + '/getTopStores/', {
                      method: 'POST',
                      headers: {
@@ -87,17 +91,39 @@ export default class StoreFeed extends React.Component {
                      },
                      body: JSON.stringify({
                          user_id: this.state.user_id,
+                         lat: this.state.lat,
+                         long: this.state.long,
                      }),
                  }).then((response) => response.json())
                   .then((json) => {
                     this.setState({ top_data: json });
                   })
-        )
+            }
+        ))
         .finally(() => {
           this.setState({ isLoading: false });
         });
       })
   }
+
+  findCoordinates = async () => {
+
+    let { status } = await Location.requestPermissionsAsync();
+
+    if (status !== 'granted') {
+      console.log("location permission denied");
+    }
+
+    else {
+      let location = await Location.getCurrentPositionAsync({});
+      this.setState({lat: location.coords.latitude});
+      this.setState({long: location.coords.longitude});
+      this.setState({coordinates_received: true});
+      console.log(this.state.lat, this.state.long);
+    }
+  
+  };
+
 
   toggleModal = () => {
     this.setState({ isModalVisible: !this.state.isModalVisible})
@@ -157,8 +183,8 @@ export default class StoreFeed extends React.Component {
                   <View style={styles.feedBoxHeader}>
                     <Avatar
                     rounded
+                    defaultSource = {Images.stores["romanescostoredefault"]}                    
                     source = {Images.stores[item.store_name_fmt]}
-                    defaultSource = {Images.stores["romanescostoredefault"]}
                      />  
                     <Text numberOfLines={1} style={styles.headline}> 
                     {item.store_name} at {item.store_street}
@@ -213,8 +239,8 @@ export default class StoreFeed extends React.Component {
                   <View style={styles.feedBoxHeader}>
                     <Avatar
                     rounded
+                    defaultSource = {Images.stores["romanescostoredefault"]}                                        
                     source = {Images.stores[item.store_name_fmt]}
-                    defaultSource = {Images.stores["romanescostoredefault"]}
                      />  
                     <Text numberOfLines={1} style={styles.headline}> 
                     {item.store_name} at {item.store_street}                    
