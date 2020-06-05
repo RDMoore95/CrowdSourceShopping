@@ -155,7 +155,9 @@ def pullFavoriteStores(user_id):
 	result['id'] = result.index.astype(str)
 
 	# Format store names
-	result['store_name_fmt'] = result['store_name'].str.replace('[^a-zA-Z]', '').str.lower()	
+	result['store_name_fmt'] = result['store_name'].str.replace('[^a-zA-Z]', '').str.lower()
+	result['store_name_fmt'] = np.where(result['store_name_fmt'].isin(['traderjoes','safeway','wholefoodsmarket','costco'])
+		, result['store_name_fmt'], 'romanescostoredefault')		
 
 	result_json = result.to_json(orient = 'records')
 	print(result_json)
