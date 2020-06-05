@@ -8,6 +8,7 @@ import { ActivityIndicator,
   Text,
   TouchableOpacity,
   AsyncStorage,
+  RefreshControl,
   View, 
   ScrollView } from 'react-native';
 import { Avatar, List, ListItem } from "react-native-elements";
@@ -64,7 +65,8 @@ export default class StoreFeed extends React.Component {
       this.setState({ [key]: val })
     }
 
-  componentDidMount() {
+
+  getStoresData = () => {
 
     this.getUserId()
       .then(() => {
@@ -104,6 +106,11 @@ export default class StoreFeed extends React.Component {
           this.setState({ isLoading: false });
         });
       })
+
+  }  
+
+  componentDidMount() {
+    this.getStoresData()
   }
 
   findCoordinates = async () => {
@@ -129,6 +136,11 @@ export default class StoreFeed extends React.Component {
     this.setState({ isModalVisible: !this.state.isModalVisible})
   };  
 
+ onRefresh() {
+  this.setState({isLoading: true});
+  this.getStoresData()
+}
+
   renderEmptyContainer = () => {
 
     return(
@@ -150,6 +162,13 @@ export default class StoreFeed extends React.Component {
           <ScrollView
             showsVerticalScrollIndicator={false}
             style={{ width, backgroundColor:'#fff'}}
+            refreshControl={
+              <RefreshControl
+                refreshing={this.state.isLoading}
+                onRefresh={() => this.onRefresh()}
+                tintColor="clear"
+              />
+            }
           >
 
           <View style={{backgroundColor:'#fff', flex:1 ,padding: 6}}></View>
