@@ -21,10 +21,19 @@ db_connection_str = 'mysql+pymysql://admin:RomanescoS2020@crowd-source-shopping.
 # DB connection
 db_connection = create_engine(db_connection_str)
 
+# Distance from user to store
+def storeUserDistance(userLat, userLong, storeLat, storeLong):
+    
+    coords_1 = (userLat, userLong)
+    coords_2 = (storeLat, storeLong)
+    
+    return round(geopy.distance.geodesic(coords_1, coords_2).miles, 1)
 
 # List of stores user can give feedback on
 # Combination of favorite and populat
-def pullFeedbackStores(user_id):
+def pullFeedbackStores(user_id, userLat, userLong):
+
+	distance_limit = 25
 
 	print("Running Pull Feedback Stores")
 	print(user_id)
@@ -37,6 +46,9 @@ def pullFeedbackStores(user_id):
 	    , store_street
 	    , store_city
 	    , store_zip
+	    , store_lat
+	    , store_long
+	    , user_feedback
 	    FROM
 	    (
 	    (SELECT DISTINCT 
@@ -45,12 +57,14 @@ def pullFeedbackStores(user_id):
 	    , s.store_street
 	    , s.store_city
 	    , s.store_zip
-	    , 1 as total_feedback
+	    , s.store_lat
+	    , s.store_long
+	    , COUNT(*) as user_feedback
 	    FROM Store_Feedback sf
 	    INNER JOIN Store s
 	    ON sf.store_id = s.store_id
 	    WHERE sf.user_id = {user}
-	    GROUP BY 1, 2, 3, 4, 5
+	    GROUP BY 1, 2, 3, 4, 5, 6, 7
 	    ORDER BY sf.time_added DESC
 	    LIMIT 10)
 	    UNION ALL
@@ -60,14 +74,16 @@ def pullFeedbackStores(user_id):
 	    , s.store_street
 	    , s.store_city
 	    , s.store_zip
-	    , SUM(1) as total_feedback
-	    FROM Store_Feedback sf
-	    INNER JOIN Store s
+	    , s.store_lat
+	    , s.store_long	    	    
+	    , 0 as user_feedback
+	    FROM Store s
+	    LEFT JOIN Store_Feedback sf
 	    ON sf.store_id = s.store_id
-	    WHERE DATEDIFF(CURDATE(), sf.time_added) <= 90
-	    GROUP BY 1, 2, 3, 4, 5
-	    ORDER BY total_feedback DESC
-	    LIMIT 20)
+	    AND DATEDIFF(CURDATE(), sf.time_added) <= 90	    
+	    GROUP BY 1, 2, 3, 4, 5, 6, 7
+	    ORDER BY user_feedback DESC
+	    )
 	    ) x
 	    '''
 	query_fmt = query.format(user = user_id)
@@ -79,9 +95,30 @@ def pullFeedbackStores(user_id):
 	result['id'] = result.index.astype(str)
 
 	# Format store names
-	result['store_name_fmt'] = result['store_name'].str.replace('[^a-zA-Z]', '').str.lower()	
+	result['store_name_fmt'] = result['store_name'].str.replace('[^a-zA-Z]', '').str.lower()
+	result['store_name_fmt'] = np.where(result['store_name_fmt'].isin(['traderjoes','safeway','wholefoodsmarket','costco'])
+		, result['store_name_fmt'], 'romanescostoredefault')		
 
-	result_json = result.to_json(orient = 'records')
+	# Calculate distance from user
+	result['distance'] = result.apply(lambda store : storeUserDistance(
+	    userLat
+	    , userLong
+	    , store['store_lat']
+	    , store['store_long']), axis = 1)
+
+	# Limit to stores within threshold
+	result_filter = result[result['distance'] <= distance_limit]
+
+	# If no stores found, use original list
+	if result_filter.shape[0] == 0:    
+	    print("No stores")
+	    result_filter = result
+
+	# Sort by number of user reviews, distance
+	result_filter = result_filter.sort_values(['user_feedback', 'distance'], ascending=[False, True])
+	result_filter = result_filter.head(30)
+
+	result_json = result_filter.to_json(orient = 'records')
 	print(result_json)
 	return result_json
 
@@ -126,7 +163,9 @@ def pullFavoriteStores(user_id):
 
 
 # Pull top stores
-def pullTopStores(userid):
+def pullTopStores(userid, userLat, userLong):
+
+	distance_limit = 25
 
 	print("Running Pull Top Stores")
 
@@ -138,13 +177,15 @@ def pullTopStores(userid):
 	    , s.store_street
 	    , s.store_city
 	    , s.store_zip
-	    , SUM(1) as total_feedback
-	    , COUNT(DISTINCT sf.user_id) as shoppers
-	    FROM Store_Feedback sf
-	    INNER JOIN Store s
+	    , s.store_long
+	    , s.store_lat
+	    , COALESCE(SUM(1), 0) - 1 as total_feedback
+	    , COALESCE(COUNT(DISTINCT sf.user_id),0) as shoppers
+	    FROM Store s
+	    LEFT JOIN Store_Feedback sf
 	    ON sf.store_id = s.store_id
-	    WHERE DATEDIFF(CURDATE(), sf.time_added) <= 90
-	    GROUP BY 1, 2, 3, 4, 5
+	    AND DATEDIFF(CURDATE(), sf.time_added) <= 90
+	    GROUP BY 1, 2, 3, 4, 5, 6, 7
 	    ORDER BY total_feedback DESC
 	    LIMIT 100
 	    '''
@@ -157,8 +198,29 @@ def pullTopStores(userid):
 
 	# Format store names
 	result['store_name_fmt'] = result['store_name'].str.replace('[^a-zA-Z]', '').str.lower()
+	result['store_name_fmt'] = np.where(result['store_name_fmt'].isin(['traderjoes','safeway','wholefoodsmarket','costco'])
+		, result['store_name_fmt'], 'romanescostoredefault')
 
-	result_json = result.to_json(orient = 'records')
+	# Calculate distance from user
+	result['distance'] = result.apply(lambda store : storeUserDistance(
+	    userLat
+	    , userLong
+	    , store['store_lat']
+	    , store['store_long']), axis = 1)
+
+	# Limit to stores within threshold
+	result_filter = result[result['distance'] <= distance_limit]
+
+	# If no stores found, use original list
+	if result_filter.shape[0] == 0:    
+	    print("No stores")
+	    result_filter = result
+
+	# Sort by number of reviews, distance
+	result_filter = result_filter.sort_values(['total_feedback', 'distance'], ascending=[False, True])    
+	result_filter = result_filter.head(30)
+
+	result_json = result_filter.to_json(orient = 'records')
 	print(result_json)
 	return result_json
 
@@ -183,22 +245,13 @@ def getRecoShoppingList(user_id):
     return shopping_list
 
 
-# Distance from user to store
-def storeUserDistance(userLat, userLong, storeLat, storeLong):
-    
-    coords_1 = (userLat, userLong)
-    coords_2 = (storeLat, storeLong)
-    
-    return round(geopy.distance.geodesic(coords_1, coords_2).miles, 1)
-
-
 # Pull top stores
 def pullRecoStores(user_id, userLat, userLong):
 
 	# userLat = 37.788565246142305
 	# userLong = -122.4142765721646
 	# user_id = 331
-	distance_limit = 5
+	distance_limit = 25
 	string_match_threshold = 0.45
 
 	print("Running Recommended Stores")
@@ -952,7 +1005,9 @@ def removeTag(list_id):
 def getFeedbackStores():
 
     print(request.json)
-    result_json = pullFeedbackStores(request.json['user_id'])
+    result_json = pullFeedbackStores(request.json['user_id']
+    	, request.json['lat']
+    	, request.json['long'])
     return result_json, 201
 
 @app.route('/getFavoriteStores/', methods=['POST', 'GET'])
@@ -966,7 +1021,10 @@ def getFavoriteStores():
 def getTopStores():
 
     print(request.json)
-    result_json = pullTopStores(request.json['user_id'])
+    result_json = pullTopStores(request.json['user_id']
+    	, request.json['lat']
+		, request.json['long']
+    	)
     return result_json, 201
 
 @app.route('/getRecoStores/', methods=['POST', 'GET'])
