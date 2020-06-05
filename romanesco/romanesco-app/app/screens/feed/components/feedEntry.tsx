@@ -81,9 +81,14 @@ export class FeedEntry extends React.Component {
 
     getUserId = async () => {
       try {
+        /*
         const value = await AsyncStorage.getItem(USER_STORAGE_KEY);
-        this.setState({['userId']: value});
+        this.setState({['user_id']: value});
         this.setState({['haveUserId']: true});
+        
+        return value;
+        */
+       return '332';
       }
       catch {
         console.log("failed to get userId");

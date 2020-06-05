@@ -22,24 +22,24 @@ export default class SignIn extends React.Component {
       email: '', password: '', userId: '', lat: '', long: '', coordinates_received: false
     }
 
-    //this.getUserId();
+    this.getUserId();
     this.findCoordinates();
   }
 
-  // getUserId = async () => {
+   getUserId = async () => {
 
-  //   try {
-  //     const userId = await AsyncStorage.getItem(USER_STORAGE_KEY)
-  //     if (userId !== null) {
-  //       this.props.navigation.navigate('Romanesco');
-  //       return true;
-  //     } else {
-  //       return false;
-  //     }
-  //   } catch (error) {
-  //     console.log(error);
-  //   }
-  // }
+     try {
+       const userId = await AsyncStorage.getItem(USER_STORAGE_KEY)
+       if (userId !== null) {
+         this.props.navigation.navigate('Romanesco');
+         return true;
+       } else {
+         return false;
+       }
+     } catch (error) {
+       console.log(error);
+     }
+   }
   //navigation = useNavigation();
 
   setUserId = async (userId) => {

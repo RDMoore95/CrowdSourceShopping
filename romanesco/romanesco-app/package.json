@@ -9,7 +9,7 @@
     },
     "dependencies": {
         "@okta/okta-react-native": "1.4.0",
-        "@react-native-community/async-storage": "^1.10.0",
+        "@react-native-community/async-storage": "^1.11.0",
         "@react-native-community/geolocation": "^1.4.2",
         "@react-native-community/masked-view": "^0.1.10",
         "@react-navigation/bottom-tabs": "^5.4.1",
@@ -38,7 +38,7 @@
         "passport-local": "^1.0.0",
         "pug": "^2.0.4",
         "react": "~16.9.0",
-        "react-dom": "~16.9.0",
+        "react-dom": "16.13.1",
         "react-native": "~0.61.5",
         "react-native-app-auth": "^1.0.1",
         "react-native-camera": "git+https://git@github.com/react-native-community/react-native-camera.git",
@@ -63,9 +63,10 @@
         "react-navigation": "^4.3.9",
         "schematics": "^0.2.0",
         "sequelize": "^5.21.9",
+        "sqlite": "^4.0.10",
         "styled-components": "^5.1.0",
         "tcomb-form-native": "^0.6.20",
-        "uuid": "^8.0.0"
+        "uuid": "^8.1.0"
     },
     "devDependencies": {
         "@babel/core": "~7.9.0",
@@ -78,7 +79,6 @@
         "enzyme-async-helpers": "0.9.1",
         "jest-expo": "~37.0.0",
         "nodemon": "^2.0.3",
-        "react-dom": "16.13.1",
         "typescript": "~3.8.3"
     },
     "jest": {
