@@ -79,21 +79,16 @@ export class FeedEntry extends React.Component {
       this.setState({ [key]: val })
     }
 
-    getUserId = async () => {
-      try {
-        /*
-        const value = await AsyncStorage.getItem(USER_STORAGE_KEY);
-        this.setState({['user_id']: value});
-        this.setState({['haveUserId']: true});
-        
-        return value;
-        */
-       return '332';
-      }
-      catch {
-        console.log("failed to get userId");
-      }
+  getUserId = async () => {
+    try {
+      const value = await AsyncStorage.getItem(USER_STORAGE_KEY);
+      this.setState({['userId']: value});
+      this.setState({['haveUserId']: true});
     }
+    catch {
+      console.log("failed to get userId");
+    }
+  }
 
     // Separate items in feed
     FlatListItemSeparator = () => {
