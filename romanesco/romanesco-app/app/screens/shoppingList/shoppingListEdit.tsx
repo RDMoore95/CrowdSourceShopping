@@ -291,18 +291,20 @@ export class ShoppingList extends React.Component {
                                     onChangeText={val => this.onChangeText('tag_name', val)}
                                   />
                                   <TouchableHighlight
-                                    title = "Submit"
                                     style={appstyles.listButton2}
                                     onPress={() => this.submitHandler() }>
-                                    <Text size="20">Submit</Text>
+                                    <Text bold
+                                          size={16}
+                                          color="white">Submit</Text>
                                   </TouchableHighlight>  
                                   <TouchableHighlight
-                                    title = "Close"
                                     style={appstyles.listButton2}
                                     onPress={() => {
                                       this.setModalAddVisible(!this.state.modalAddVisible) 
                                       this.props.navigation.navigate("ShoppingList")}}>
-                                    <Text size="20">Close</Text>
+                                    <Text bold
+                                          size={16}
+                                          color="white">Close</Text>
                                   </TouchableHighlight>
                                 </View>
                               </View>
@@ -319,7 +321,7 @@ export class ShoppingList extends React.Component {
                                 renderItem={({ item, id }) => (
                                 <View>
                                     <View style={appstyles.listRow}>
-                                        <Text size="20">{item.tag_name}</Text>
+                                        <Text size={20}>{item.tag_name}</Text>
                                         <Icon
                                           name="ios-close-circle-outline" size={20}
                                           onPress={() => {this.removeItem(item.shopping_list_history_id)
