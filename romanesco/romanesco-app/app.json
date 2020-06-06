@@ -3,7 +3,7 @@
   "displayName": "romanesco-app",
   "expo": {
     "name": "Romanesco",
-    "icon": "./app/assets/imgs/romanescoicon.png", 
+    "icon": "./app/assets/imgs/romanescoicon.png",
     "slug": "RomanescoApp",
     "ios": {
       "bundleIdentifier": "edu.oregonstate.romanesco",
@@ -16,6 +16,7 @@
         "ACCESS_FINE_LOCATION"
       ]
     },
-    "version": "1.0.1"
+    "version": "1.0.1",
+    "description": "\n"
   }
 }

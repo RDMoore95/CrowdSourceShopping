@@ -272,16 +272,7 @@ export default class UserProfile extends React.Component {
               <Block middle style={{ marginTop: 30, marginBottom: 16 }}>
                 <Block style={styles.divider} />
               </Block>
-              <Block middle>
-                <Text
-                  size={16}
-                  color="#525F7F"
-                  style={{ textAlign: "center" }}
-                >
-                  Superstar Shopper! Trader Joe's >>>
-                </Text>
-
-              </Block>
+              
 
               </Block>
 
