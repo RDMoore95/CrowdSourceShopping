@@ -36,7 +36,7 @@
         "jwt-decode": "^2.2.0",
         "passport": "^0.4.1",
         "passport-local": "^1.0.0",
-        "pug": "^2.0.4",
+        "pug": "^3.0.1",
         "react": "16.9.0",
         "react-dom": "16.9.0",
         "react-native": "0.61.4",
