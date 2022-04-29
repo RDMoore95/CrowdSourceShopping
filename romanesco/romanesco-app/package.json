@@ -17,7 +17,7 @@
         "@react-navigation/material-top-tabs": "^5.2.1",
         "@react-navigation/native": "^5.1.7",
         "@react-navigation/stack": "^5.2.18",
-        "async": "^3.2.0",
+        "async": "^3.2.2",
         "bcryptjs": "^2.4.3",
         "cors": "^2.8.5",
         "events": "^3.1.0",
