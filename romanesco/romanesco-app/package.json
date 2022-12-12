@@ -27,7 +27,7 @@
         "expo-location": "~8.1.0",
         "expo-permissions": "~8.1.0",
         "expo-updates": "~0.1.2",
-        "express": "^4.17.1",
+        "express": "^4.17.3",
         "express-session": "^1.17.1",
         "firebase": "7.9.0",
         "formik": "^2.1.4",
